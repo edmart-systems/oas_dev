@@ -1,0 +1,479 @@
+generator client {
+  provider = "prisma-client-js"
+  // binaryTargets = ["native", "debian-openssl-1.1.x"] // c-panel binary target
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("NEXT_PUBLIC_DATABASE_URL")
+}
+
+model Role {
+  role_id    Int      @id @default(autoincrement())
+  role       String   @db.VarChar(24)
+  role_desc  String?  @db.VarChar(160)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+
+  users User[]
+
+  @@map("role")
+}
+
+model Status {
+  status_id   Int      @id @default(autoincrement())
+  status      String   @db.VarChar(24)
+  status_desc String?  @db.VarChar(160)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+
+  users User[]
+
+  @@map("status")
+}
+
+model User {
+  userId          Int      @id @default(autoincrement())
+  co_user_id      String   @unique @db.VarChar(20)
+  firstName       String   @db.VarChar(24)
+  lastName        String   @db.VarChar(24)
+  otherName       String?  @db.VarChar(24)
+  email           String   @unique @db.VarChar(64)
+  email_verified  Int      @default(0)
+  phone_number    String   @unique @db.VarChar(16)
+  phone_verified  Int      @default(0)
+  hash            String   @db.VarChar(244)
+  profile_picture String?  @db.VarChar(120)
+  status_id       Int
+  status_reason   String?  @db.VarChar(260)
+  role_id         Int
+  signed          Int      @default(0)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+
+  role             Role               @relation(fields: [role_id], references: [role_id])
+  status           Status             @relation(fields: [status_id], references: [status_id])
+  quotations       Quotation[]
+  signatures       User_signature[]
+  Edited_quotation Edited_quotation[]
+  quotation_drafts Quotation_draft[]
+  tasks            Task[]
+
+  @@map("user")
+}
+
+model User_signature {
+  id         Int      @id @default(autoincrement())
+  co_user_id String   @unique
+  canUpdate  Int      @default(0)
+  dataUrl    String   @db.LongText
+  height     Int      @default(30)
+  width      Int      @default(120)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+
+  user User @relation(fields: [co_user_id], references: [co_user_id])
+
+  @@map("user_signature")
+}
+
+model Currency {
+  currency_id   Int      @id @default(autoincrement())
+  currency_code String   @db.VarChar(6)
+  currency_name String   @db.VarChar(24)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+
+  quotations       Quotation[]
+  Edited_quotation Edited_quotation[]
+
+  @@map("currency")
+}
+
+model Unit {
+  unit_id    Int      @id @default(autoincrement())
+  name       String   @db.VarChar(160)
+  short_name String?  @db.VarChar(160)
+  unit_desc  String?  @db.VarChar(160)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+
+  @@map("unit")
+}
+
+model Company {
+  co_id           Int      @id @default(autoincrement())
+  legal_name      String?  @db.VarChar(64)
+  business_name   String   @db.VarChar(64)
+  tin             String?
+  email           String   @db.VarChar(64)
+  phone_number_1  String   @db.VarChar(16)
+  phone_number_2  String?  @db.VarChar(16)
+  landline_number String?  @db.VarChar(16)
+  logo            String?  @db.VarChar(120)
+  web             String?  @db.VarChar(120)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+
+  addresses Company_address[]
+  bank      Bank[]
+
+  @@map("company")
+}
+
+model Company_address {
+  co_ad_id      Int      @id @default(autoincrement())
+  co_id         Int
+  branch_number String?  @db.VarChar(20)
+  branch_name   String?  @db.VarChar(20)
+  box_number    String?  @db.VarChar(20)
+  street        String?  @db.VarChar(60)
+  plot_number   String?  @db.VarChar(20)
+  building_name String?  @db.VarChar(20)
+  floor_number  Int
+  room_number   String   @db.VarChar(20)
+  country       String   @default("Uganda") @db.VarChar(20)
+  district      String   @db.VarChar(20)
+  county        String   @db.VarChar(20)
+  subcounty     String   @db.VarChar(20)
+  village       String   @db.VarChar(20)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+
+  company Company @relation(fields: [co_id], references: [co_id])
+
+  @@map("company_address")
+}
+
+model Bank {
+  bank_id     Int      @id @default(autoincrement())
+  co_id       Int
+  name        String   @db.VarChar(60)
+  branch_name String   @db.VarChar(60)
+  swift_code  String?  @db.VarChar(60)
+  ac_title    String   @db.VarChar(60)
+  ac_number   String   @db.VarChar(60)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+
+  company      Company         @relation(fields: [co_id], references: [co_id])
+  quotationTcs Quotation_tcs[]
+
+  @@map("bank")
+}
+
+model Quotation_type {
+  type_id Int    @id @default(autoincrement())
+  name    String @db.VarChar(60)
+
+  quotationTcs     Quotation_tcs[]
+  quotations       Quotation[]
+  Edited_quotation Edited_quotation[]
+
+  @@map("quotation_type")
+}
+
+model Quotation_category {
+  cat_id Int    @id @default(autoincrement())
+  cat    String @db.VarChar(60)
+
+  quotations       Quotation[]
+  Edited_quotation Edited_quotation[]
+
+  @@map("quotation_category")
+}
+
+model Quotation_tcs {
+  tc_id                      Int      @id @default(autoincrement())
+  delivery_days              Int
+  delivery_words             String   @db.VarChar(120)
+  validity_days              Int
+  validity_words             String?  @db.VarChar(120)
+  payment_grace_days         Int?
+  payment_words              String?  @db.VarChar(160)
+  initial_payment_percentage Int?
+  last_payment_percentage    Int?
+  payment_method_words       String?  @db.VarChar(160)
+  quotation_type_id          Int
+  bank_id                    Int
+  vat_percentage             Int      @default(18)
+  created_at                 DateTime @default(now())
+  updated_at                 DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+
+  quotationType    Quotation_type     @relation(fields: [quotation_type_id], references: [type_id])
+  bank             Bank               @relation(fields: [bank_id], references: [bank_id])
+  quotations       Quotation[]
+  Edited_quotation Edited_quotation[]
+
+  @@map("quotation_tcs")
+}
+
+// model QuotationX {
+//   quotation_id      Int      @id @default(autoincrement())
+//   quotation_number  String   @db.VarChar(12)
+//   quotation_type_id Int
+//   co_user_id        String   @db.VarChar(20)
+//   date              BigInt
+//   client_name       String   @db.VarChar(60)
+//   contact_email     String   @db.VarChar(60)
+//   contact_person    String   @db.VarChar(60)
+//   contact_phone     String   @db.VarChar(16)
+//   currency_id       Int      @default(1)
+//   sub_total         Float
+//   vat               Float
+//   grand_total       Float
+//   day_to_expire     Int
+//   created_at        DateTime @default(now())
+//   updated_at        DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+
+//   quotationType Quotation_type @relation(fields: [quotation_type_id], references: [type_id])
+//   currency      Currency       @relation(fields: [currency_id], references: [currency_id])
+//   user          User           @relation(fields: [co_user_id], references: [co_user_id])
+
+//   @@map("quotation")
+// }
+
+model Quotation_status {
+  status_id Int    @id @default(autoincrement())
+  status    String @db.VarChar(12)
+
+  Quotation        Quotation[]
+  Edited_quotation Edited_quotation[]
+
+  @@map("quotation_status")
+}
+
+model Quotation {
+  id                         Int      @id @default(autoincrement())
+  quotation_id               String   @unique @db.VarChar(12)
+  status_id                  Int      @default(1)
+  co_user_id                 String   @db.VarChar(20)
+  time                       BigInt
+  quotation_type_id          Int
+  cat_id                     Int
+  tcs_edited                 Int      @default(0)
+  vat_excluded               Int      @default(0)
+  tcs_id                     Int
+  currency_id                Int
+  client_data_id             Int
+  sub_total                  Float
+  vat                        Float
+  grand_total                Float
+  validity_days              Int
+  payment_grace_days         Int?
+  initial_payment_percentage Int?
+  last_payment_percentage    Int?
+  edited                     Int      @default(0)
+  created_at                 DateTime @default(now())
+  updated_at                 DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+
+  quotationStatus      Quotation_status         @relation(fields: [status_id], references: [status_id])
+  quotationType        Quotation_type           @relation(fields: [quotation_type_id], references: [type_id])
+  quotationCategory    Quotation_category       @relation(fields: [cat_id], references: [cat_id])
+  currency             Currency                 @relation(fields: [currency_id], references: [currency_id])
+  user                 User                     @relation(fields: [co_user_id], references: [co_user_id])
+  client_data          Quotation_client_data    @relation(fields: [client_data_id], references: [client_id])
+  lineItems            Quotation_items[]
+  tcs                  Quotation_tcs            @relation(fields: [tcs_id], references: [tc_id])
+  editedQuotations     Edited_quotation[]
+  quotationTaggedUsers Quotation_tagged_users[]
+
+  @@index([quotation_id], map: "idx_quotation_quotation_id")
+  @@map("quotation")
+}
+
+model Edited_quotation {
+  id                         Int      @id @default(autoincrement())
+  quotation_id               String   @db.VarChar(12)
+  status_id                  Int      @default(1)
+  co_user_id                 String   @db.VarChar(20)
+  time                       BigInt
+  created_time               BigInt
+  quotation_type_id          Int
+  cat_id                     Int
+  tcs_edited                 Int      @default(0)
+  vat_excluded               Int      @default(0)
+  tcs_id                     Int
+  currency_id                Int
+  client_data_id             Int
+  sub_total                  Float
+  vat                        Float
+  grand_total                Float
+  validity_days              Int
+  payment_grace_days         Int?
+  initial_payment_percentage Int?
+  last_payment_percentage    Int?
+  created_at                 DateTime @default(now())
+  updated_at                 DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+
+  originalQuotation    Quotation                @relation(fields: [quotation_id], references: [quotation_id])
+  quotationStatus      Quotation_status         @relation(fields: [status_id], references: [status_id])
+  quotationType        Quotation_type           @relation(fields: [quotation_type_id], references: [type_id])
+  quotationCategory    Quotation_category       @relation(fields: [cat_id], references: [cat_id])
+  currency             Currency                 @relation(fields: [currency_id], references: [currency_id])
+  user                 User                     @relation(fields: [co_user_id], references: [co_user_id])
+  client_data          Quotation_client_data    @relation(fields: [client_data_id], references: [client_id])
+  lineItems            Quotation_items[]
+  tcs                  Quotation_tcs            @relation(fields: [tcs_id], references: [tc_id])
+  quotationTaggedUsers Quotation_tagged_users[]
+
+  @@map("edited_quotation")
+}
+
+model Quotation_client_data {
+  client_id      Int     @id @default(autoincrement())
+  name           String?
+  external_ref   String?
+  contact_person String?
+  email          String?
+  phone          String?
+  box_number     Int?
+  country        String?
+  city           String?
+  address_Line_1 String?
+
+  quotations       Quotation[]
+  Edited_quotation Edited_quotation[]
+
+  @@map("quotation_client_data")
+}
+
+model Quotation_items {
+  item_id        Int     @id @default(autoincrement())
+  quot_id        Int?
+  edited_quot_id Int?
+  name           String
+  description    String? @db.LongText
+  quantity       Float
+  units          String
+  unitPrice      Float
+
+  quotation        Quotation?        @relation(fields: [quot_id], references: [id])
+  Edited_quotation Edited_quotation? @relation(fields: [edited_quot_id], references: [id])
+
+  @@map("quotation_items")
+}
+
+model Quotation_tagged_users {
+  id                  Int     @id @default(autoincrement())
+  main_quotation_id   String? @db.VarChar(12)
+  edited_quotation_id Int?
+  taggedUsers         String  @db.Text
+
+  mainQuotation   Quotation?        @relation(fields: [main_quotation_id], references: [quotation_id])
+  editedQuotation Edited_quotation? @relation(fields: [edited_quotation_id], references: [id])
+
+  @@map("quotation_tagged_users")
+}
+
+model Quotation_draft {
+  id     BigInt @id
+  userId Int
+  draft  String @db.LongText
+
+  user User @relation(fields: [userId], references: [userId])
+
+  @@map("quotation_draft")
+}
+
+model Notification_type {
+  id   Int    @id @default(autoincrement())
+  type String
+
+  notifications Notification[]
+
+  @@map("notification_type")
+}
+
+model Notification_template {
+  id       Int    @id @default(autoincrement())
+  name     String
+  template String @db.VarChar(380)
+
+  notifications Notification[]
+
+  @@map("notification_template")
+}
+
+model Notification {
+  id          Int     @id @default(autoincrement())
+  type_id     Int
+  time        BigInt
+  userId      Int
+  title       String?
+  message     String  @db.Text
+  template_id Int?
+  isRead      Int     @default(0)
+  deleted     Int     @default(0)
+  action_data String?
+
+  type     Notification_type      @relation(fields: [type_id], references: [id])
+  template Notification_template? @relation(fields: [template_id], references: [id])
+
+  @@map("notification")
+}
+
+model Task_priority {
+  id       Int    @id @default(autoincrement())
+  priority String @db.VarChar(10)
+
+  tasks    Task[]
+  subTasks Sub_task[]
+
+  @@map("task_priority")
+}
+
+model Task_status {
+  id     Int    @id @default(autoincrement())
+  status String @db.VarChar(18)
+
+  tasks    Task[]
+  subTasks Sub_task[]
+
+  @@map("task_status")
+}
+
+model Task {
+  taskId      Int      @id @default(autoincrement())
+  userId      Int
+  statusId    Int      @default(1)
+  priorityId  Int      @default(2)
+  taskName    String   @db.Text
+  taskDetails String?  @db.LongText
+  comments    String?  @db.LongText
+  time        BigInt
+  startTime   BigInt
+  endTime     BigInt?
+  taskLocked  Int      @default(0)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+
+  subTasks Sub_task[]
+
+  user         User          @relation(fields: [userId], references: [userId])
+  taskStatus   Task_status   @relation(fields: [statusId], references: [id])
+  taskPriority Task_priority @relation(fields: [priorityId], references: [id])
+
+  @@map("task")
+}
+
+model Sub_task {
+  subTaskId   Int      @id @default(autoincrement())
+  taskId      Int
+  statusId    Int      @default(1)
+  priorityId  Int?     @default(2)
+  taskName    String   @db.Text
+  taskDetails String?  @db.LongText
+  comments    String   @db.LongText
+  time        BigInt
+  startTime   BigInt?
+  endTime     BigInt?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+
+  parentTask   Task           @relation(fields: [taskId], references: [taskId], onDelete: Cascade)
+  taskStatus   Task_status    @relation(fields: [statusId], references: [id])
+  taskPriority Task_priority? @relation(fields: [priorityId], references: [id])
+
+  @@map("sub_task")
+}
