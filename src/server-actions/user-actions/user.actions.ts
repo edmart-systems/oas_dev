@@ -39,8 +39,8 @@ export const checkCredentialsExistence = async (
         message: credentials.email
           ? "Email address is already registered on the system"
           : credentials.phone
-          ? "Phone number is already registered on the system"
-          : "User is already registered on the system",
+            ? "Phone number is already registered on the system"
+            : "User is already registered on the system",
       });
     }
 
@@ -91,6 +91,37 @@ export const requestPasswordResetAction = async (
     return Promise.resolve({
       status: false,
       message: "Something went wrong while requesting a password reset",
+    });
+  }
+};
+
+export const getUserByResetTokenAction = async (
+  token: string
+): Promise<ActionResponse> => {
+  try {
+    const res = await userService.getUserByResetToken(token);
+    return Promise.resolve(res);
+  } catch (err) {
+    logger.error(err);
+    return Promise.resolve({
+      status: false,
+      message: "Failed to fetch user info from token",
+    });
+  }
+};
+
+export const resetPasswordAction = async (
+  token: string,
+  newPassword: string
+): Promise<ActionResponse> => {
+  try {
+    const res: ActionResponse = await userService.resetPassword(token, newPassword);
+    return Promise.resolve(res);
+  } catch (err) {
+    logger.error(err);
+    return Promise.resolve({
+      status: false,
+      message: "Something went wrong while resetting the password",
     });
   }
 };

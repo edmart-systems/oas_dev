@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Stack,
   Typography,
@@ -20,7 +20,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeSlash, Warning } from "@phosphor-icons/react";
 import RouterLink from "next/link";
 import { paths } from "@/utils/paths.utils";
-// --- Validation ---
+import { toast } from "react-toastify";
+import { useSearchParams } from "next/navigation";
+import { resetPasswordAction, getUserByResetTokenAction } from "@/server-actions/user-actions/user.actions";
+import { useRouter } from "next/navigation";
+
 const schema = zod
   .object({
     password: zod.string().min(1, { message: "Password is required" }),
@@ -41,35 +45,101 @@ const defaultValues: Values = {
 };
 
 const NewPasswordForm = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
+  const [userInfo, setUserInfo] = useState<{ firstName: string; email: string } | null>(null);
+  useEffect(() => {
+    if (token) {
+      getUserByResetTokenAction(token).then((res) => {
+        if (res.status && res.data) {
+          setUserInfo(res.data);
+        }
+      });
+    }
+  }, [token]);
+
   const {
     control,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<Values>({
     defaultValues,
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (data: Values) => {
-    // Placeholder for backend logic
-    setIsFetching(true);
-    setTimeout(() => {
-      console.log("Password Reset Data:", data);
+  const onSubmit = React.useCallback(
+  async (values: Values): Promise<void> => {
+    setIsFetching(true); 
+    try {
+      if (!token) {
+        setError("root", {
+          type: "server",
+          message: "Reset token missing or invalid.",
+        });
+        toast.error("Reset token missing or invalid.");
+        return;
+      }
+
+      const res = await resetPasswordAction(token, values.password);
+
+      if (!res.status) {
+        setError("root", {
+          type: "server",
+          message: res.message || "Failed to reset password.",
+        });
+        toast.error(res.message || "Failed to reset password.");
+      } else {
+        toast.success("Password reset successfully!");
+        setTimeout(() => {
+          router.push(paths.auth.login);
+        }, 1500);
+      }
+    } catch (error) {
+      setError("root", {
+        type: "server",
+        message: "An unexpected error occurred.",
+      });
+      toast.error("An unexpected error occurred.");
+    } finally {
       setIsFetching(false);
-    }, 1000);
-  };
+    }
+  },
+  [setError, token]
+);
+
 
   return (
     <Stack spacing={4}>
       <Stack spacing={1}>
-        <Typography variant="h4">Create New Password</Typography>
+        <Typography variant="h4">
+          Create New Password
+        </Typography>
+
+        {userInfo && (
+          <Typography
+            variant="subtitle1"
+            color="text.secondary"
+            sx={{ marginTop: "-8px" }}
+          >
+            for {userInfo.firstName} ({userInfo.email})
+          </Typography>
+        )}
+
         <Typography color="text.secondary" variant="body2">
-          Back to login?{" "}
-          <Link component={RouterLink} href={paths.auth.login} underline="hover" variant="subtitle2">
+          Cancel{" "}
+          <Link
+            component={RouterLink}
+            href={paths.auth.login}
+            underline="hover"
+            variant="subtitle2"
+          >
             Login
           </Link>
         </Typography>
@@ -90,9 +160,15 @@ const NewPasswordForm = () => {
                   type={showPassword ? "text" : "password"}
                   endAdornment={
                     showPassword ? (
-                      <Eye cursor="pointer" onClick={() => setShowPassword(false)} />
+                      <Eye
+                        cursor="pointer"
+                        onClick={() => setShowPassword(false)}
+                      />
                     ) : (
-                      <EyeSlash cursor="pointer" onClick={() => setShowPassword(true)} />
+                      <EyeSlash
+                        cursor="pointer"
+                        onClick={() => setShowPassword(true)}
+                      />
                     )
                   }
                 />
@@ -138,7 +214,12 @@ const NewPasswordForm = () => {
 
           {/* Submit */}
           <Box sx={{ m: 1, position: "relative" }}>
-            <Button disabled={isFetching} type="submit" variant="contained" fullWidth>
+            <Button
+              disabled={isFetching}
+              type="submit"
+              variant="contained"
+              fullWidth
+            >
               Reset Password
             </Button>
             {isFetching && (

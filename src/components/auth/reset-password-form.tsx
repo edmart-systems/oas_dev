@@ -12,6 +12,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { Controller, useForm } from "react-hook-form";
 import { z as zod } from "zod";
+import { Warning } from "@phosphor-icons/react";
 import { ArrowLeft } from "@phosphor-icons/react";
 import Link from "next/link";
 import { paths } from "@/utils/paths.utils";
@@ -84,9 +85,11 @@ const ResetPasswordForm = (): React.JSX.Element => {
               </FormControl>
             )}
           />
-          {errors.root ? (
-            <Alert color="error">{errors.root.message}</Alert>
-          ) : null}
+          {errors.root && (
+            <Alert color="error" icon={<Warning />}>
+              {errors.root.message}
+            </Alert>
+          )}
           <Button disabled={isPending} type="submit" variant="contained">
             Send recovery link
           </Button>

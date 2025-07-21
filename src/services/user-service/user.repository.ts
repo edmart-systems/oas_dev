@@ -115,6 +115,22 @@ export class UserRepository {
     }
   };
 
+  updateUserPasswordHashById = async (
+    userId: number,
+    hash: string
+  ): Promise<boolean> => {
+    try {
+      await this.prisma.user.update({
+        where: { userId },
+        data: { hash },
+      });
+      return Promise.resolve(true);
+    } catch (err) {
+      logger.error(err);
+      return Promise.resolve(false);
+    }
+  };
+
 
   checkUserExistence = async (
     credentials: CheckUserExistenceType
