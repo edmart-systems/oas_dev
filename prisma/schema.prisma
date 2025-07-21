@@ -58,9 +58,22 @@ model User {
   Edited_quotation Edited_quotation[]
   quotation_drafts Quotation_draft[]
   tasks            Task[]
+  passwordResets   PasswordReset[]    // Relation to PasswordReset
 
   @@map("user")
 }
+
+model PasswordReset {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique @db.VarChar(244) 
+  userId    Int
+  user      User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  expires_at DateTime 
+  created_at DateTime @default(now())
+
+  @@map("password_reset")
+}
+
 
 model User_signature {
   id         Int      @id @default(autoincrement())

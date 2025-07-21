@@ -12,12 +12,13 @@ import {
   UserStatus,
   UserStatusCounts,
   UserStatusDto,
+  NewPasswordReset,
 } from "@/types/user.types";
 import { CheckUserExistenceType } from "@/types/verification.types";
-import { PrismaClient, Role, Status, User } from "@prisma/client";
+import { PrismaClient, Role, Status, User, PasswordReset } from "@prisma/client";
 
 export class UserRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaClient) { }
 
   getUserByEmail = async (email: string): Promise<User | null> => {
     try {
@@ -41,6 +42,79 @@ export class UserRepository {
       return Promise.resolve(null);
     }
   };
+
+  getActiveUserByEmail = async (email: string): Promise<User | null> => {
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: {
+          email: email,
+          status_id: 1,
+        }
+      });
+
+      return Promise.resolve(user);
+    } catch (err) {
+      logger.error(err);
+      return Promise.resolve(null);
+    }
+  };
+
+  createPasswordResetToken = async (
+    newReset: NewPasswordReset
+  ): Promise<PasswordReset | null> => {
+    try {
+      // Remove previous tokens for this user 
+      await this.prisma.passwordReset.deleteMany({
+        where: { userId: newReset.userId },
+      });
+
+      const resetEntry: PasswordReset = await this.prisma.passwordReset.create({
+        data: {
+          ...newReset,
+        },
+      });
+
+      if (resetEntry) {
+        return Promise.resolve(resetEntry);
+      }
+
+      return Promise.resolve(null);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
+    }
+  };
+
+  // Look up reset token + eager-load user
+  getPasswordResetByToken = async (
+    token: string
+  ): Promise<(PasswordReset & { user: User }) | null> => {
+    try {
+      const resetEntry = await this.prisma.passwordReset.findUnique({
+        where: { token },
+        include: { user: true },
+      });
+
+      return Promise.resolve(resetEntry);
+    } catch (err) {
+      logger.error(err);
+      return Promise.resolve(null);
+    }
+  };
+
+  // Consume (delete) a reset token after use
+  deletePasswordResetToken = async (id: number): Promise<boolean> => {
+    try {
+      await this.prisma.passwordReset.delete({
+        where: { id },
+      });
+      return Promise.resolve(true);
+    } catch (err) {
+      logger.error(err);
+      return Promise.resolve(false);
+    }
+  };
+
 
   checkUserExistence = async (
     credentials: CheckUserExistenceType

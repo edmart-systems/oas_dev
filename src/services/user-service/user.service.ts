@@ -33,17 +33,22 @@ import {
 import {
   sendAccountApprovedEmail,
   sendNewAccountEmail,
+  sendPasswordResetEmail,
 } from "@/comm/emails/user.emails";
 import { Session } from "next-auth";
 import { SingleQuotationPageData } from "@/types/quotations.types";
 import { SessionUser } from "../../server-actions/auth-actions/auth.actions";
 import { NotificationService } from "../notification-service/notification.service";
 import { NOT_AUTHORIZED_RESPONSE } from "@/utils/constants.utils";
+import crypto from "crypto";
 
 export class UserService {
   private readonly userRepo = new UserRepository(prisma);
 
-  constructor() {}
+  private generateSecureToken(): string {
+    return crypto.randomBytes(32).toString("hex"); 
+  }
+  constructor() { }
 
   createNewUser = async ({
     newUserInfo,
@@ -156,6 +161,65 @@ export class UserService {
       return Promise.reject(err);
     }
   };
+
+  requestPasswordReset = async ({
+    email,
+  }: {
+    email: string;
+  }): Promise<ActionResponse> => {
+    try {
+      if (!email || !validateEmailAddress(email)) {
+        return Promise.resolve({
+          status: false,
+          message: "Invalid email address",
+        });
+      }
+
+      const user = await this.userRepo.getActiveUserByEmail(email);
+
+      if (!user) {
+        return Promise.resolve({
+          status: false,
+          message: "No active account found with that email address",
+        });
+      }
+
+      const token = this.generateSecureToken();
+      const expires_at = new Date(Date.now() + 15 * 60 * 1000);
+
+      const createdReset = await this.userRepo.createPasswordResetToken({
+        userId: user.userId,
+        token,
+        expires_at,
+      });
+
+      if (!createdReset) {
+        return Promise.resolve({
+          status: false,
+          message: "Failed to create password reset request",
+        });
+      }
+
+      const resetLink = `${process.env.NEXTAUTH_URL}/auth/new-password?token=${encodeURIComponent(token)}`;
+      const emailSent = await sendPasswordResetEmail({ user, resetLink, expires_at });
+
+      if (!emailSent) {
+        return Promise.resolve({
+          status: false,
+          message: "Failed to send password reset email",
+        });
+      }
+
+      return Promise.resolve({
+        status: true,
+        message: "Password reset email sent successfully",
+      });
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
+    }
+  };
+
 
   getUserByEmail = async (email: string): Promise<User | null> => {
     try {

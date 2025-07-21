@@ -77,6 +77,24 @@ export const createUserAccount = async (
   }
 };
 
+export const requestPasswordResetAction = async (
+  email: string
+): Promise<ActionResponse> => {
+  try {
+    const res: ActionResponse = await userService.requestPasswordReset({
+      email,
+    });
+
+    return Promise.resolve(res);
+  } catch (err) {
+    logger.error(err);
+    return Promise.resolve({
+      status: false,
+      message: "Something went wrong while requesting a password reset",
+    });
+  }
+};
+
 export const fetchAllUsers = async (
   status: UserStatus | null
 ): Promise<ActionResponse> => {
