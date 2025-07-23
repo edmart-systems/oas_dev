@@ -112,13 +112,25 @@ const BasicInfo = ({
       if (!editTcs) return;
       const str = evt.target.value;
 
-      if (!checkDigitsOnly(str)) return;
+// =================================   commented to be removed   ==========================================
 
-      const num = parseInt(str, 10);
+      // if (!checkDigitsOnly(str)) return;
+
+      // const num = parseInt(str, 10);
+
+      // setSelectedTcs((prev) => ({
+      //   ...prev,
+      //   edited_payment_grace_days: isNaN(num) ? 0 : num,
+      // }));
+
+// =================================   added   ==========================================
+      
+const num = parseInt(str, 10);
+      if (isNaN(num)) return; // Only reject if not a number
 
       setSelectedTcs((prev) => ({
         ...prev,
-        edited_payment_grace_days: isNaN(num) ? 0 : num,
+        edited_payment_grace_days: num,
       }));
     } catch (err) {
       // console.log(err);
@@ -300,8 +312,11 @@ const BasicInfo = ({
               label="Payment Grace Period"
               value={selectedTcs.edited_payment_grace_days}
               size="small"
+              type="number"
               fullWidth
               onChange={graceDaysChangeHandler}
+              inputProps={{ min: -365, max: 365, inputMode: "numeric", pattern: "[0-9]*", }}
+              helperText="Use negative for days before delivery, 0 for on delivery day, positive for days after delivery."
               slotProps={{
                 input: {
                   endAdornment: (

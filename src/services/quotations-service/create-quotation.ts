@@ -28,6 +28,71 @@ import {
 } from "@/utils/verification-validation.utils";
 import { Quotation_type } from "@prisma/client";
 
+// =================================   commented to be removed   ==========================================
+// export const verifyTcs = ({
+//   selectedTcs,
+//   quotationType,
+//   editTcs,
+// }: {
+//   selectedTcs: TcsDto;
+//   quotationType: Quotation_type;
+//   editTcs: boolean;
+// }): ObjectVerifyResponse => {
+//   if (!editTcs) {
+//     return { valid: true };
+//   }
+
+//   let isOkay = true;
+//   const errArr: string[] = [];
+
+//   const {
+//     edited_validity_days,
+//     edited_payment_grace_days,
+//     edited_initial_payment_percentage,
+//     edited_last_payment_percentage,
+//     edited_delivery_days,
+//   } = selectedTcs;
+
+//   if (
+//     !edited_validity_days ||
+//     !isWithinRange(edited_validity_days, quotationValidityRange)
+//   ) {
+//     isOkay = false;
+//     errArr.push(ERROR_MESSAGES.INVALID_VALIDITY);
+//   }
+
+//   if (
+//     !edited_delivery_days ||
+//     !isWithinRange(edited_delivery_days, quotationDeliveryDaysRange)
+//   ) {
+//     isOkay = false;
+//     errArr.push(ERROR_MESSAGES.INVALID_DELIVERY);
+//   }
+
+//   if (quotationType.type_id == 1) {
+//     //Supply of Products
+//     if (
+//       !edited_payment_grace_days ||
+//       !isWithinRange(edited_payment_grace_days, quotationGraceDaysRange)
+//     ) {
+//       isOkay = false;
+//       errArr.push(ERROR_MESSAGES.INVALID_GRACE);
+//     }
+//   } else {
+//     if (
+//       !edited_initial_payment_percentage ||
+//       !edited_last_payment_percentage ||
+//       edited_initial_payment_percentage + edited_last_payment_percentage !== 100
+//     ) {
+//       isOkay = false;
+//       errArr.push(ERROR_MESSAGES.INVALID_PERCENTAGES);
+//     }
+//   }
+
+//   return { valid: isOkay, errors: errArr };
+// };
+
+// =================================   added   ==========================================
 export const verifyTcs = ({
   selectedTcs,
   quotationType,
@@ -52,35 +117,38 @@ export const verifyTcs = ({
     edited_delivery_days,
   } = selectedTcs;
 
+  // Validity days check
   if (
-    !edited_validity_days ||
+    edited_validity_days == null || // allow 0 but not null/undefined
     !isWithinRange(edited_validity_days, quotationValidityRange)
   ) {
     isOkay = false;
     errArr.push(ERROR_MESSAGES.INVALID_VALIDITY);
   }
 
+  // Delivery days check
   if (
-    !edited_delivery_days ||
+    edited_delivery_days == null || // allow 0 but not null/undefined
     !isWithinRange(edited_delivery_days, quotationDeliveryDaysRange)
   ) {
     isOkay = false;
     errArr.push(ERROR_MESSAGES.INVALID_DELIVERY);
   }
 
+  // Payment grace days check for type 1
   if (quotationType.type_id == 1) {
-    //Supply of Products
     if (
-      !edited_payment_grace_days ||
+      edited_payment_grace_days == null || // allow 0 but not null/undefined
       !isWithinRange(edited_payment_grace_days, quotationGraceDaysRange)
     ) {
       isOkay = false;
       errArr.push(ERROR_MESSAGES.INVALID_GRACE);
     }
   } else {
+    // Percentage validation
     if (
-      !edited_initial_payment_percentage ||
-      !edited_last_payment_percentage ||
+      edited_initial_payment_percentage == null ||
+      edited_last_payment_percentage == null ||
       edited_initial_payment_percentage + edited_last_payment_percentage !== 100
     ) {
       isOkay = false;

@@ -9,7 +9,7 @@ export const quotationValidityRange: ItemRange = {
 };
 
 export const quotationGraceDaysRange: ItemRange = {
-  min: 1,
+  min: -365, // Negative => days BEFORE delivery
   max: 365,
 };
 
