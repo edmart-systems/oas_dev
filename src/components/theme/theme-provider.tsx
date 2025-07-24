@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ThemeProvider as MUIThemeProvider,
   useMediaQuery,
@@ -26,17 +26,25 @@ export const ThemeProvider = ({
   const dispatch = useAppDispatch();
   const pathName = usePathname();
   const searchParams = useSearchParams();
+  const [hasMounted, setHasMounted] = useState(false);
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
   useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  useEffect(() => {
     nProgress.done();
-    if (mode == null) {
+    if (hasMounted && mode == null) {
       dispatch(setThemeMode(prefersDarkMode ? "dark" : "light"));
     }
-    checkSessionExpiration(pathName, sessionData, dispatch);
-  }, [mode, pathName, searchParams]);
 
-  if (!mode) {
+    if (hasMounted) {
+      checkSessionExpiration(pathName, sessionData, dispatch);
+    }
+  }, [mode, pathName, searchParams, prefersDarkMode, hasMounted]);
+
+  if (!hasMounted || !mode) {
     return <ScreenLoader fullScreen />;
   }
 

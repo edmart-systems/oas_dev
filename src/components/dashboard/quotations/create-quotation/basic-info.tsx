@@ -111,21 +111,7 @@ const BasicInfo = ({
     try {
       if (!editTcs) return;
       const str = evt.target.value;
-
-// =================================   commented to be removed   ==========================================
-
-      // if (!checkDigitsOnly(str)) return;
-
-      // const num = parseInt(str, 10);
-
-      // setSelectedTcs((prev) => ({
-      //   ...prev,
-      //   edited_payment_grace_days: isNaN(num) ? 0 : num,
-      // }));
-
-// =================================   added   ==========================================
-      
-const num = parseInt(str, 10);
+      const num = parseInt(str, 10);
       if (isNaN(num)) return; // Only reject if not a number
 
       setSelectedTcs((prev) => ({

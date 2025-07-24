@@ -70,20 +70,6 @@ export const verifyTcs = ({
 
   if (quotationType.type_id == 1) {
 
-// =================================   commented to be removed   ==========================================
-    //Supply of Products
-    // if (
-    //   !edited_payment_grace_days ||
-    //   !isWithinRange(edited_payment_grace_days, quotationGraceDaysRange)
-    // ) {
-    //   errArr.push({
-    //     message: `Grace period out of range ${quotationGraceDaysRange.min}-${quotationGraceDaysRange.max} days`,
-    //     origin: "TCs",
-    //   });
-    // }
-    // Allow negative (days BEFORE delivery), zero (ON delivery), positive (AFTER delivery)
-    
-// =================================   added   ==========================================
     const hasValue =
       edited_payment_grace_days !== undefined &&
       edited_payment_grace_days !== null &&

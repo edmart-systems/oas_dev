@@ -165,122 +165,6 @@ export class QuotationsService {
     }
   };
 
-// =================================   commented to be removed   =========================================
-  // createNewQuotation = async (
-  //   user: SessionUser,
-  //   newQuotation: NewQuotation
-  // ): Promise<ActionResponse> => {
-  //   try {
-  //     const {
-  //       clientData,
-  //       lineItems,
-  //       tcs,
-  //       currency,
-  //       tcsEdited,
-  //       vatExcluded,
-  //       time,
-  //       type,
-  //       category,
-  //     } = newQuotation;
-
-  //     const tcsCheck = verifyTcs({
-  //       selectedTcs: tcs,
-  //       quotationType: type,
-  //       editTcs: tcsEdited,
-  //     });
-
-  //     const clientCheck = verifyClientInfo(clientData);
-
-  //     const itemsCheck = verifyLineItems(lineItems);
-
-  //     if (!tcsCheck.valid || !clientCheck.valid || !itemsCheck.valid) {
-  //       const errsArr: string[] = [];
-  //       tcsCheck.errors && errsArr.push(...tcsCheck.errors);
-  //       clientCheck.errors && errsArr.push(...clientCheck.errors);
-  //       itemsCheck.errors && errsArr.push(...itemsCheck.errors);
-
-  //       const res: ActionResponse = {
-  //         status: false,
-  //         message: "Bad Request",
-  //         data: errsArr.join(" & "),
-  //       };
-  //       return Promise.resolve(res);
-  //     }
-
-  //     const _clientData: RawClientQuotationData = {
-  //       name: clientData.name ? clientData.name.trim() : "",
-  //       contact_person: clientData.contactPerson
-  //         ? clientData.contactPerson.trim()
-  //         : "",
-  //       external_ref: clientData.ref ? clientData.ref.trim() : "",
-  //       email: clientData.email ? clientData.email.trim() : "",
-  //       phone: clientData.phone ? clientData.phone.trim() : "",
-  //       country: clientData.country ? clientData.country.trim() : "",
-  //       address_Line_1: clientData.addressLine1
-  //         ? clientData.addressLine1.trim()
-  //         : "",
-  //       city: clientData.city ? clientData.city.trim() : "",
-  //       box_number: clientData.boxNumber,
-  //     };
-
-  //     const lineItemsResult = processQuotationLineItems(
-  //       lineItems,
-  //       vatExcluded,
-  //       tcs
-  //     );
-
-  //     const quotationId = await this.generateQuotationId();
-
-  //     const _quotationData: RawQuotationData = {
-  //       co_user_id: user.co_user_id,
-  //       time: BigInt(time),
-  //       quotation_type_id: type.type_id,
-  //       tcs_edited: tcsEdited ? 1 : 0,
-  //       vat_excluded: vatExcluded ? 1 : 0,
-  //       tcs_id: tcs.tc_id,
-  //       cat_id: category.cat_id,
-  //       currency_id: currency.currency_id,
-  //       quotation_id: quotationId,
-  //       validity_days:
-  //         tcsEdited && tcs.edited_validity_days
-  //           ? tcs.edited_validity_days
-  //           : tcs.validity_days,
-  //       payment_grace_days:
-  //         tcsEdited && tcs.edited_payment_grace_days
-  //           ? tcs.edited_payment_grace_days
-  //           : tcs.payment_grace_days,
-  //       initial_payment_percentage:
-  //         tcsEdited && tcs.edited_initial_payment_percentage
-  //           ? tcs.edited_initial_payment_percentage
-  //           : tcs.initial_payment_percentage,
-  //       last_payment_percentage:
-  //         tcsEdited && tcs.edited_last_payment_percentage
-  //           ? tcs.edited_last_payment_percentage
-  //           : tcs.last_payment_percentage,
-  //       sub_total: lineItemsResult.sub_total,
-  //       vat: lineItemsResult.vat,
-  //       grand_total: lineItemsResult.grand_total,
-  //     };
-
-  //     const createdQuotation = await this.quotationsRepo.recordNewQuotation({
-  //       clientData: _clientData,
-  //       lineItems: lineItemsResult.lineItems,
-  //       quotationData: _quotationData,
-  //     });
-
-  //     const res: ActionResponse = {
-  //       status: true,
-  //       message: "Success",
-  //       data: createdQuotation.quotation_id,
-  //     };
-  //     return Promise.resolve(res);
-  //   } catch (err) {
-  //     logger.error(err);
-  //     return Promise.reject(err);
-  //   }
-  // };
-
-// =================================   added   ==========================================
   createNewQuotation = async (
     user: SessionUser,
     newQuotation: NewQuotation
@@ -312,13 +196,6 @@ export class QuotationsService {
         tcsCheck.errors && errsArr.push(...tcsCheck.errors);
         clientCheck.errors && errsArr.push(...clientCheck.errors);
         itemsCheck.errors && errsArr.push(...itemsCheck.errors);
-
-        // Log detailed error information to be removed
-        console.error("Quotation creation failed:");
-        console.error("TCS Check:", tcsCheck);
-        console.error("Client Check:", clientCheck);
-        console.error("Items Check:", itemsCheck);
-        console.error("Collected Errors:", errsArr);
 
         const res: ActionResponse = {
           status: false,
@@ -363,8 +240,6 @@ export class QuotationsService {
         currency_id: currency.currency_id,
         quotation_id: quotationId,
 
-  //  ===============     added         ===================
-
         validity_days: tcsEdited
           ? (tcs.edited_validity_days ?? tcs.validity_days)
           : tcs.validity_days,
@@ -381,24 +256,6 @@ export class QuotationsService {
           ? (tcs.edited_last_payment_percentage ?? tcs.last_payment_percentage)
           : tcs.last_payment_percentage,
 
-  //  ===============     commented to be removed        ===================
-
-        // validity_days:
-        //   tcsEdited && tcs.edited_validity_days
-        //     ? tcs.edited_validity_days
-        //     : tcs.validity_days,
-        // payment_grace_days:
-        //   tcsEdited && tcs.edited_payment_grace_days
-        //     ? tcs.edited_payment_grace_days
-        //     : tcs.payment_grace_days,
-        // initial_payment_percentage:
-        //   tcsEdited && tcs.edited_initial_payment_percentage
-        //     ? tcs.edited_initial_payment_percentage
-        //     : tcs.initial_payment_percentage,
-        // last_payment_percentage:
-        //   tcsEdited && tcs.edited_last_payment_percentage
-        //     ? tcs.edited_last_payment_percentage
-        //     : tcs.last_payment_percentage,
         sub_total: lineItemsResult.sub_total,
         vat: lineItemsResult.vat,
         grand_total: lineItemsResult.grand_total,
@@ -520,22 +377,38 @@ export class QuotationsService {
         cat_id: category.cat_id,
         currency_id: currency.currency_id,
         quotation_id: quotationId,
-        validity_days:
-          tcsEdited && tcs.edited_validity_days
-            ? tcs.edited_validity_days
-            : tcs.validity_days,
-        payment_grace_days:
-          tcsEdited && tcs.edited_payment_grace_days
-            ? tcs.edited_payment_grace_days
-            : tcs.payment_grace_days,
-        initial_payment_percentage:
-          tcsEdited && tcs.edited_initial_payment_percentage
-            ? tcs.edited_initial_payment_percentage
-            : tcs.initial_payment_percentage,
-        last_payment_percentage:
-          tcsEdited && tcs.edited_last_payment_percentage
-            ? tcs.edited_last_payment_percentage
-            : tcs.last_payment_percentage,
+        // validity_days:
+        //   tcsEdited && tcs.edited_validity_days
+        //     ? tcs.edited_validity_days
+        //     : tcs.validity_days,
+        // payment_grace_days:
+        //   tcsEdited && tcs.edited_payment_grace_days
+        //     ? tcs.edited_payment_grace_days
+        //     : tcs.payment_grace_days,
+        // initial_payment_percentage:
+        //   tcsEdited && tcs.edited_initial_payment_percentage
+        //     ? tcs.edited_initial_payment_percentage
+        //     : tcs.initial_payment_percentage,
+        // last_payment_percentage:
+        //   tcsEdited && tcs.edited_last_payment_percentage
+        //     ? tcs.edited_last_payment_percentage
+        //     : tcs.last_payment_percentage,
+        validity_days: tcsEdited
+          ? (tcs.edited_validity_days ?? tcs.validity_days)
+          : tcs.validity_days,
+
+        payment_grace_days: tcsEdited
+          ? (tcs.edited_payment_grace_days ?? tcs.payment_grace_days)
+          : tcs.payment_grace_days,
+
+        initial_payment_percentage: tcsEdited
+          ? (tcs.edited_initial_payment_percentage ?? tcs.initial_payment_percentage)
+          : tcs.initial_payment_percentage,
+
+        last_payment_percentage: tcsEdited
+          ? (tcs.edited_last_payment_percentage ?? tcs.last_payment_percentage)
+          : tcs.last_payment_percentage,
+          
         sub_total: lineItemsResult.sub_total,
         vat: lineItemsResult.vat,
         grand_total: lineItemsResult.grand_total,
@@ -973,8 +846,8 @@ export class QuotationsService {
           const messageObj: QuotationFollowUpNotificationData = {
             id: quot.quotation_id,
             client: `${quot.client_data.name}${quot.client_data.contact_person
-                ? ` (${quot.client_data.contact_person})`
-                : ""
+              ? ` (${quot.client_data.contact_person})`
+              : ""
               }`,
             date: fDateDdMmmYyyy(Number(quot.time)),
           };
@@ -1258,9 +1131,9 @@ export class QuotationsService {
       thisUser.firstName,
       thisUser.lastName
     )} (${thisUser.co_user_id}) on quotation ${quotationId.quotationNumber}. ${message && message.length > 5
-        ? `"${message}${message.substring(message.length - 1) === "." ? "" : "."
-        }"`
-        : ""
+      ? `"${message}${message.substring(message.length - 1) === "." ? "" : "."
+      }"`
+      : ""
       } Please tap open to followup.`;
 
     return {

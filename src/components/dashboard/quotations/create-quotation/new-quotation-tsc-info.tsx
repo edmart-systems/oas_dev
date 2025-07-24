@@ -16,55 +16,15 @@ type Props = {
   setEditTcs: Dispatch<SetStateAction<boolean>>;
 };
 
-// =================================   commented to be removed   ==========================================
-
-// export const generatePaymentStr = ({
-//   selectedQuoteType,
-//   selectedTcs,
-//   editTcs,
-// }: Omit<Props, "setEditTcs" | "tcs" | "setSelectedTcs">): string => {
-//   const paymentStr =
-//     selectedQuoteType.type_id == 1
-//       ? editTcs
-//         ? selectedTcs.payment_words?.replace(
-//             "{payment_grace_days}",
-//             String(selectedTcs.edited_payment_grace_days)
-//           )
-//         : selectedTcs.payment_words?.replace(
-//             "{payment_grace_days}",
-//             String(selectedTcs.payment_grace_days ?? "N/A")
-//           )
-//       : editTcs
-//       ? selectedTcs.payment_words
-//           ?.replace(
-//             "{initial_payment_percentage}",
-//             String(selectedTcs.edited_initial_payment_percentage)
-//           )
-//           .replace(
-//             "{last_payment_percentage}",
-//             String(selectedTcs.edited_last_payment_percentage)
-//           )
-//       : selectedTcs.payment_words
-//           ?.replace(
-//             "{initial_payment_percentage}",
-//             String(selectedTcs.initial_payment_percentage ?? "N/A")
-//           )
-//           .replace(
-//             "{last_payment_percentage}",
-//             String(selectedTcs.last_payment_percentage ?? "N/A")
-//           );
-
-//   return paymentStr ?? "";
-// };
-
-// =================================   added   ==========================================
+// Converts payment grace days into a human-readable string
 function humanizeGraceDays(days?: number | null): string {
   if (days == null || Number.isNaN(days)) return "N/A";
   if (days < 0) return `${Math.abs(days)} day${Math.abs(days) === 1 ? "" : "s"} before delivery`;
-  if (days === 0) return "on delivery day";
+  if (days === 0) return "On delivery day";
   return `${days} day${days === 1 ? "" : "s"} after delivery`;
 }
 
+// Generates the payment phrase using TCS template data
 export const generatePaymentStr = ({
   selectedQuoteType,
   selectedTcs,
