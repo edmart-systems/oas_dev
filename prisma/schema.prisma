@@ -488,3 +488,26 @@ model Tag{
   created_at DateTime @default(now())
   updated_at DateTime  @updatedAt
 }
+
+
+model Category{
+  category_id Int @id @default(autoincrement()) 
+  category String @unique 
+  created_by String?
+  updated_by String?
+  created_at DateTime @default(now())
+  updated_at DateTime  @updatedAt
+}
+
+model Supplier {
+  supplier_id         Int       @id @default(autoincrement())
+  supplier_name       String    @unique
+  supplier_email      String?    @unique
+  supplier_phone      String?
+  supplier_address   String?
+  supplier_tinNumber Int?   @unique
+  created_by         String?
+  updated_by         String?
+  supplier_created_at DateTime @default(now())
+  supplier_updated_at DateTime @updatedAt
+}
