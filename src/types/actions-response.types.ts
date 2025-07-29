@@ -1,3 +1,5 @@
+// src/types/actins-response.types.ts
+
 export type ActionResponse<T = any> = {
   status: boolean;
   message: string;

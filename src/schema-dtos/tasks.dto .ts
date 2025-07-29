@@ -59,3 +59,5 @@ export const NewSubTasksDtoSchema = zod.array(NewSubTaskDtoSchema);
 export const SubTaskUpdateDataDtoSchema = TaskUpdateDataDtoSchema.extend({
   subTaskId: zod.number(),
 });
+
+export const NewTasksDtoSchema = zod.array(NewTaskDtoSchema);

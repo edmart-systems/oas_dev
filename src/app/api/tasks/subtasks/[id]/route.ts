@@ -1,3 +1,5 @@
+// src/app/api/tasks/subtasks/[id]/route.ts
+
 import { logger } from "@/logger/default-logger";
 import { SubTaskUpdateDataDtoSchema } from "@/schema-dtos/tasks.dto ";
 import { getAuthSession } from "@/server-actions/auth-actions/auth.actions";
@@ -58,6 +60,7 @@ export const PUT = async (
     const parsedData = await UpdateSubTaskSchema.safeParseAsync(body);
 
     if (!parsedData.success) {
+      console.log("Validation errors:", parsedData.error.format());   // added by ed
       return NextResponse.json(BAD_REQUEST_RESPONSE, {
         status: 400,
       });
