@@ -488,3 +488,13 @@ model Tag{
   created_at DateTime @default(now())
   updated_at DateTime  @updatedAt
 }
+
+
+model Category{
+  category_id Int @id @default(autoincrement()) 
+  category String @unique 
+  created_by String?
+  updated_by String?
+  created_at DateTime @default(now())
+  updated_at DateTime  @updatedAt
+}
