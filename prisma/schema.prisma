@@ -522,6 +522,8 @@ model Supplier {
   supplier_updated_at DateTime @updatedAt
 
   Product Product[]
+
+  Purchase Purchase[]
 }
 
 model Inventory_point{
@@ -534,6 +536,8 @@ model Inventory_point{
 
 
   Product Product[]
+
+  Purchase Purchase[]
 }
 
 model Product {
@@ -568,3 +572,19 @@ model Product {
   inventory_point     Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
 }
 
+model Purchase {
+  purchase_id           Int      @id  @default(autoincrement())
+  purchase_quantity     Int
+  purchase_unit_cost    Int
+  purchase_total_cost   Int
+  purchase_created_by   String?
+  purchase_updated_by   String?
+  inventory_point_id  Int @default(1)
+  supplier_id         Int
+  purchase_created_at   DateTime @default(now())
+  purchase_updated_at   DateTime @updatedAt
+
+  supplier           Supplier @relation(fields: [supplier_id], references: [supplier_id])
+  inventory_point     Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
+
+}

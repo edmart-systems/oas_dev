@@ -34,7 +34,6 @@ export const CreateProductDto = z.object({
   updated_by:          z.string().optional(),
   product_status:      z.number(),
   supplier_id:         z.number().optional(), 
-  inventory_point_id:  z.number().default(1),
 
 });
 
