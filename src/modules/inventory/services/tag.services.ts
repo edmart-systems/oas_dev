@@ -1,4 +1,4 @@
-import { TagRepository } from "../repositories/tag.repositories";
+import { TagRepository } from "../repositories/tag.repository";
 import { TagDtoInput } from "../dtos/tag.dto";
 import { Tag } from "@prisma/client";
 

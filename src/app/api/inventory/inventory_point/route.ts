@@ -1,14 +1,14 @@
-import { TagRepository } from "@/modules/inventory/repositories/tag.repository";
-import { TagService } from "@/modules/inventory/services/tag.services";
+import { Inventory_pointRepository } from "@/modules/inventory/repositories/inventory_point.repository";
+import { Inventory_pointService } from "@/modules/inventory/services/inventory_point.service";
 import prisma from "../../../../../db/db";
 import { NextRequest, NextResponse } from "next/server";
-import { TagDto } from "@/modules/inventory/dtos/tag.dto";
+import { Inventory_pointDto } from "@/modules/inventory/dtos/inventory_point.dto";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/server-actions/auth-actions/auth.actions";
 import { SessionService } from "@/services/auth-service/session.service";
 
 
-const service = new TagService(new TagRepository(prisma));
+const service = new Inventory_pointService(new Inventory_pointRepository(prisma));
 const sessionService = new SessionService
 
 export async function POST(req: NextRequest) {
@@ -22,12 +22,12 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     // Inject logged-in user's email or id here
-    const tagData = {
+    const inventory_pointData = {
       ...body,
       created_by: session.user?.email || session.user?.userId || "unknown",
     };
 
-    const parsed = TagDto.safeParse(tagData);
+    const parsed = Inventory_pointDto.safeParse(inventory_pointData);
 
     if (!parsed.success) {
       return NextResponse.json(
@@ -36,9 +36,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const newTag = await service.createTag(parsed.data);
+    const newInventory_point = await service.createInventory_point(parsed.data);
     return NextResponse.json(
-      { message: "Tag created successfully", data: newTag },
+      { message: "Inventory_point created successfully", data: newInventory_point },
       { status: 201 }
     );
   } catch (err: any) {
@@ -53,8 +53,8 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const tags = await service.getAllTags();
-    return NextResponse.json(tags);
+    const inventory_points = await service.getAllInventory_points();
+    return NextResponse.json(inventory_points);
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
