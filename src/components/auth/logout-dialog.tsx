@@ -9,7 +9,7 @@ import Slide from "@mui/material/Slide";
 import { TransitionProps } from "@mui/material/transitions";
 import { signOut } from "next-auth/react";
 import { SignOut } from "@phosphor-icons/react";
-import { Box } from "@mui/material";
+import { Box, IconButton, Tooltip } from "@mui/material";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -22,9 +22,10 @@ const Transition = forwardRef(function Transition(
 
 type Props = {
   children?: ReactNode;
+  isCollapsed?: boolean;
 };
 
-const LogoutDialog = ({ children }: Props) => {
+const LogoutDialog = ({ children, isCollapsed = false }: Props) => {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -50,13 +51,25 @@ const LogoutDialog = ({ children }: Props) => {
         <Box onClick={handleClickOpen}>{children}</Box>
       ) : (
         <Fragment>
-          <Button
-            variant="outlined"
-            startIcon={<SignOut />}
-            onClick={handleClickOpen}
-          >
-            Sign Out
-          </Button>{" "}
+          {isCollapsed ? (
+            <Tooltip title="Sign Out" placement="right">
+              <IconButton
+                color="primary"
+                onClick={handleClickOpen}
+                sx={{ width: "100%", justifyContent: "center" }}
+              >
+                <SignOut />
+              </IconButton>
+            </Tooltip>
+          ) : (
+            <Button
+              variant="outlined"
+              startIcon={<SignOut />}
+              onClick={handleClickOpen}
+            >
+              Sign Out
+            </Button>
+          )}
         </Fragment>
       )}
       <Dialog

@@ -1,3 +1,5 @@
+// src/components/dashboard/users/users-table.tsx
+
 "use client";
 
 import React, {

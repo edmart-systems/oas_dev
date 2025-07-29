@@ -1,3 +1,5 @@
+// src/services/tasks-service/tasks.repository.ts
+
 import { logger } from "@/logger/default-logger";
 import { ItemRange } from "@/types/other.types";
 import {
@@ -631,37 +633,117 @@ export class TasksRepository {
     return formattedSubTasks;
   };
 
-  private formatTasksOut = (tasks: FullRawTask | FullRawTask[]): TaskOut[] => {
-    const formattedTasks: TaskOut[] = (
-      Array.isArray(tasks) ? tasks : Array(tasks)
-    ).map((task) => {
-      const {
-        updated_at,
-        created_at,
-        taskStatus,
-        taskPriority,
-        taskLocked,
-        subTasks,
-        startTime,
-        endTime,
-        time,
-        ...taskRest
-      } = task;
+// Update the formatTasksOut method in TasksRepository:
+// private formatTasksOut = (tasks: FullRawTask | FullRawTask[]): TaskOut[] => {
+//   const formattedTasks: TaskOut[] = (
+//     Array.isArray(tasks) ? tasks : Array(tasks)
+//   ).map((task) => {
+//     const {
+//       updated_at,
+//       created_at,
+//       taskStatus,
+//       taskPriority,
+//       taskLocked,
+//       subTasks,
+//       startTime,
+//       endTime,
+//       time,
+//       user, 
+//       ...taskRest
+//     } = task;
 
-      const formattedSubTasks: SubTaskOut[] = this.formatSubTasksOut(subTasks);
+//     const formattedSubTasks: SubTaskOut[] = this.formatSubTasksOut(subTasks);
 
-      return {
-        ...taskRest,
-        taskLocked: Boolean(taskLocked),
-        status: taskStatus,
-        startTime: Number(startTime),
-        endTime: Number(endTime),
-        time: Number(time),
-        priority: taskPriority,
-        subTasks: formattedSubTasks,
-      };
+//     return {
+//       ...taskRest,
+//       taskLocked: Boolean(taskLocked),
+//       status: taskStatus,
+//       startTime: Number(startTime),
+//       endTime: Number(endTime),
+//       time: Number(time),
+//       priority: taskPriority,
+//       subTasks: formattedSubTasks,
+//       user: user ? { // Add user data to output
+//         co_user_id: user.co_user_id,
+//         firstName: user.firstName,
+//         lastName: user.lastName,
+//         email: user.email,
+//       } : undefined,
+//     };
+//   });
+
+//   return formattedTasks;
+// };
+
+private formatTasksOut = (tasks: any): TaskOut[] => {
+  const formattedTasks: TaskOut[] = (
+    Array.isArray(tasks) ? tasks : Array(tasks)
+  ).map((task) => {
+    const {
+      updated_at,
+      created_at,
+      taskStatus,
+      taskPriority,
+      taskLocked,
+      subTasks,
+      startTime,
+      endTime,
+      time,
+      ...taskRest
+    } = task;
+
+    const formattedSubTasks: SubTaskOut[] = this.formatSubTasksOut(subTasks);
+
+    return {
+      ...taskRest,
+      taskLocked: Boolean(taskLocked),
+      status: taskStatus,
+      startTime: Number(startTime),
+      endTime: Number(endTime),
+      time: Number(time),
+      priority: taskPriority,
+      subTasks: formattedSubTasks,
+      user: task.user ? {
+        co_user_id: task.user.co_user_id,
+        firstName: task.user.firstName,
+        lastName: task.user.lastName,
+        email: task.user.email,
+      } : undefined,
+    };
+  });
+
+  return formattedTasks;
+};
+
+
+
+  
+fetchAllUsersTasks = async (timeRange: ItemRange): Promise<TaskOut[]> => {
+  try {
+    const tasks: FullRawTask[] = await this.prisma.task.findMany({
+      where: {
+        startTime: {
+          gte: BigInt(timeRange.min),
+          lte: BigInt(timeRange.max),
+        },
+      },
+      include: {
+        taskStatus: true,
+        taskPriority: true,
+        user: true, // Include user data
+        subTasks: { include: { taskStatus: true, taskPriority: true } },
+      },
+      orderBy: {
+        startTime: "desc",
+      },
     });
 
-    return formattedTasks;
-  };
+    const formattedTasks: TaskOut[] = this.formatTasksOut(tasks);
+    return Promise.resolve(formattedTasks);
+  } catch (err) {
+    logger.error(err);
+    return Promise.reject(err);
+  }
+};
+
 }

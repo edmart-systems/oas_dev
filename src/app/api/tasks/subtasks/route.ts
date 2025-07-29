@@ -1,3 +1,5 @@
+// src/app/api/tasks/subtasks/route.ts
+
 import { logger } from "@/logger/default-logger";
 import { NewSubTasksDtoSchema } from "@/schema-dtos/tasks.dto ";
 import { getAuthSession } from "@/server-actions/auth-actions/auth.actions";
@@ -42,7 +44,12 @@ export const POST = async (req: NextRequest) => {
     const parsedData = await CreateSubTasksSchema.safeParseAsync(body);
 
     if (!parsedData.success) {
-      return NextResponse.json(BAD_REQUEST_RESPONSE, {
+      console.log("Validation errors:", parsedData.error.format());
+      return NextResponse.json({
+        status: false,
+        message: "Bad request: Validation failed",
+        errors: parsedData.error.format()
+      }, {
         status: 400,
       });
     }

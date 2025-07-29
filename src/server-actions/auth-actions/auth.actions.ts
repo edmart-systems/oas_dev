@@ -1,3 +1,5 @@
+// /src/server-actions/auth-actions/auth.actions.ts
+
 import NextAuth, { getServerSession, NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";

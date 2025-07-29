@@ -1,3 +1,5 @@
+// src/types/user.types.ts
+
 import { Role, Status, User, User_signature } from "@prisma/client";
 import { ReactElement } from "react";
 import { Dimensions } from "./other.types";
