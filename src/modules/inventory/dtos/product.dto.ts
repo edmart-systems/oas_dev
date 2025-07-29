@@ -4,7 +4,6 @@ export const ProductDto = z.object({
   product_name:        z.string(),
   product_barcode:     z.number(),
   product_description: z.string(),
-  product_location:    z.string(),
   product_quantity:    z.number().default(0),
   unit_id:             z.number(),
   category_id:         z.number(),
@@ -16,7 +15,8 @@ export const ProductDto = z.object({
   created_by:          z.string(),
   updated_by:          z.string(),
   product_status:      z.number(),
-  supplier_id:         z.number().optional(), 
+  supplier_id:         z.number().optional(),
+  inventory_point_id:  z.number().default(1), 
 
 });
 
@@ -24,7 +24,6 @@ export const CreateProductDto = z.object({
   product_name:        z.string(),
   product_barcode:     z.number(),
   product_description: z.string(),
-  product_location:    z.string(),
   unit_id:             z.number(),
   category_id:         z.number(),
   tag_id:              z.number(),
@@ -35,6 +34,7 @@ export const CreateProductDto = z.object({
   updated_by:          z.string().optional(),
   product_status:      z.number(),
   supplier_id:         z.number().optional(), 
+  inventory_point_id:  z.number().default(1),
 
 });
 

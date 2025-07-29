@@ -524,12 +524,23 @@ model Supplier {
   Product Product[]
 }
 
+model Inventory_point{
+  inventory_point_id Int @id @default(autoincrement())
+  inventory_point String @unique
+  created_by String?
+  updated_by String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+
+  Product Product[]
+}
+
 model Product {
   product_id          Int       @id @default(autoincrement())
   product_name        String    @unique
   product_barcode     Int       @unique
   product_description String
-  product_location    String
   product_quantity    Int      @default(0)
   unit_id             Int
   category_id         Int
@@ -544,20 +555,16 @@ model Product {
   product_created_at  DateTime @default(now())
   product_updated_at  DateTime @updatedAt
   supplier_id         Int?
+  inventory_point_id  Int @default(1)
+
+  
+  
 
   unit                Unit      @relation(fields: [unit_id], references: [unit_id])
   category            Category  @relation(fields: [category_id], references: [category_id])
   tag                 Tag       @relation(fields: [tag_id], references: [tag_id])
   currency            Currency  @relation(fields: [currency_id], references: [currency_id])
   supplier           Supplier? @relation(fields: [supplier_id], references: [supplier_id])
+  inventory_point     Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
 }
 
-model Inventory_point{
-  inventory_point_id Int @id @default(autoincrement())
-  inventory_point String @unique
-  created_by String?
-  updated_by String?
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-}
