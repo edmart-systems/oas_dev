@@ -477,3 +477,14 @@ model Sub_task {
 
   @@map("sub_task")
 }
+
+
+
+model Tag{
+  tag_id Int @id @default(autoincrement()) 
+  tag String @unique 
+  created_by String?
+  updated_by String?
+  created_at DateTime @default(now())
+  updated_at DateTime  @updatedAt
+}
