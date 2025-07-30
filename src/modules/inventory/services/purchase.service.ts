@@ -1,13 +1,49 @@
 import { PurchaseRepository } from "../repositories/purchase.repository";
 import { CreatePurchaseInput } from "../dtos/purchase.dto";
+import { PurchaseItemRepository } from "../repositories/purchase_item.repository";
 import { Purchase } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 
 export class PurchaseService {
-    constructor(private purchaseRepo: PurchaseRepository) {}
+    constructor(
+        private prisma: PrismaClient,
+        private purchaseRepo: PurchaseRepository,
+        private purchaseItemRepo: PurchaseItemRepository,
+    ) {}
 
-    async createPurchase(data: CreatePurchaseInput): Promise<Purchase> {
-        return this.purchaseRepo.create(data);
+
+    async createPurchase(data: CreatePurchaseInput) {
+        const { purchase_items, ...purchaseData } = data;
+
+        const calculatedItems = purchase_items.map(item => ({
+            product_id: item.product_id,
+            quantity: item.quantity,
+            unit_cost: item.unit_cost,
+            total_cost: item.total_cost ?? item.unit_cost * item.quantity,
+        }));
+
+        const totalCost = calculatedItems.reduce((sum, item) => sum + item.total_cost, 0);
+        const totalQuantity = calculatedItems.reduce((sum, item) => sum + item.quantity, 0);
+        const totalUnitCost = totalQuantity ? totalCost / totalQuantity : 0;
+
+        return this.prisma.$transaction(async (tx) => {
+            const purchaseRepo = new PurchaseRepository(tx);
+            const purchase = await purchaseRepo.create({
+                ...purchaseData,
+                purchase_total_cost: totalCost,
+                purchase_unit_cost: totalUnitCost,
+                purchase_quantity: totalQuantity,
+                purchase_items: calculatedItems,
+            });
+            for (const item of calculatedItems) {
+            await tx.product.update({
+                where: { product_id: item.product_id },
+                data: { product_quantity: { increment: item.quantity } },
+            });
+        }
+            return purchase;
+        });
     }
 
     async getAllPurchases(): Promise<Purchase[]> {
@@ -25,4 +61,4 @@ export class PurchaseService {
     async updatePurchase(id: number, data: Partial<CreatePurchaseInput>): Promise<Purchase> {
         return this.purchaseRepo.update(id, data);
     }
-}                                           
+}

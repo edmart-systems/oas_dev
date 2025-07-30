@@ -8,7 +8,11 @@ import { authOptions } from "@/server-actions/auth-actions/auth.actions";
 import { SessionService } from "@/services/auth-service/session.service";
 
 
-const service = new PurchaseService(new PurchaseRepository(prisma));
+import { PurchaseItemRepository } from "@/modules/inventory/repositories/purchase_item.repository";
+
+const purchaseRepo = new PurchaseRepository(prisma);
+const purchaseItemRepo = new PurchaseItemRepository(prisma);
+const service = new PurchaseService(prisma, purchaseRepo, purchaseItemRepo);
 const sessionService = new SessionService
 
 export async function POST(req: NextRequest) {
