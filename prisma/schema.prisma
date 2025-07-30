@@ -538,6 +538,8 @@ model Inventory_point{
   Product Product[]
 
   Purchase Purchase[]
+
+  Stock Stock[]
 }
 
 model Product {
@@ -572,6 +574,8 @@ model Product {
   inventory_point     Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
 
   Purchase_items Purchase_item[]
+
+  Stock Stock[]
 }
 
 model Purchase {
@@ -603,4 +607,19 @@ model Purchase_item {
 
   purchase Purchase @relation(fields: [purchase_id], references: [purchase_id])
   product Product @relation(fields: [product_id], references: [product_id])
+}
+
+model Stock {
+  stock_id         Int       @id @default(autoincrement())
+  product_id       Int
+  inventory_point_id Int
+  change_type      String     
+  quantity_change  Int        
+  resulting_stock  Int        
+  reference_id     Int?       
+  created_at       DateTime   @default(now())
+
+  product          Product    @relation(fields: [product_id], references: [product_id])
+  inventory_point Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
+  
 }

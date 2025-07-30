@@ -37,6 +37,26 @@ export class PurchaseService {
                 purchase_items: calculatedItems,
             });
             for (const item of calculatedItems) {
+
+            const product = await tx.product.findUnique({
+            where: { product_id: item.product_id },
+            select: { product_quantity: true },
+            });
+            
+            const currentQty = product?.product_quantity ?? 0;
+            const resulting_stock = currentQty + item.quantity;
+
+            await tx.stock.create({
+                data: {
+                    product_id: item.product_id,
+                    inventory_point_id: purchase.inventory_point_id,
+                    change_type: "PURCHASE",
+                    quantity_change: item.quantity,
+                    resulting_stock, 
+                    reference_id: purchase.purchase_id, 
+                },
+            });
+            
             await tx.product.update({
                 where: { product_id: item.product_id },
                 data: { product_quantity: { increment: item.quantity } },

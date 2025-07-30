@@ -1,10 +1,10 @@
-import { PurchaseItemDtoInput } from "../dtos/purchase_item.dto";
+import { CreatePurchaseItemInput, PurchaseItemDtoInput } from "../dtos/purchase_item.dto";
 import { Purchase_item } from "@prisma/client";
 
 export class PurchaseItemRepository {
     constructor(private prisma: any) {} // Accepts both PrismaClient and transaction client
 
-    async create(data: PurchaseItemDtoInput): Promise<Purchase_item> {
+    async create(data: CreatePurchaseItemInput): Promise<Purchase_item> {
         const totalCost = data.total_cost ?? data.quantity * data.unit_cost;
 
         const purchaseItem = await this.prisma.purchase_item.create({
