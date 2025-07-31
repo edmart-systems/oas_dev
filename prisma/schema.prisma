@@ -90,6 +90,7 @@ model Currency {
 
   @@map("currency")
   
+  Sale Sale[]
 }
 
 model Unit {
@@ -576,6 +577,8 @@ model Product {
   Purchase_items Purchase_item[]
 
   Stock Stock[]
+
+  Sale_item Sale_item[]
 }
 
 model Purchase {
@@ -622,4 +625,37 @@ model Stock {
   product          Product    @relation(fields: [product_id], references: [product_id])
   inventory_point Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
   
+}
+
+model Sale{
+  sale_id             Int      @id @default(autoincrement())
+  sale_no             String   @unique @db.VarChar(12)
+  seller_id           Int
+  sale_total_quantity Int@default(0)
+  sale_total_amount   Int
+  sale_total_discount Int @default(0)
+  sale_total_tax      Int @default(0)
+  sale_grand_total Int @default(0)
+  currency_id         Int
+  inventory_point_id  Int @default(1)
+  sale_status         Int @default(1)
+  sale_created_at     DateTime @default(now())
+  sale_updated_at     DateTime @updatedAt
+
+  currency            Currency  @relation(fields: [currency_id], references: [currency_id])
+  Sale_items          Sale_item[]
+}
+
+model Sale_item {
+  sale_item_id   Int    @id @default(autoincrement())
+  sale_id        Int
+  product_id     Int
+  quantity       Int
+  unit_price     Int
+  total_price    Int
+  discount       Int @default(0)
+  tax            Int @default(0)
+
+  sale           Sale    @relation(fields: [sale_id], references: [sale_id])
+  product        Product @relation(fields: [product_id], references: [product_id])
 }
