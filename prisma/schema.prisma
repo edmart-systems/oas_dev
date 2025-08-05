@@ -536,7 +536,6 @@ model Inventory_point{
   updated_at DateTime @updatedAt
 
 
-  Product Product[]
 
   Purchase Purchase[]
 
@@ -545,26 +544,26 @@ model Inventory_point{
 
 model Product {
   product_id          Int       @id @default(autoincrement())
+  supplier_id         Int?
   product_name        String    @unique
   product_barcode     Int       @unique
   product_description String
-  product_quantity    Int      @default(0)
   unit_id             Int
   category_id         Int
   tag_id              Int
-  buying_price        Int
-  selling_price       Int
-  vat_inclusive       Int      @default(0)
   currency_id         Int
+  product_quantity    Int  @default(0)
+  product_max_quantity Int? @default(0)
+  product_min_quantity Int? @default(0)
+  product_status      Int? @default(1)
+  buying_price        Int @default(0)
+  selling_price       Int @default(0)
+  markup_percentage  Int @default(0)
+  vat_inclusive       Int      @default(0)
   created_by               String?
   updated_by              String?
-  product_status      Int
   product_created_at  DateTime @default(now())
   product_updated_at  DateTime @updatedAt
-  supplier_id         Int?
-  inventory_point_id  Int @default(1)
-
-  
   
 
   unit                Unit      @relation(fields: [unit_id], references: [unit_id])
@@ -572,8 +571,6 @@ model Product {
   tag                 Tag       @relation(fields: [tag_id], references: [tag_id])
   currency            Currency  @relation(fields: [currency_id], references: [currency_id])
   supplier           Supplier? @relation(fields: [supplier_id], references: [supplier_id])
-  inventory_point     Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
-
   Purchase_items Purchase_item[]
 
   Stock Stock[]

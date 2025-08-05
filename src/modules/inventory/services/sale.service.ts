@@ -2,7 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import { CreateSaleInput } from "../dtos/sale.dto";
 import { SaleRepository } from "../repositories/sale.repository";
 import { SaleItemRepository } from "../repositories/sale_item.repository";
-import { Sale } from "@prisma/client";  
+import { Sale } from "@prisma/client";
+import { calculateProductStatus } from "../methods/purchase.method";  
 
 export class SaleService {
   constructor(
@@ -47,9 +48,14 @@ export class SaleService {
       for (const item of calculatedItems) {
         const product = await tx.product.findUnique({
           where: { product_id: item.product_id },
-          select: { product_quantity: true },
+          select: { product_quantity: true, product_name: true },
         });
         const currentQty = product?.product_quantity ?? 0;
+        
+        if (currentQty < item.quantity) {
+          throw new Error(`Insufficient stock for product ${product?.product_name || item.product_id}. Available: ${currentQty}, Required: ${item.quantity}`);
+        }
+        
         const resulting_stock = currentQty - item.quantity;
 
         await tx.stock.create({
@@ -63,12 +69,27 @@ export class SaleService {
           },
         });
 
+        const updatedProduct = await tx.product.findUnique({
+          where: { product_id: item.product_id },
+          select: { 
+            product_quantity: true, 
+            product_min_quantity: true, 
+            product_max_quantity: true
+          },
+        });
+        
+        const newQuantity = (updatedProduct?.product_quantity ?? 0) - item.quantity;
+        const newStatus = calculateProductStatus(
+          newQuantity,
+          updatedProduct?.product_min_quantity ?? null,
+          updatedProduct?.product_max_quantity ?? null
+        );
+        
         await tx.product.update({
           where: { product_id: item.product_id },
           data: {
-            product_quantity: {
-              decrement: item.quantity,
-            },
+            product_quantity: newQuantity,
+            product_status: newStatus
           },
         });
       }

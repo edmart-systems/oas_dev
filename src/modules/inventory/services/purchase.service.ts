@@ -3,6 +3,7 @@ import { CreatePurchaseInput } from "../dtos/purchase.dto";
 import { PurchaseItemRepository } from "../repositories/purchase_item.repository";
 import { Purchase } from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
+import { calculateProductStatus, calculateMarkupPercentage, calculatePurchaseTotals } from "../methods/purchase.method";
 
 
 export class PurchaseService {
@@ -23,9 +24,7 @@ export class PurchaseService {
             total_cost: item.total_cost ?? item.unit_cost * item.quantity,
         }));
 
-        const totalCost = calculatedItems.reduce((sum, item) => sum + item.total_cost, 0);
-        const totalQuantity = calculatedItems.reduce((sum, item) => sum + item.quantity, 0);
-        const totalUnitCost = totalQuantity ? totalCost / totalQuantity : 0;
+        const { totalCost, totalQuantity, totalUnitCost } = calculatePurchaseTotals(calculatedItems);
 
         return this.prisma.$transaction(async (tx) => {
             const purchaseRepo = new PurchaseRepository(tx);
@@ -57,9 +56,35 @@ export class PurchaseService {
                 },
             });
             
+            const updatedProduct = await tx.product.findUnique({
+                where: { product_id: item.product_id },
+                select: { 
+                    product_quantity: true, 
+                    product_min_quantity: true, 
+                    product_max_quantity: true,
+                    selling_price: true 
+                },
+            });
+            
+            const newQuantity = (updatedProduct?.product_quantity ?? 0) + item.quantity;
+            const newStatus = calculateProductStatus(
+                newQuantity,
+                updatedProduct?.product_min_quantity ?? null,
+                updatedProduct?.product_max_quantity ?? null
+            );
+            const newMarkup = calculateMarkupPercentage(
+                item.unit_cost,
+                updatedProduct?.selling_price ?? 0
+            );
+            
             await tx.product.update({
                 where: { product_id: item.product_id },
-                data: { product_quantity: { increment: item.quantity } },
+                data: { 
+                    product_quantity: newQuantity,
+                    buying_price: item.unit_cost,
+                    product_status: newStatus,
+                    markup_percentage: newMarkup
+                },
             });
         }
             return purchase;

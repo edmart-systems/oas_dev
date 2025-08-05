@@ -2,7 +2,7 @@ import { PrismaClient, Sale } from "@prisma/client";
 import { CreateSaleInput } from "../dtos/sale.dto";
 
 export class SaleRepository {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient | any) {}
 
   async create(data: CreateSaleInput): Promise<Sale> {
     const { sale_items, ...saleData } = data;

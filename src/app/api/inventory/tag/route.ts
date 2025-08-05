@@ -53,7 +53,11 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
+    const session = await sessionService.checkIsUserSessionOk(await getServerSession(authOptions));
     const tags = await service.getAllTags();
+    if(!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 }); 
+    }
     return NextResponse.json(tags);
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

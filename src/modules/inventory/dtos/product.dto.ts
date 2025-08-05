@@ -32,9 +32,9 @@ export const CreateProductDto = z.object({
   currency_id:         z.number(),
   created_by:          z.string().optional(),
   updated_by:          z.string().optional(),
-  product_status:      z.number(),
-  supplier_id:         z.number().optional(), 
-
+  supplier_id:         z.number().optional(),
+  product_max_quantity: z.number().optional(),
+  product_min_quantity: z.number().optional(),
 });
 
 export const UpdateProductDto = ProductDto.partial();
