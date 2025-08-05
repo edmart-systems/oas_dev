@@ -2,15 +2,16 @@
   "name": "office-automation",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://oas.edmartsystems.com/",
-  "type": "module",
+  "homepage": "https://1.hakateq.com/",
   "scripts": {
     "dev": "nodemon server.js",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js",
+    "start": "node server.js",
+    "cpanel": "node app.js",
     "lint": "next lint",
     "prismaDev": "dotenv -e .env.local prisma migrate dev"
   },
+  "main": "app.js",
   "prisma": {
     "seed": "dotenv -e .env.local npx tsx prisma/seed.ts"
   },
@@ -44,6 +45,7 @@
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.1",
     "cmdk": "^1.1.1",
+    "cross-env": "^10.0.0",
     "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.11",

@@ -1,1 +1,3 @@
-// src/app/dashboard/tasks/create
+export default function CreateTaskPage() {
+  return <div>Create Task</div>;
+}
