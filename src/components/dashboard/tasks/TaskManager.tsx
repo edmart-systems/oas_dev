@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo, Suspense } from "react";
+import React, { useState, useEffect, useRef, useMemo, Suspense, useCallback } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -12,7 +12,7 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Tooltip from "@mui/material/Tooltip";
-import { Box, Button, Card, CardContent, TextField, Typography, FormControl,InputLabel, Select, MenuItem, IconButton, Stack, Checkbox, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, Snackbar, Alert, Divider, Chip, Skeleton, Tabs, Tab, Avatar, Menu,
+import { Box, Button, Card, CardContent, TextField, Typography, FormControl,InputLabel, Select, MenuItem, IconButton, Stack, Checkbox, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, Snackbar, Alert, Divider, Chip, Skeleton, Tabs, Tab, Avatar, Menu, LinearProgress,
 } from "@mui/material";
 import { Add, Delete, Edit, Save, Refresh, Launch, Sort, ArrowDropDown, ExpandMore, ChevronRight,
 } from "@mui/icons-material";
@@ -29,7 +29,7 @@ interface ApiSubTask {
   statusId: number;
   priorityId?: number;
   taskName: string;
-  taskDetails: string;
+  taskDetails?: string;
   comments?: string;
   status: {
     id: number;
@@ -50,7 +50,7 @@ interface ApiTask {
   statusId: number;
   priorityId: number;
   taskName: string;
-  taskDetails: string;
+  taskDetails?: string;
   comments?: string;
   taskLocked: boolean;
   status: {
@@ -97,7 +97,7 @@ interface SubTask {
   id: string; // Client-side generated ID for new subtasks
   apiSubTaskId?: number; // Backend ID for existing subtasks
   taskName: string;
-  taskDetails: string;
+  taskDetails?: string;
   comments?: string;
   status: TaskStatus;
   priority: TaskPriority;
@@ -111,7 +111,7 @@ interface Task {
   apiTaskId?: number; // Backend ID for existing tasks
   userId: number;
   taskName: string;
-  taskDetails: string;
+  taskDetails?: string;
   comments?: string;
   status: TaskStatus;
   priority: TaskPriority;
@@ -131,7 +131,7 @@ interface SubTaskForm {
   id: string; // Client-side generated ID
   apiSubTaskId?: number; // Backend ID for existing subtasks
   taskName: string;
-  taskDetails: string;
+  taskDetails?: string;
   comments?: string;
   status: TaskStatus;
   priority: TaskPriority;
@@ -142,7 +142,7 @@ interface SubTaskForm {
 
 interface TaskForm {
   taskName: string;
-  taskDetails: string;
+  taskDetails?: string;
   comments?: string;
   status: TaskStatus;
   priority: TaskPriority;
@@ -559,12 +559,21 @@ const TaskTableTabs = ({
 const TaskMonthFilter = ({
   value,
   onChange,
+  onLoadingChange,
 }: {
   value: string;
   onChange: (value: string) => void;
+  onLoadingChange?: (loading: boolean) => void;
 }) => {
   const months = [
-    { value: "", label: "Current Month" },
+    { value: "", label: "All Months" },
+    { value: "2024-01", label: "January 2024" },
+    { value: "2024-02", label: "February 2024" },
+    { value: "2024-03", label: "March 2024" },
+    { value: "2024-04", label: "April 2024" },
+    { value: "2024-05", label: "May 2024" },
+    { value: "2024-06", label: "June 2024" },
+    { value: "2024-07", label: "July 2024" },
     { value: "2025-01", label: "January 2025" },
     { value: "2025-02", label: "February 2025" },
     { value: "2025-03", label: "March 2025" },
@@ -585,7 +594,13 @@ const TaskMonthFilter = ({
       <Select
         label="Month"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => {
+          onLoadingChange?.(true);
+          setTimeout(() => {
+            onChange(e.target.value);
+            onLoadingChange?.(false);
+          }, 100);
+        }}
       >
         {months.map((month) => (
           <MenuItem key={month.value} value={month.value}>
@@ -777,34 +792,9 @@ class TaskApiService {
   }
 
   async createTask(userId: number, taskData: any): Promise<ApiTask> {
-    // Process subtasks to ensure they have all required fields
-    const processedSubTasks =
-      taskData.subTasks?.map((st: any) => ({
-        userId,
-        taskName: st.taskName,
-        taskDetails: st.taskDetails,
-        comments: st.comments || "",
-        status: st.status,
-        priority: st.priority || "Moderate",
-        startTime: st.startTime,
-        endTime: st.endTime,
-        time: st.endTime, // Redundant but keeping as per original API spec
-      })) || [];
-
     const payload = {
       userId,
-      newTask: {
-        userId,
-        taskName: taskData.taskName,
-        taskDetails: taskData.taskDetails,
-        comments: taskData.comments || "",
-        status: taskData.status,
-        priority: taskData.priority,
-        startTime: taskData.startTime,
-        endTime: taskData.endTime,
-        time: taskData.endTime, // Redundant but keeping as per original API spec
-        subTasks: processedSubTasks,
-      },
+      newTask: taskData,
     };
 
     console.log("Creating task with payload:", JSON.stringify(payload));
@@ -826,18 +816,20 @@ class TaskApiService {
       taskData: {
         userId,
         taskId,
-        taskName: taskData.taskName,
-        taskDetails: taskData.taskDetails,
-        comments: taskData.comments,
-        status: taskData.status, // Add this
-        priority: taskData.priority, // Add this
-        statusStr: taskData.status, // Keep existing
-        priorityStr: taskData.priority, // Keep existing
+        taskName: taskData.taskName || "",
+        taskDetails: taskData.taskDetails || "",
+        comments: taskData.comments || "",
+        status: taskData.status,
+        priority: taskData.priority,
+        statusStr: taskData.status,
+        priorityStr: taskData.priority,
         startTime: taskData.startTime,
         endTime: taskData.endTime,
         time: taskData.endTime,
       },
     };
+    
+    console.log('API updateTask payload:', JSON.stringify(payload, null, 2));
 
     const response = await this.makeRequest<ApiTask>(`/tasks/${taskId}`, {
       method: "PUT",
@@ -864,7 +856,7 @@ class TaskApiService {
       taskId, // Ensure taskId is passed for new subtasks
       userId,
       taskName: st.taskName,
-      taskDetails: st.taskDetails,
+      taskDetails: st.taskDetails || "",
       comments: st.comments || "",
       status: st.status,
       priority: st.priority || "Moderate",
@@ -899,8 +891,8 @@ class TaskApiService {
         subTaskId,
         taskId: subTaskData.taskId,
         taskName: subTaskData.taskName,
-        taskDetails: subTaskData.taskDetails,
-        comments: subTaskData.comments,
+        taskDetails: subTaskData.taskDetails || "",
+        comments: subTaskData.comments || "",
         status: subTaskData.status,
         priority: subTaskData.priority,
         startTime: subTaskData.startTime,
@@ -995,6 +987,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
   const [priorityFilter, setPriorityFilter] = useState("");
   const [userFilter, setUserFilter] = useState("");
   const [dayFilter, setDayFilter] = useState("");
+  const [filterLoading, setFilterLoading] = useState(false);
 
   // State for task form
   const [openForm, setOpenForm] = useState(false);
@@ -1013,6 +1006,12 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
 
   // state for expanded tasks
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
+
+  // State for multi-task operations
+  const [openMultiAdd, setOpenMultiAdd] = useState(false);
+  const [openMultiEdit, setOpenMultiEdit] = useState(false);
+  const [multiTaskData, setMultiTaskData] = useState<TaskForm[]>([]);
+  const [multiEditData, setMultiEditData] = useState<Partial<TaskForm>>({});
 
 
 
@@ -1044,7 +1043,6 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
   }, [tasks]);
 
   // Filter and sort tasks
-  // Filter and sort tasks
   const filteredAndSortedTasks = useMemo(() => {
     // First filter by tab
     let result = tasks;
@@ -1060,18 +1058,8 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         return taskDate.getFullYear() === parseInt(year) && 
                taskDate.getMonth() === parseInt(month) - 1;
       });
-    } else {
-      // Show current month by default when no month filter is selected
-      const currentDate = new Date();
-      const currentYear = currentDate.getFullYear();
-      const currentMonth = currentDate.getMonth();
-      
-      result = result.filter((task) => {
-        const taskDate = new Date(task.startTime);
-        return taskDate.getFullYear() === currentYear && 
-               taskDate.getMonth() === currentMonth;
-      });
     }
+    // Remove default month filtering - show all months when no filter is selected
 
     if (statusFilter) {
       result = result.filter((task) => task.status === statusFilter);
@@ -1177,9 +1165,13 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
 
   // Handlers
   const handleRequestSort = (property: SortField) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
+    setFilterLoading(true);
+    setTimeout(() => {
+      const isAsc = orderBy === property && order === "asc";
+      setOrder(isAsc ? "desc" : "asc");
+      setOrderBy(property);
+      setFilterLoading(false);
+    }, 100);
   };
 
 
@@ -1321,6 +1313,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
 
   // Handle form field changes
   const handleFormChange = (field: keyof TaskForm, value: any) => {
+    console.log(`Updating ${field} to:`, value);
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -1387,7 +1380,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
       id: st.id,
       apiSubTaskId: st.apiSubTaskId,
       taskName: st.taskName,
-      taskDetails: st.taskDetails,
+      taskDetails: st.taskDetails || "",
       comments: st.comments || "",
       status: st.status,
       priority: st.priority,
@@ -1398,7 +1391,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
 
     setFormData({
       taskName: task.taskName,
-      taskDetails: task.taskDetails,
+      taskDetails: task.taskDetails || "",
       comments: task.comments || "",
       status: task.status,
       priority: task.priority,
@@ -1417,10 +1410,6 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
       setError("Task Name is required");
       return false;
     }
-    if (!formData.taskDetails.trim()) {
-      setError("Task Details are required");
-      return false;
-    }
     if (isoToTimestamp(formData.endTime) < isoToTimestamp(formData.startTime)) {
       setError("End time must be after start time");
       return false;
@@ -1431,10 +1420,6 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
       const st = formData.subTasks[i];
       if (!st.taskName.trim()) {
         setError(`Subtask ${i + 1}: Name is required`);
-        return false;
-      }
-      if (!st.taskDetails.trim()) {
-        setError(`Subtask ${i + 1}: Details are required`);
         return false;
       }
       if (isoToTimestamp(st.endTime) < isoToTimestamp(st.startTime)) {
@@ -1471,15 +1456,21 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         }
 
         // Update main task
-        await apiService.updateTask(task.apiTaskId, userId, {
+        const taskDetailsValue = formData.taskDetails?.trim();
+        const commentsValue = formData.comments?.trim();
+        
+        const updatePayload = {
           taskName: formData.taskName.trim(),
-          taskDetails: formData.taskDetails.trim(),
-          comments: formData.comments?.trim() || "",
+          taskDetails: taskDetailsValue === "" ? "" : (taskDetailsValue || ""),
+          comments: commentsValue === "" ? "" : (commentsValue || ""),
           status: formData.status,
           priority: formData.priority,
           startTime: isoToTimestamp(formData.startTime),
           endTime: isoToTimestamp(formData.endTime),
-        });
+        };
+        
+        console.log('Updating task with payload:', updatePayload);
+        await apiService.updateTask(task.apiTaskId, userId, updatePayload);
 
         // Handle subtasks
         // New subtasks to create
@@ -1491,7 +1482,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
               userId,
               newSubTasks.map((st) => ({
                 taskName: st.taskName.trim(),
-                taskDetails: st.taskDetails.trim(),
+                taskDetails: st.taskDetails?.trim() || "",
                 comments: st.comments?.trim() || "",
                 status: st.status,
                 priority: st.priority,
@@ -1518,7 +1509,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
               await apiService.updateSubTask(st.apiSubTaskId, userId, {
                 taskId: task.apiTaskId,
                 taskName: st.taskName.trim(),
-                taskDetails: st.taskDetails.trim(),
+                taskDetails: st.taskDetails?.trim() || "",
                 comments: st.comments?.trim() || "",
                 status: st.status,
                 priority: st.priority,
@@ -1562,53 +1553,69 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
           }
         }
 
+        // Update local state immediately instead of refreshing from API
+        setTasks((prev) =>
+          prev.map((t) =>
+            t.id === editTaskId
+              ? {
+                  ...t,
+                  taskName: formData.taskName.trim(),
+                  taskDetails: taskDetailsValue || undefined,
+                  comments: commentsValue || undefined,
+                  status: formData.status,
+                  priority: formData.priority,
+                  startTime: isoToTimestamp(formData.startTime),
+                  endTime: isoToTimestamp(formData.endTime),
+                  subTasks: formData.subTasks.map((st) => ({
+                    id: st.id,
+                    apiSubTaskId: st.apiSubTaskId,
+                    taskName: st.taskName,
+                    taskDetails: st.taskDetails?.trim() || undefined,
+                    comments: st.comments?.trim() || undefined,
+                    status: st.status,
+                    priority: st.priority,
+                    startTime: isoToTimestamp(st.startTime),
+                    endTime: isoToTimestamp(st.endTime),
+                    completed: st.completed,
+                  })),
+                }
+              : t
+          )
+        );
+        
         setSuccess("Task updated successfully");
       } else {
-        // Create new task
+        // Create new task with subtasks
         try {
-          // First create the task without subtasks
+          const subtasksPayload = formData.subTasks
+            .filter(st => st.taskName.trim()) // Only include subtasks with names
+            .map((st) => ({
+              userId,
+              taskId: 0, // Placeholder - will be set by backend
+              taskName: st.taskName.trim(),
+              taskDetails: st.taskDetails?.trim() || "",
+              comments: st.comments?.trim() || "",
+              status: st.status,
+              priority: st.priority,
+              startTime: isoToTimestamp(st.startTime),
+              endTime: isoToTimestamp(st.endTime),
+              time: isoToTimestamp(st.endTime),
+            }));
+
           const mainTaskPayload = {
+            userId,
             taskName: formData.taskName.trim(),
-            taskDetails: formData.taskDetails.trim(),
+            taskDetails: formData.taskDetails?.trim() || "",
             comments: formData.comments?.trim() || "",
             status: formData.status,
             priority: formData.priority,
             startTime: isoToTimestamp(formData.startTime),
             endTime: isoToTimestamp(formData.endTime),
-            // Empty subtasks array initially
-            subTasks: [],
+            time: isoToTimestamp(formData.endTime),
+            subTasks: subtasksPayload,
           };
 
-          // Create the main task first
-          const createdTask = await apiService.createTask(
-            userId,
-            mainTaskPayload
-          );
-
-          // If there are subtasks, add them separately
-          if (formData.subTasks.length > 0) {
-            try {
-              const subtasksPayload = formData.subTasks.map((st) => ({
-                taskName: st.taskName.trim(),
-                taskDetails: st.taskDetails.trim(),
-                comments: st.comments?.trim() || "",
-                status: st.status,
-                priority: st.priority,
-                startTime: isoToTimestamp(st.startTime),
-                endTime: isoToTimestamp(st.endTime),
-              }));
-
-              await apiService.addSubTasks(
-                createdTask.taskId,
-                userId,
-                subtasksPayload
-              );
-            } catch (subtaskError) {
-              console.error("Error adding subtasks to new task:", subtaskError);
-              // Continue even if subtasks fail - we already have the main task
-            }
-          }
-
+          await apiService.createTask(userId, mainTaskPayload);
           setSuccess("Task created successfully");
         } catch (createError) {
           console.error("Error creating task:", createError);
@@ -1624,8 +1631,10 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         }
       }
 
-      // Reload tasks and reset form
-      await refreshHandler();
+      // Only refresh for new tasks, not updates
+      if (!editTaskId) {
+        await refreshHandler();
+      }
       setOpenForm(false);
     } catch (err) {
       console.error("Operation failed:", err);
@@ -1681,6 +1690,212 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
     }
   };
 
+  // Multi-task operations
+  const handleOpenMultiAdd = () => {
+    setMultiTaskData([
+      {
+        taskName: "",
+        taskDetails: "",
+        comments: "",
+        status: "Pending",
+        priority: "Moderate",
+        startTime: nowISO,
+        endTime: nowISO,
+        subTasks: [],
+        completed: false,
+      },
+      {
+        taskName: "",
+        taskDetails: "",
+        comments: "",
+        status: "Pending",
+        priority: "Moderate",
+        startTime: nowISO,
+        endTime: nowISO,
+        subTasks: [],
+        completed: false,
+      },
+    ]);
+    setOpenMultiAdd(true);
+  };
+
+  const addMultiTask = () => {
+    setMultiTaskData((prev) => [
+      ...prev,
+      {
+        taskName: "",
+        taskDetails: "",
+        comments: "",
+        status: "Pending",
+        priority: "Moderate",
+        startTime: nowISO,
+        endTime: nowISO,
+        subTasks: [],
+        completed: false,
+      },
+    ]);
+  };
+
+  const removeMultiTask = (index: number) => {
+    setMultiTaskData((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const updateMultiTask = useCallback((index: number, field: keyof TaskForm, value: any) => {
+    setMultiTaskData((prev) => {
+      const newData = [...prev];
+      newData[index] = { ...newData[index], [field]: value };
+      return newData;
+    });
+  }, []);
+
+  const addMultiSubTask = useCallback((taskIndex: number) => {
+    const newSubTask: SubTaskForm = {
+      id: generateId(),
+      taskName: "",
+      taskDetails: "",
+      comments: "",
+      status: "Pending",
+      priority: "Moderate",
+      startTime: nowISO,
+      endTime: nowISO,
+      completed: false,
+    };
+    setMultiTaskData((prev) => {
+      const newData = [...prev];
+      newData[taskIndex] = { ...newData[taskIndex], subTasks: [...newData[taskIndex].subTasks, newSubTask] };
+      return newData;
+    });
+  }, []);
+
+  const removeMultiSubTask = useCallback((taskIndex: number, subTaskIndex: number) => {
+    setMultiTaskData((prev) => {
+      const newData = [...prev];
+      newData[taskIndex] = { 
+        ...newData[taskIndex], 
+        subTasks: newData[taskIndex].subTasks.filter((_, i) => i !== subTaskIndex) 
+      };
+      return newData;
+    });
+  }, []);
+
+  const updateMultiSubTask = useCallback((taskIndex: number, subTaskIndex: number, field: keyof SubTaskForm, value: any) => {
+    setMultiTaskData((prev) => {
+      const newData = [...prev];
+      const newSubTasks = [...newData[taskIndex].subTasks];
+      newSubTasks[subTaskIndex] = { ...newSubTasks[subTaskIndex], [field]: value };
+      newData[taskIndex] = { ...newData[taskIndex], subTasks: newSubTasks };
+      return newData;
+    });
+  }, []);
+
+  const handleMultiAdd = async () => {
+    setLoading(true);
+    try {
+      let successCount = 0;
+      for (let i = 0; i < multiTaskData.length; i++) {
+        const taskData = multiTaskData[i];
+        if (taskData.taskName.trim()) {
+          if (editTaskId && i === 0) {
+            // Update existing task
+            const task = tasks.find((t) => t.id === editTaskId);
+            if (task?.apiTaskId) {
+              await apiService.updateTask(task.apiTaskId, userId, {
+                taskName: taskData.taskName.trim(),
+                taskDetails: taskData.taskDetails?.trim() || "",
+                comments: taskData.comments?.trim() || "",
+                status: taskData.status,
+                priority: taskData.priority,
+                startTime: isoToTimestamp(taskData.startTime),
+                endTime: isoToTimestamp(taskData.endTime),
+              });
+              successCount++;
+            }
+          } else {
+            // Create new task with subtasks
+            const subtasksPayload = taskData.subTasks
+              .filter(st => st.taskName.trim()) // Only include subtasks with names
+              .map(st => ({
+                userId,
+                taskId: 0, // Placeholder - will be set by backend
+                taskName: st.taskName.trim(),
+                taskDetails: st.taskDetails?.trim() || "",
+                comments: st.comments?.trim() || "",
+                status: st.status,
+                priority: st.priority,
+                startTime: isoToTimestamp(st.startTime),
+                endTime: isoToTimestamp(st.endTime),
+                time: isoToTimestamp(st.endTime),
+              }));
+
+            await apiService.createTask(userId, {
+              userId,
+              taskName: taskData.taskName.trim(),
+              taskDetails: taskData.taskDetails?.trim() || "",
+              comments: taskData.comments?.trim() || "",
+              status: taskData.status,
+              priority: taskData.priority,
+              startTime: isoToTimestamp(taskData.startTime),
+              endTime: isoToTimestamp(taskData.endTime),
+              time: isoToTimestamp(taskData.endTime),
+              subTasks: subtasksPayload,
+            });
+            successCount++;
+          }
+        }
+      }
+      setSuccess(`${successCount} tasks ${editTaskId ? 'updated' : 'created'} successfully`);
+      setEditTaskId(null);
+      setOpenMultiAdd(false);
+      await refreshHandler();
+    } catch (err) {
+      console.error('Multi-add error:', err);
+      setError(err instanceof Error ? err.message : "Failed to process tasks");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMultiEdit = async () => {
+    setLoading(true);
+    try {
+      let successCount = 0;
+      for (const id of selected) {
+        const task = tasks.find((t) => t.id === id);
+        if (task?.apiTaskId && task.userId === userId) {
+          const updateData: any = {};
+          if (multiEditData.status) updateData.status = multiEditData.status;
+          if (multiEditData.priority) updateData.priority = multiEditData.priority;
+          
+          if (Object.keys(updateData).length > 0) {
+            await apiService.updateTask(task.apiTaskId, userId, updateData);
+            successCount++;
+          }
+        }
+      }
+      
+      // Update local state
+      setTasks((prev) =>
+        prev.map((task) => {
+          if (selected.includes(task.id) && task.userId === userId) {
+            const updates: any = {};
+            if (multiEditData.status) updates.status = multiEditData.status;
+            if (multiEditData.priority) updates.priority = multiEditData.priority;
+            return { ...task, ...updates };
+          }
+          return task;
+        })
+      );
+      
+      setSuccess(`${successCount} tasks updated successfully`);
+      setSelected([]);
+      setOpenMultiEdit(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update tasks");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Load tasks on component mount
   useEffect(() => {
     refreshHandler();
@@ -1725,7 +1940,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
           <Stack direction="row" justifyContent="space-between">
             <Stack spacing={2} direction="row">
               <Suspense fallback={<MyCircularProgress />}>
-                <TaskMonthFilter value={monthFilter} onChange={setMonthFilter} />
+                <TaskMonthFilter value={monthFilter} onChange={setMonthFilter} onLoadingChange={setFilterLoading} />
               </Suspense>
               <Suspense fallback={<MyCircularProgress />}>
                 <TaskStatusFilter
@@ -1760,9 +1975,11 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
               <Button
                 variant="contained"
                 startIcon={<Add />}
-                onClick={handleOpenNew}
+                onClick={handleOpenMultiAdd}
                 size="small"
-              ></Button>
+              >
+                Add Tasks
+              </Button>
 
               {loading ? (
                 <MyCircularProgress />
@@ -1787,6 +2004,14 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                   {selected.length} Selected
                 </Typography>
                 <Button
+                  variant="outlined"
+                  startIcon={<Edit />}
+                  onClick={() => setOpenMultiEdit(true)}
+                  size="small"
+                >
+                  Edit Selected
+                </Button>
+                <Button
                   variant="contained"
                   color="error"
                   size="small"
@@ -1800,6 +2025,13 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
           )}
         </CardContent>
         <Divider />
+
+        {/* Progress bar for filtering/sorting */}
+        {filterLoading && (
+          <Box sx={{ width: '100%', mb: 2 }}>
+            <LinearProgress />
+          </Box>
+        )}
 
         {/* Hierarchical grouping view: Week > Day > User > Tasks */}
         {/* Week level with single table */}
@@ -1837,12 +2069,12 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                 }}
               >
                 <Table
-                  size={dense ? "small" : "medium"}
+                  size="small"
                   sx={{ width: "100%", tableLayout: "auto", minWidth: 800 }}
                 >
                   <TableHead>
                     <TableRow>
-                      <TableCell padding="checkbox" sx={{ width: "50px" }}>
+                      <TableCell padding="checkbox" sx={{ width: "30px", px: 0.5 }}>
                         <Checkbox
                           color="primary"
                           indeterminate={
@@ -1880,7 +2112,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                           }}
                         />
                       </TableCell>
-                      <TableCell sx={{ minWidth: "300px", width: "40%" }}>
+                      <TableCell sx={{ minWidth: "350px", width: "50%" }}>
                         <TableSortLabel
                           active={orderBy === "taskName"}
                           direction={orderBy === "taskName" ? order : "asc"}
@@ -1928,7 +2160,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                           Priority
                         </TableSortLabel>
                       </TableCell>
-                      <TableCell sx={{ minWidth: "250px" }}>Notes</TableCell>
+                      <TableCell sx={{ minWidth: "200px" }}>Notes</TableCell>
                       <TableCell sx={{ width: "100px" }}>Actions</TableCell>
                     </TableRow>
                   </TableHead>
@@ -1954,7 +2186,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                           >
                             <TableCell
                               padding="checkbox"
-                              sx={{ maxWidth: "80px" }}
+                              sx={{ maxWidth: "30px", px: 0.5 }}
                             >
                               {task.userId === userId ? (
                                 <Checkbox
@@ -1966,10 +2198,10 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                                   inputProps={{ "aria-labelledby": labelId }}
                                 />
                               ) : (
-                                <Box sx={{ width: 42, height: 42 }} />
+                                <Box sx={{ width: 14, height: 14 }} />
                               )}
                             </TableCell>
-                            <TableCell sx={{ minWidth: "300px", width: "40%" }}>
+                            <TableCell sx={{ minWidth: "350px", width: "50%", py: 1 }}>
                               <Box
                                 sx={{ display: "flex", alignItems: "center" }}
                               >
@@ -1977,28 +2209,31 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                                   <IconButton
                                     size="small"
                                     onClick={() => toggleTaskExpansion(task.id)}
-                                    sx={{ mr: 1, p: 0.5 }}
+                                    sx={{ mr: 0.5, p: 0.25, minWidth: 20 }}
                                   >
                                     {expandedTasks.has(task.id) ? (
-                                      <ExpandMore sx={{ fontSize: 16 }} />
+                                      <ExpandMore sx={{ fontSize: 14 }} />
                                     ) : (
-                                      <ChevronRight sx={{ fontSize: 16 }} />
+                                      <ChevronRight sx={{ fontSize: 14 }} />
                                     )}
                                   </IconButton>
                                 )}
                                 <Box sx={{ flex: 1 }}>
                                   <Typography
                                     variant="subtitle2"
-                                    sx={{ fontWeight: 600 }}
+                                    sx={{ fontWeight: 600, lineHeight: 1.2 }}
                                   >
                                     {task.taskName}
                                   </Typography>
-                                  <Typography
-                                    variant="caption"
-                                    color="text.secondary"
-                                  >
-                                    {task.taskDetails}
-                                  </Typography>
+                                  {task.taskDetails && (
+                                    <Typography
+                                      variant="caption"
+                                      color="text.secondary"
+                                      sx={{ lineHeight: 1.1, mt: 0.25 }}
+                                    >
+                                      {task.taskDetails}
+                                    </Typography>
+                                  )}
                                 </Box>
                               </Box>
 
@@ -2007,27 +2242,30 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                                 expandedTasks.has(task.id) && (
                                   <Box
                                     sx={{
-                                      mt: 1,
-                                      ml: 1,
-                                      borderLeft: "2px solid",
+                                      mt: 0.5,
+                                      ml: 0.5,
+                                      borderLeft: "1px solid",
                                       borderColor: "divider",
-                                      pl: 1,
+                                      pl: 0.5,
                                     }}
                                   >
                                     {task.subTasks.map((subtask) => (
-                                      <Box key={subtask.id} sx={{ py: 0.5 }}>
+                                      <Box key={subtask.id} sx={{ py: 0.25 }}>
                                         <Typography
                                           variant="body2"
-                                          sx={{ fontWeight: 500 }}
+                                          sx={{ fontWeight: 500, fontSize: '0.8rem', lineHeight: 1.2 }}
                                         >
                                           • {subtask.taskName}
                                         </Typography>
-                                        <Typography
-                                          variant="caption"
-                                          color="text.secondary"
-                                        >
-                                          {subtask.taskDetails}
-                                        </Typography>
+                                        {subtask.taskDetails && (
+                                          <Typography
+                                            variant="caption"
+                                            color="text.secondary"
+                                            sx={{ fontSize: '0.7rem', lineHeight: 1.1 }}
+                                          >
+                                            {subtask.taskDetails}
+                                          </Typography>
+                                        )}
                                       </Box>
                                     ))}
                                   </Box>
@@ -2068,7 +2306,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                                 <TaskPriorityChip priority={task.priority} />
                               )}
                             </TableCell>
-                            <TableCell sx={{ minWidth: "250px", width: "30%" }}>
+                            <TableCell sx={{ minWidth: "200px", width: "25%", py: 1 }}>
                               <Typography
                                 variant="body2"
                                 sx={{
@@ -2078,7 +2316,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                                   overflow: "auto",
                                 }}
                               >
-                                {task.comments || task.taskDetails}
+                                {task.comments || task.taskDetails || "-"}
                               </Typography>
                             </TableCell>
 
@@ -2088,7 +2326,32 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                                   <Tooltip title="Edit">
                                     <IconButton
                                       color="primary"
-                                      onClick={() => handleOpenEdit(task)}
+                                      onClick={() => {
+                                        setMultiTaskData([{
+                                          taskName: task.taskName,
+                                          taskDetails: task.taskDetails || "",
+                                          comments: task.comments || "",
+                                          status: task.status,
+                                          priority: task.priority,
+                                          startTime: timestampToISO(task.startTime),
+                                          endTime: timestampToISO(task.endTime),
+                                          subTasks: task.subTasks.map((st) => ({
+                                            id: st.id,
+                                            apiSubTaskId: st.apiSubTaskId,
+                                            taskName: st.taskName,
+                                            taskDetails: st.taskDetails || "",
+                                            comments: st.comments || "",
+                                            status: st.status,
+                                            priority: st.priority,
+                                            startTime: timestampToISO(st.startTime),
+                                            endTime: timestampToISO(st.endTime),
+                                            completed: st.completed,
+                                          })),
+                                          completed: task.completed,
+                                        }]);
+                                        setEditTaskId(task.id);
+                                        setOpenMultiAdd(true);
+                                      }}
                                       size="small"
                                     >
                                       <Edit
@@ -2137,7 +2400,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         {Object.keys(groupedTasks).length === 0 && !loading && (
           <Box p={4} textAlign="center">
             <Typography variant="body1" color="text.secondary">
-              No tasks found. Click "New Task" to create one.
+              No tasks found. Click &ldquo;New Task&rdquo; to create one.
             </Typography>
           </Box>
         )}
@@ -2155,258 +2418,275 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         )}
       </Card>
 
-      {/* Task Form Dialog */}
+      {/* Multi-Add Tasks Dialog */}
       <Dialog
-        open={openForm}
-        onClose={() => !loading && setOpenForm(false)}
-        maxWidth="md"
+        open={openMultiAdd}
+        onClose={() => !loading && setOpenMultiAdd(false)}
+        maxWidth="xl"
         fullWidth
+        PaperProps={{ sx: { height: '90vh' } }}
       >
-        <DialogTitle>{editTaskId ? "Edit Task" : "New Task"}</DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
-            <TextField
-              label="Task Name"
-              value={formData.taskName}
-              onChange={(e) => handleFormChange("taskName", e.target.value)}
-              fullWidth
-              required
-              disabled={loading}
-            />
-            <TextField
-              label="Task Details"
-              value={formData.taskDetails}
-              onChange={(e) => handleFormChange("taskDetails", e.target.value)}
-              multiline
-              rows={3}
-              fullWidth
-              required
-              disabled={loading}
-            />
-            <TextField
-              label="Comments"
-              value={formData.comments}
-              onChange={(e) => handleFormChange("comments", e.target.value)}
-              multiline
-              rows={2}
-              fullWidth
-              disabled={loading}
-            />
-            <Box sx={{ display: "flex", gap: 2 }}>
-              <FormControl fullWidth disabled={loading}>
-                <InputLabel>Status</InputLabel>
-                <Select
-                  value={formData.status}
-                  onChange={(e) => handleFormChange("status", e.target.value)}
-                  label="Status"
-                >
-                  {TASK_STATUSES.map((status) => (
-                    <MenuItem key={status} value={status}>
-                      {status}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl fullWidth disabled={loading}>
-                <InputLabel>Priority</InputLabel>
-                <Select
-                  value={formData.priority}
-                  onChange={(e) => handleFormChange("priority", e.target.value)}
-                  label="Priority"
-                >
-                  {TASK_PRIORITIES.map((priority) => (
-                    <MenuItem key={priority} value={priority}>
-                      {priority}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
-            <Box sx={{ display: "flex", gap: 2 }}>
-              <TextField
-                label="Start Time"
-                name="startTime"
-                type="datetime-local"
-                value={formData.startTime}
-                onChange={(e) => handleFormChange("startTime", e.target.value)}
-                fullWidth
-                InputLabelProps={{ shrink: true }}
+        <DialogTitle>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Typography variant="h6">{editTaskId ? 'Edit Task' : `Add Multiple Tasks (${multiTaskData.length})`}</Typography>
+            {!editTaskId && (
+              <Button
+                startIcon={<Add />}
+                onClick={addMultiTask}
+                variant="outlined"
+                size="small"
                 disabled={loading}
-              />
-              <TextField
-                label="End Time"
-                name="endTime"
-                type="datetime-local"
-                value={formData.endTime}
-                onChange={(e) => handleFormChange("endTime", e.target.value)}
-                fullWidth
-                InputLabelProps={{ shrink: true }}
-                disabled={loading}
-              />
-            </Box>
-
-            {/* Subtasks section */}
-            <Box sx={{ mt: 3 }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  mb: 2,
-                }}
               >
-                <Typography variant="h6">Subtasks</Typography>
-                <Button
-                  startIcon={<Add />}
-                  onClick={addSubTask}
-                  variant="outlined"
-                  size="small"
-                  disabled={loading}
-                >
-                  Add Subtask
-                </Button>
-              </Box>
-
-              {formData.subTasks.map((subTask, index) => (
-                <Card key={subTask.id} sx={{ mb: 2, p: 2 }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      mb: 1,
-                    }}
-                  >
-                    <Typography variant="subtitle1">
-                      Subtask {index + 1}
-                    </Typography>
+                Add Task
+              </Button>
+            )}
+          </Box>
+        </DialogTitle>
+        <DialogContent sx={{ overflow: 'auto' }}>
+          <Box sx={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+            gap: 2, 
+            mt: 1 
+          }}>
+            {multiTaskData.map((task, index) => (
+              <Card key={index} sx={{ p: 2, height: 'fit-content' }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+                  <Typography variant="subtitle2" color="primary">Task {index + 1}</Typography>
+                  {multiTaskData.length > 1 && (
                     <IconButton
                       size="small"
                       color="error"
-                      onClick={() => removeSubTask(subTask.id)}
+                      onClick={() => removeMultiTask(index)}
                       disabled={loading}
                     >
-                      <Delete />
+                      <Delete sx={{ fontSize: 16 }} />
                     </IconButton>
+                  )}
+                </Box>
+                
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                  <TextField
+                    label="Task Name"
+                    value={task.taskName}
+                    onChange={(e) => updateMultiTask(index, "taskName", e.target.value)}
+                    fullWidth
+                    required
+                    disabled={loading}
+                    size="small"
+                  />
+                  <TextField
+                    label="Details"
+                    value={task.taskDetails || ""}
+                    onChange={(e) => updateMultiTask(index, "taskDetails", e.target.value)}
+                    multiline
+                    rows={2}
+                    fullWidth
+                    disabled={loading}
+                    size="small"
+                  />
+                  <Box sx={{ display: "flex", gap: 1 }}>
+                    <FormControl fullWidth disabled={loading} size="small">
+                      <InputLabel>Status</InputLabel>
+                      <Select
+                        value={task.status}
+                        onChange={(e) => updateMultiTask(index, "status", e.target.value)}
+                        label="Status"
+                      >
+                        {TASK_STATUSES.map((status) => (
+                          <MenuItem key={status} value={status}>
+                            {status}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    <FormControl fullWidth disabled={loading} size="small">
+                      <InputLabel>Priority</InputLabel>
+                      <Select
+                        value={task.priority}
+                        onChange={(e) => updateMultiTask(index, "priority", e.target.value)}
+                        label="Priority"
+                      >
+                        {TASK_PRIORITIES.map((priority) => (
+                          <MenuItem key={priority} value={priority}>
+                            {priority}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Box>
-
-                  <Box
-                    sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-                  >
-                    <TextField
-                      label="Subtask Name"
-                      value={subTask.taskName}
-                      onChange={(e) =>
-                        updateSubTask(subTask.id, "taskName", e.target.value)
-                      }
-                      fullWidth
-                      size="small"
-                      disabled={loading}
-                    />
-                    <TextField
-                      label="Subtask Details"
-                      value={subTask.taskDetails}
-                      onChange={(e) =>
-                        updateSubTask(subTask.id, "taskDetails", e.target.value)
-                      }
-                      multiline
-                      rows={2}
-                      fullWidth
-                      size="small"
-                      disabled={loading}
-                    />
-                    <Box sx={{ display: "flex", gap: 2 }}>
-                      <FormControl fullWidth size="small" disabled={loading}>
-                        <InputLabel>Status</InputLabel>
-                        <Select
-                          value={subTask.status}
-                          onChange={(e) =>
-                            updateSubTask(subTask.id, "status", e.target.value)
-                          }
-                          label="Status"
-                        >
-                          {TASK_STATUSES.map((status) => (
-                            <MenuItem key={status} value={status}>
-                              {status}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                      <FormControl fullWidth size="small" disabled={loading}>
-                        <InputLabel>Priority</InputLabel>
-                        <Select
-                          value={subTask.priority}
-                          onChange={(e) =>
-                            updateSubTask(
-                              subTask.id,
-                              "priority",
-                              e.target.value
-                            )
-                          }
-                          label="Priority"
-                        >
-                          {TASK_PRIORITIES.map((priority) => (
-                            <MenuItem key={priority} value={priority}>
-                              {priority}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Box>
-                    <Box sx={{ display: "flex", gap: 2 }}>
-                      <TextField
-                        label="Start Time"
-                        type="datetime-local"
-                        value={subTask.startTime}
-                        onChange={(e) =>
-                          updateSubTask(subTask.id, "startTime", e.target.value)
-                        }
-                        fullWidth
+                  <TextField
+                    label="Start Time"
+                    type="datetime-local"
+                    value={task.startTime}
+                    onChange={(e) => updateMultiTask(index, "startTime", e.target.value)}
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                    disabled={loading}
+                    size="small"
+                  />
+                  <TextField
+                    label="End Time"
+                    type="datetime-local"
+                    value={task.endTime}
+                    onChange={(e) => updateMultiTask(index, "endTime", e.target.value)}
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                    disabled={loading}
+                    size="small"
+                  />
+                  
+                  {/* Subtasks section */}
+                  <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
+                      <Typography variant="caption" color="primary">Subtasks ({task.subTasks.length})</Typography>
+                      <IconButton
                         size="small"
-                        InputLabelProps={{ shrink: true }}
+                        onClick={() => addMultiSubTask(index)}
                         disabled={loading}
-                      />
-                      <TextField
-                        label="End Time"
-                        type="datetime-local"
-                        value={subTask.endTime}
-                        onChange={(e) =>
-                          updateSubTask(subTask.id, "endTime", e.target.value)
-                        }
-                        fullWidth
-                        size="small"
-                        InputLabelProps={{ shrink: true }}
-                        disabled={loading}
-                      />
+                      >
+                        <Add sx={{ fontSize: 14 }} />
+                      </IconButton>
                     </Box>
+                    
+                    {task.subTasks.map((subTask, subIndex) => (
+                      <Box key={subTask.id} sx={{ mb: 1, p: 1, bgcolor: 'grey.50', borderRadius: 1 }}>
+                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
+                          <Typography variant="caption">Sub {subIndex + 1}</Typography>
+                          <IconButton
+                            size="small"
+                            color="error"
+                            onClick={() => removeMultiSubTask(index, subIndex)}
+                            disabled={loading}
+                          >
+                            <Delete sx={{ fontSize: 12 }} />
+                          </IconButton>
+                        </Box>
+                        <TextField
+                          label="Subtask Name"
+                          value={subTask.taskName}
+                          onChange={(e) => updateMultiSubTask(index, subIndex, "taskName", e.target.value)}
+                          fullWidth
+                          size="small"
+                          disabled={loading}
+                          sx={{ mb: 1 }}
+                        />
+                        <Box sx={{ display: "flex", gap: 1 }}>
+                          <FormControl fullWidth size="small" disabled={loading}>
+                            <InputLabel>Status</InputLabel>
+                            <Select
+                              value={subTask.status}
+                              onChange={(e) => updateMultiSubTask(index, subIndex, "status", e.target.value)}
+                              label="Status"
+                            >
+                              {TASK_STATUSES.map((status) => (
+                                <MenuItem key={status} value={status}>
+                                  {status}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                          <FormControl fullWidth size="small" disabled={loading}>
+                            <InputLabel>Priority</InputLabel>
+                            <Select
+                              value={subTask.priority}
+                              onChange={(e) => updateMultiSubTask(index, subIndex, "priority", e.target.value)}
+                              label="Priority"
+                            >
+                              {TASK_PRIORITIES.map((priority) => (
+                                <MenuItem key={priority} value={priority}>
+                                  {priority}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        </Box>
+                      </Box>
+                    ))}
                   </Box>
-                </Card>
-              ))}
-
-              {formData.subTasks.length === 0 && (
-                <Typography
-                  color="text.secondary"
-                  sx={{ textAlign: "center", py: 2 }}
-                >
-                  No subtasks added yet
-                </Typography>
-              )}
-            </Box>
+                </Box>
+              </Card>
+            ))}
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenForm(false)} disabled={loading}>
+          <Button onClick={() => setOpenMultiAdd(false)} disabled={loading}>
             Cancel
           </Button>
           <Button
-            onClick={handleSubmit}
+            onClick={handleMultiAdd}
             variant="contained"
             startIcon={loading ? <CircularProgress size={20} /> : <Save />}
-            disabled={loading}
+            disabled={loading || multiTaskData.every(t => !t.taskName.trim())}
           >
-            {editTaskId ? "Update" : "Create"}
+            {editTaskId ? 'Update Task' : 'Create All Tasks'}
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Multi-Edit Tasks Dialog */}
+      <Dialog
+        open={openMultiEdit}
+        onClose={() => !loading && setOpenMultiEdit(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Edit {selected.length} Selected Tasks</DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
+            <Typography variant="body2" color="text.secondary">
+              Only fields with values will be updated. Leave blank to keep existing values.
+            </Typography>
+            
+            <FormControl fullWidth disabled={loading}>
+              <InputLabel>Status</InputLabel>
+              <Select
+                value={multiEditData.status || ""}
+                onChange={(e) => setMultiEditData(prev => ({ ...prev, status: e.target.value as TaskStatus }))}
+                label="Status"
+              >
+                <MenuItem value="">Keep existing</MenuItem>
+                {TASK_STATUSES.map((status) => (
+                  <MenuItem key={status} value={status}>
+                    {status}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            
+            <FormControl fullWidth disabled={loading}>
+              <InputLabel>Priority</InputLabel>
+              <Select
+                value={multiEditData.priority || ""}
+                onChange={(e) => setMultiEditData(prev => ({ ...prev, priority: e.target.value as TaskPriority }))}
+                label="Priority"
+              >
+                <MenuItem value="">Keep existing</MenuItem>
+                {TASK_PRIORITIES.map((priority) => (
+                  <MenuItem key={priority} value={priority}>
+                    {priority}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenMultiEdit(false)} disabled={loading}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleMultiEdit}
+            variant="contained"
+            startIcon={loading ? <CircularProgress size={20} /> : <Save />}
+            disabled={loading || (!multiEditData.status && !multiEditData.priority)}
+          >
+            Update Tasks
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+
 
       {/* Notifications */}
       <Snackbar
