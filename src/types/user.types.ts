@@ -129,3 +129,9 @@ export type HeartbeatResponseData = {
   status: UserStatusDto;
   notificationsCounts?: NotificationsCount;
 };
+
+export type NewPasswordReset = {
+  userId: number;
+  token: string;
+  expires_at: Date;
+};

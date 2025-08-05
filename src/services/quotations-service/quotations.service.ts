@@ -71,7 +71,7 @@ export class QuotationsService {
   private readonly companyService = new CompanyService();
   private readonly signatureService = new UserSignatureService();
 
-  constructor() {}
+  constructor() { }
 
   getCreateQuotationPageData = async (
     userId: string
@@ -189,7 +189,6 @@ export class QuotationsService {
       });
 
       const clientCheck = verifyClientInfo(clientData);
-
       const itemsCheck = verifyLineItems(lineItems);
 
       if (!tcsCheck.valid || !clientCheck.valid || !itemsCheck.valid) {
@@ -240,22 +239,23 @@ export class QuotationsService {
         cat_id: category.cat_id,
         currency_id: currency.currency_id,
         quotation_id: quotationId,
-        validity_days:
-          tcsEdited && tcs.edited_validity_days
-            ? tcs.edited_validity_days
-            : tcs.validity_days,
-        payment_grace_days:
-          tcsEdited && tcs.edited_payment_grace_days
-            ? tcs.edited_payment_grace_days
-            : tcs.payment_grace_days,
-        initial_payment_percentage:
-          tcsEdited && tcs.edited_initial_payment_percentage
-            ? tcs.edited_initial_payment_percentage
-            : tcs.initial_payment_percentage,
-        last_payment_percentage:
-          tcsEdited && tcs.edited_last_payment_percentage
-            ? tcs.edited_last_payment_percentage
-            : tcs.last_payment_percentage,
+
+        validity_days: tcsEdited
+          ? (tcs.edited_validity_days ?? tcs.validity_days)
+          : tcs.validity_days,
+
+        payment_grace_days: tcsEdited
+          ? (tcs.edited_payment_grace_days ?? tcs.payment_grace_days)
+          : tcs.payment_grace_days,
+
+        initial_payment_percentage: tcsEdited
+          ? (tcs.edited_initial_payment_percentage ?? tcs.initial_payment_percentage)
+          : tcs.initial_payment_percentage,
+
+        last_payment_percentage: tcsEdited
+          ? (tcs.edited_last_payment_percentage ?? tcs.last_payment_percentage)
+          : tcs.last_payment_percentage,
+
         sub_total: lineItemsResult.sub_total,
         vat: lineItemsResult.vat,
         grand_total: lineItemsResult.grand_total,
@@ -275,9 +275,11 @@ export class QuotationsService {
       return Promise.resolve(res);
     } catch (err) {
       logger.error(err);
+      console.error("Unexpected error in createNewQuotation:", err);
       return Promise.reject(err);
     }
   };
+
 
   createEditedQuotation = async (
     user: SessionUser,
@@ -375,22 +377,38 @@ export class QuotationsService {
         cat_id: category.cat_id,
         currency_id: currency.currency_id,
         quotation_id: quotationId,
-        validity_days:
-          tcsEdited && tcs.edited_validity_days
-            ? tcs.edited_validity_days
-            : tcs.validity_days,
-        payment_grace_days:
-          tcsEdited && tcs.edited_payment_grace_days
-            ? tcs.edited_payment_grace_days
-            : tcs.payment_grace_days,
-        initial_payment_percentage:
-          tcsEdited && tcs.edited_initial_payment_percentage
-            ? tcs.edited_initial_payment_percentage
-            : tcs.initial_payment_percentage,
-        last_payment_percentage:
-          tcsEdited && tcs.edited_last_payment_percentage
-            ? tcs.edited_last_payment_percentage
-            : tcs.last_payment_percentage,
+        // validity_days:
+        //   tcsEdited && tcs.edited_validity_days
+        //     ? tcs.edited_validity_days
+        //     : tcs.validity_days,
+        // payment_grace_days:
+        //   tcsEdited && tcs.edited_payment_grace_days
+        //     ? tcs.edited_payment_grace_days
+        //     : tcs.payment_grace_days,
+        // initial_payment_percentage:
+        //   tcsEdited && tcs.edited_initial_payment_percentage
+        //     ? tcs.edited_initial_payment_percentage
+        //     : tcs.initial_payment_percentage,
+        // last_payment_percentage:
+        //   tcsEdited && tcs.edited_last_payment_percentage
+        //     ? tcs.edited_last_payment_percentage
+        //     : tcs.last_payment_percentage,
+        validity_days: tcsEdited
+          ? (tcs.edited_validity_days ?? tcs.validity_days)
+          : tcs.validity_days,
+
+        payment_grace_days: tcsEdited
+          ? (tcs.edited_payment_grace_days ?? tcs.payment_grace_days)
+          : tcs.payment_grace_days,
+
+        initial_payment_percentage: tcsEdited
+          ? (tcs.edited_initial_payment_percentage ?? tcs.initial_payment_percentage)
+          : tcs.initial_payment_percentage,
+
+        last_payment_percentage: tcsEdited
+          ? (tcs.edited_last_payment_percentage ?? tcs.last_payment_percentage)
+          : tcs.last_payment_percentage,
+          
         sub_total: lineItemsResult.sub_total,
         vat: lineItemsResult.vat,
         grand_total: lineItemsResult.grand_total,
@@ -799,9 +817,8 @@ export class QuotationsService {
           updateRes.quotationsCount + updateRes.editedQuotationsCount;
         const failedCount = totalQuotations - updatedCount;
 
-        const message = `Total Un-flagged Expired Quotations: ${totalQuotations}, Updated: ${updatedCount}, Failed: ${
-          failedCount >= 0 ? failedCount : 0
-        }`;
+        const message = `Total Un-flagged Expired Quotations: ${totalQuotations}, Updated: ${updatedCount}, Failed: ${failedCount >= 0 ? failedCount : 0
+          }`;
 
         return Promise.resolve({
           status: true,
@@ -828,11 +845,10 @@ export class QuotationsService {
         {
           const messageObj: QuotationFollowUpNotificationData = {
             id: quot.quotation_id,
-            client: `${quot.client_data.name}${
-              quot.client_data.contact_person
-                ? ` (${quot.client_data.contact_person})`
-                : ""
-            }`,
+            client: `${quot.client_data.name}${quot.client_data.contact_person
+              ? ` (${quot.client_data.contact_person})`
+              : ""
+              }`,
             date: fDateDdMmmYyyy(Number(quot.time)),
           };
 
@@ -905,8 +921,8 @@ export class QuotationsService {
       const quotation = isVariant
         ? await this.quotationsRepo.fetchEditedSingleBaseQuotation(quotationId)
         : await this.quotationsRepo.fetchSingleBaseQuotation(
-            quotationId.quotationNumber
-          );
+          quotationId.quotationNumber
+        );
 
       if (!quotation) {
         return Promise.resolve({
@@ -984,9 +1000,8 @@ export class QuotationsService {
       if (successful.length > 0) {
         const res: ActionResponse<QuotationTaggedUser[]> = {
           status: true,
-          message: `${successful.length} Successful${
-            failed.length > 0 ? `, ${failed.length} Failed` : ""
-          }`,
+          message: `${successful.length} Successful${failed.length > 0 ? `, ${failed.length} Failed` : ""
+            }`,
           data: finalUpdatedTaggedUsers,
         };
 
@@ -1115,13 +1130,11 @@ export class QuotationsService {
     const notificationMessage = `You have been tagged by ${userNameFormatterSummary(
       thisUser.firstName,
       thisUser.lastName
-    )} (${thisUser.co_user_id}) on quotation ${quotationId.quotationNumber}. ${
-      message && message.length > 5
-        ? `"${message}${
-            message.substring(message.length - 1) === "." ? "" : "."
-          }"`
-        : ""
-    } Please tap open to followup.`;
+    )} (${thisUser.co_user_id}) on quotation ${quotationId.quotationNumber}. ${message && message.length > 5
+      ? `"${message}${message.substring(message.length - 1) === "." ? "" : "."
+      }"`
+      : ""
+      } Please tap open to followup.`;
 
     return {
       title: "Quotation Tag",

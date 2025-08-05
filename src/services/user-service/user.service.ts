@@ -33,17 +33,24 @@ import {
 import {
   sendAccountApprovedEmail,
   sendNewAccountEmail,
+  sendPasswordResetEmail,
+  sendPasswordChangedNotificationEmail,
 } from "@/comm/emails/user.emails";
 import { Session } from "next-auth";
 import { SingleQuotationPageData } from "@/types/quotations.types";
 import { SessionUser } from "../../server-actions/auth-actions/auth.actions";
 import { NotificationService } from "../notification-service/notification.service";
 import { NOT_AUTHORIZED_RESPONSE } from "@/utils/constants.utils";
+import crypto from "crypto";
+import { validatePassword } from "@/utils/verification-validation.utils";
 
 export class UserService {
   private readonly userRepo = new UserRepository(prisma);
 
-  constructor() {}
+  private generateSecureToken(): string {
+    return crypto.randomBytes(32).toString("hex");
+  }
+  constructor() { }
 
   createNewUser = async ({
     newUserInfo,
@@ -154,6 +161,135 @@ export class UserService {
     } catch (err) {
       logger.error(err);
       return Promise.reject(err);
+    }
+  };
+
+  requestPasswordReset = async ({
+    email,
+  }: {
+    email: string;
+  }): Promise<ActionResponse> => {
+    try {
+      if (!email || !validateEmailAddress(email)) {
+        return Promise.resolve({
+          status: false,
+          message: "Invalid email address",
+        });
+      }
+
+      const user = await this.userRepo.getActiveUserByEmail(email);
+
+      if (!user) {
+        return Promise.resolve({
+          status: false,
+          message: "No active account found with that email address",
+        });
+      }
+
+      const token = this.generateSecureToken();
+      const expires_at = new Date(Date.now() + 15 * 60 * 1000); //15 mins
+
+      const createdReset = await this.userRepo.createPasswordResetToken({
+        userId: user.userId,
+        token,
+        expires_at,
+      });
+
+      if (!createdReset) {
+        return Promise.resolve({
+          status: false,
+          message: "Failed to create password reset request",
+        });
+      }
+
+      const resetLink = `${process.env.NEXTAUTH_URL}/auth/new-password?token=${encodeURIComponent(token)}`;
+      const emailSent = await sendPasswordResetEmail({ user, resetLink, expires_at });
+
+      if (!emailSent) {
+        return Promise.resolve({
+          status: false,
+          message: "Failed to send password reset email",
+        });
+      }
+
+      return Promise.resolve({
+        status: true,
+        message: "Password reset email sent successfully",
+      });
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
+    }
+  };
+
+  getUserByResetToken = async (token: string): Promise<ActionResponse> => {
+    try {
+      const resetEntry = await this.userRepo.getPasswordResetByToken(token);
+      if (!resetEntry) {
+        return { status: false, message: "Invalid or expired reset token" };
+      }
+
+      return {
+        status: true,
+        message: "Token is valid",
+        data: {
+          firstName: resetEntry.user.firstName,
+          email: resetEntry.user.email,
+        },
+      };
+    } catch (err) {
+      logger.error(err);
+      return { status: false, message: "Something went wrong" };
+    }
+  };
+
+  resetPassword = async (
+    token: string,
+    newPassword: string
+  ): Promise<ActionResponse> => {
+    try {
+      if (!validatePassword(newPassword)) {
+        return {
+          status: false,
+          message:
+            "Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, one number, and one special character.",
+        };
+      }
+      const resetEntry = await this.userRepo.getPasswordResetByToken(token);
+      if (!resetEntry) {
+        return { status: false, message: "Invalid or expired reset token" };
+      }
+
+      if (resetEntry.expires_at < new Date()) {
+        await this.userRepo.deletePasswordResetToken(resetEntry.id);
+        return { status: false, message: "Reset token has expired" };
+      }
+
+      const user = resetEntry.user;
+      if (!user) {
+        return { status: false, message: "User linked to token not found" };
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      const updated = await this.userRepo.updateUserPasswordHashById(
+        user.userId,
+        hashedPassword
+      );
+
+      if (!updated) {
+        return { status: false, message: "Failed to update password" };
+      }
+
+      await this.userRepo.deletePasswordResetToken(resetEntry.id);
+      const emailSent = await sendPasswordChangedNotificationEmail(user.email, user.firstName);
+      if (!emailSent) {
+        logger.error(`Failed to send password changed notification to ${user.email}`);
+      }
+      return { status: true, message: "Password updated successfully" };
+    } catch (err) {
+      logger.error(err);
+      return { status: false, message: "Something went wrong" };
     }
   };
 

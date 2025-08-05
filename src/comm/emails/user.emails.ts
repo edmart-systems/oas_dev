@@ -7,6 +7,8 @@ import { sendEmail } from "@/comm/emails/emails.config";
 import { approvedAccountEmailTemplate } from "./templates/approved-account-mail-template";
 import { SendEmailDto } from "@/types/communication.types";
 import { logger } from "@/logger/default-logger";
+import { passwordResetEmailTemplate } from "./templates/password-reset-link-mail-template";
+import { passwordChangedEmailTemplate } from "./templates/password-changed-mail-template";
 
 export const sendNewAccountEmail = async (user: User): Promise<boolean> => {
   try {
@@ -80,5 +82,88 @@ export const sendAccountApprovedEmail = async (
   } catch (err) {
     logger.error(err);
     return Promise.resolve(false);
+  }
+};
+
+export const sendPasswordResetEmail = async ({
+  user,
+  resetLink,
+  expires_at,
+}: {
+  user: User;
+  resetLink: string;
+  expires_at: Date;
+}): Promise<boolean> => {
+  try {
+    const emailContent: string | null = passwordResetEmailTemplate({
+      firstName: user.firstName,
+      resetLink,
+      expiresAt: expires_at,
+    });
+
+    if (!emailContent) throw Error("Password Reset Email content is null.");
+
+    const emailData: SendEmailDto = {
+      recipients: [
+        {
+          name: user.firstName,
+          address: user.email,
+        },
+      ],
+      sender: systemEmailSender,
+      subject: `Password Reset Request`,
+      message: emailContent,
+      isHtml: true,
+    };
+
+    const sendEmailRes = await sendEmail(emailData);
+
+    if (sendEmailRes.accepted.length < 1) {
+      logger.error("Failed to send Password Reset Email:", sendEmailRes);
+      return Promise.resolve(false);
+    } else {
+      logger.info("Password Reset Email sent successfully");
+      return Promise.resolve(true);
+    }
+  } catch (err) {
+    logger.error(err);
+    return Promise.resolve(false);
+  }
+};
+
+export const sendPasswordChangedNotificationEmail = async (
+  email: string,
+  firstName: string
+): Promise<boolean> => {
+  try {
+    const emailContent = passwordChangedEmailTemplate({ firstName });
+
+    if (!emailContent) throw new Error("Password Changed Email content is null.");
+
+    const emailData = {
+      recipients: [
+        {
+          name: firstName,
+          address: email,
+        },
+      ],
+      sender: systemEmailSender,
+      subject: `Password Changed Successfully`,
+      message: emailContent,
+      isHtml: true,
+    };
+
+    const sendEmailRes = await sendEmail(emailData);
+
+    if (!sendEmailRes.accepted || sendEmailRes.accepted.length < 1) {
+      logger.error("Failed to send Password Changed Email:", sendEmailRes);
+      return false;
+    }
+
+    logger.info(`Password Changed Email sent successfully to ${email}`);
+    return true;
+  } catch (err) {
+    logger.error(err);
+    return false;
   }
 };

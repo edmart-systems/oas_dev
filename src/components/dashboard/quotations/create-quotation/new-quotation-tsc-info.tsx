@@ -16,43 +16,51 @@ type Props = {
   setEditTcs: Dispatch<SetStateAction<boolean>>;
 };
 
+// Converts payment grace days into a human-readable string
+function humanizeGraceDays(days?: number | null): string {
+  if (days == null || Number.isNaN(days)) return "N/A";
+  if (days < 0) return `${Math.abs(days)} day${Math.abs(days) === 1 ? "" : "s"} before delivery`;
+  if (days === 0) return "On delivery day";
+  return `${days} day${days === 1 ? "" : "s"} after delivery`;
+}
+
+// Generates the payment phrase using TCS template data
 export const generatePaymentStr = ({
   selectedQuoteType,
   selectedTcs,
   editTcs,
 }: Omit<Props, "setEditTcs" | "tcs" | "setSelectedTcs">): string => {
-  const paymentStr =
-    selectedQuoteType.type_id == 1
-      ? editTcs
-        ? selectedTcs.payment_words?.replace(
-            "{payment_grace_days}",
-            String(selectedTcs.edited_payment_grace_days)
-          )
-        : selectedTcs.payment_words?.replace(
-            "{payment_grace_days}",
-            String(selectedTcs.payment_grace_days ?? "N/A")
-          )
-      : editTcs
-      ? selectedTcs.payment_words
-          ?.replace(
-            "{initial_payment_percentage}",
-            String(selectedTcs.edited_initial_payment_percentage)
-          )
-          .replace(
-            "{last_payment_percentage}",
-            String(selectedTcs.edited_last_payment_percentage)
-          )
-      : selectedTcs.payment_words
-          ?.replace(
-            "{initial_payment_percentage}",
-            String(selectedTcs.initial_payment_percentage ?? "N/A")
-          )
-          .replace(
-            "{last_payment_percentage}",
-            String(selectedTcs.last_payment_percentage ?? "N/A")
-          );
+  const paymentWords = selectedTcs.payment_words ?? "";
 
-  return paymentStr ?? "";
+  if (selectedQuoteType.type_id === 1) {
+    const days = editTcs
+      ? selectedTcs.edited_payment_grace_days
+      : selectedTcs.payment_grace_days;
+
+    // If template contains {payment_grace_days_phrase}, replace with humanized phrase
+    if (paymentWords.includes("{payment_grace_days_phrase}")) {
+      return paymentWords.replace("{payment_grace_days_phrase}", humanizeGraceDays(days));
+    }
+
+    // Fallback: old template using {payment_grace_days}
+    return paymentWords.replace(
+      "{payment_grace_days}",
+      String(days ?? "N/A")
+    );
+  }
+
+  // For other quotation types (with percentages)
+  const init = editTcs
+    ? selectedTcs.edited_initial_payment_percentage
+    : selectedTcs.initial_payment_percentage;
+
+  const last = editTcs
+    ? selectedTcs.edited_last_payment_percentage
+    : selectedTcs.last_payment_percentage;
+
+  return paymentWords
+    .replace("{initial_payment_percentage}", init != null ? String(init) : "N/A")
+    .replace("{last_payment_percentage}", last != null ? String(last) : "N/A");
 };
 
 export const generateValidityStr = ({

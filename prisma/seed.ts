@@ -363,7 +363,8 @@ const main = async () => {
           validity_words: "{validity_days} days.",
           payment_grace_days: 30,
           payment_words:
-            "{payment_grace_days} days after delivery of the items and presentation of a tax invoice.",
+          // changed from payment_grace_days to payment_grace_days_phrase
+          "{payment_grace_days_phrase} of the items and presentation of a tax invoice.", // <--- updated
           payment_method_words:
             "The payment shall be by Cheque, EFT or RTGS to our account with the following details:-",
           bank_id: 1,

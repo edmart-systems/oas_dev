@@ -12,10 +12,13 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { Controller, useForm } from "react-hook-form";
 import { z as zod } from "zod";
+import { Warning } from "@phosphor-icons/react";
 import { ArrowLeft } from "@phosphor-icons/react";
 import Link from "next/link";
 import { paths } from "@/utils/paths.utils";
 import { useTheme } from "@mui/material";
+import { toast } from "react-toastify";
+import { requestPasswordResetAction } from "@/server-actions/user-actions/user.actions";
 
 const schema = zod.object({
   email: zod.string().min(1, { message: "Email is required" }).email(),
@@ -28,6 +31,7 @@ const defaultValues = { email: "" } satisfies Values;
 const ResetPasswordForm = (): React.JSX.Element => {
   const theme = useTheme();
   const [isPending, setIsPending] = React.useState<boolean>(false);
+  const [success, setSuccess] = React.useState<boolean>(false);
 
   const {
     control,
@@ -38,15 +42,24 @@ const ResetPasswordForm = (): React.JSX.Element => {
 
   const onSubmit = React.useCallback(
     async (values: Values): Promise<void> => {
-      // setIsPending(true);
-      // const { error } = await authClient.resetPassword(values);
-      // if (error) {
-      // setError('root', { type: 'server', message: error });
-      // setIsPending(false);
-      // return;
-      // }
-      // setIsPending(false);
-      // Redirect to confirm password reset
+      setIsPending(true);
+      setSuccess(false);
+
+      try {
+        const res = await requestPasswordResetAction(values.email);
+
+        if (!res.status) {
+          setError("root", { type: "server", message: res.message || "Failed to send reset email" });
+          toast.error(res.message || "Failed to send reset email");
+        } else {
+          toast.success("Password reset email sent! Check your inbox.");
+          setSuccess(true);
+        }
+      } catch (error) {
+        toast.error("An unexpected error occurred.");
+      } finally {
+        setIsPending(false);
+      }
     },
     [setError]
   );
@@ -72,9 +85,11 @@ const ResetPasswordForm = (): React.JSX.Element => {
               </FormControl>
             )}
           />
-          {errors.root ? (
-            <Alert color="error">{errors.root.message}</Alert>
-          ) : null}
+          {errors.root && (
+            <Alert color="error" icon={<Warning />}>
+              {errors.root.message}
+            </Alert>
+          )}
           <Button disabled={isPending} type="submit" variant="contained">
             Send recovery link
           </Button>

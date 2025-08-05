@@ -69,13 +69,18 @@ export const verifyTcs = ({
   }
 
   if (quotationType.type_id == 1) {
-    //Supply of Products
+
+    const hasValue =
+      edited_payment_grace_days !== undefined &&
+      edited_payment_grace_days !== null &&
+      !Number.isNaN(edited_payment_grace_days);
+
     if (
-      !edited_payment_grace_days ||
+      !hasValue ||
       !isWithinRange(edited_payment_grace_days, quotationGraceDaysRange)
     ) {
       errArr.push({
-        message: `Grace period out of range ${quotationGraceDaysRange.min}-${quotationGraceDaysRange.max} days`,
+        message: `Grace period must be between ${quotationGraceDaysRange.min} and ${quotationGraceDaysRange.max} days (negative=before delivery, 0=on delivery, positive=after delivery).`,
         origin: "TCs",
       });
     }
