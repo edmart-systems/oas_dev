@@ -1,3 +1,5 @@
+// src/dashboard/invoices/page.tsx
+
 import PageTitle from "@/components/dashboard/common/page-title";
 import { Box, Stack, Typography } from "@mui/material";
 import { Metadata } from "next";

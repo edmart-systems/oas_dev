@@ -1,3 +1,5 @@
+// src/services/tasks-service/tasks.service.ts
+
 import { logger } from "@/logger/default-logger";
 import prisma from "../../../db/db";
 import { TasksRepository } from "./tasks.repository";
@@ -149,6 +151,64 @@ export class TasksService {
     }
   };
 
+  // fetchThisMonthTasks = async (
+  //   userId: number,
+  //   usrTime: number
+  // ): Promise<ActionResponse<TasksFetchResponse>> => {
+  //   try {
+  //     const user = await UserService.getUserById(userId);
+
+  //     if (!user) {
+  //       const res: ActionResponse = {
+  //         status: false,
+  //         message: NOT_FOUND_RESPONSE,
+  //       };
+
+  //       return Promise.resolve(res);
+  //     }
+
+  //     const timeRange: ItemRange = getMonthTimeRange(usrTime);
+
+  //     const tasks: TaskOut[] = await this.tasksRepo.fetchUserTasks(
+  //       userId,
+  //       timeRange
+  //     );
+
+  //     const date = new Date(usrTime);
+  //     const daysInMonth = getDaysInMonth(usrTime);
+  //     const groupedTasks: TasksOutGroups = {};
+
+  //     for (let day = 1; day <= daysInMonth; day++) {
+  //       const dateStr = fDateWwwDdMmmYyyy(
+  //         new Date(date.getFullYear(), date.getMonth(), day)
+  //       );
+  //       groupedTasks[dateStr] = [];
+  //     }
+
+  //     for (const task of tasks) {
+  //       const dateStr = fDateWwwDdMmmYyyy(task.startTime);
+  //       groupedTasks[dateStr].push(task);
+  //     }
+
+  //     const tasksRes: TasksFetchResponse = {
+  //       user: user,
+  //       details: { from: timeRange.min, to: timeRange.max },
+  //       tasks: groupedTasks,
+  //     };
+
+  //     const res: ActionResponse<TasksFetchResponse> = {
+  //       status: true,
+  //       message: "Successful",
+  //       data: tasksRes,
+  //     };
+
+  //     return Promise.resolve(res);
+  //   } catch (err) {
+  //     logger.error(err);
+  //     return Promise.reject(err);
+  //   }
+  // };
+
   fetchThisMonthTasks = async (
     userId: number,
     usrTime: number
@@ -161,14 +221,13 @@ export class TasksService {
           status: false,
           message: NOT_FOUND_RESPONSE,
         };
-
         return Promise.resolve(res);
       }
 
       const timeRange: ItemRange = getMonthTimeRange(usrTime);
 
-      const tasks: TaskOut[] = await this.tasksRepo.fetchUserTasks(
-        userId,
+      // Use fetchAllUsersTasks instead of fetchUserTasks
+      const tasks: TaskOut[] = await this.tasksRepo.fetchAllUsersTasks(
         timeRange
       );
 
@@ -213,6 +272,54 @@ export class TasksService {
     userSession: SessionUser
   ): Promise<ActionResponse<TasksFetchResponse>> => {
     try {
+      // If userId is 0, fetch all users' tasks (admin functionality)
+      if (userId === 0) {
+        const user = await UserService.getUserById(userSession.userId);
+        
+        if (!user) {
+          const res: ActionResponse = {
+            status: false,
+            message: NOT_FOUND_RESPONSE,
+          };
+          return Promise.resolve(res);
+        }
+
+        // Fetch all users' tasks for the time range
+        const tasks: TaskOut[] = await this.tasksRepo.fetchAllUsersTasks(
+          timeRange
+        );
+        
+        const groupedTasks: TasksOutGroups = {};
+        const currentDate = new Date(timeRange.min);
+        const endDate = new Date(timeRange.max);
+
+        while (currentDate <= endDate) {
+          const dateStr = fDateWwwDdMmmYyyy(currentDate);
+          groupedTasks[dateStr] = [];
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        for (const task of tasks) {
+          const dateStr = fDateWwwDdMmmYyyy(task.startTime);
+          groupedTasks[dateStr].push(task);
+        }
+
+        const tasksRes: TasksFetchResponse = {
+          user: user,
+          details: { from: timeRange.min, to: timeRange.max },
+          tasks: groupedTasks,
+        };
+
+        const res: ActionResponse<TasksFetchResponse> = {
+          status: true,
+          message: "Successful",
+          data: tasksRes,
+        };
+
+        return Promise.resolve(res);
+      }
+
+      // Original logic for specific user tasks
       if (userId !== userSession.userId && userSession.role_id !== 1) {
         const res: ActionResponse = {
           status: false,

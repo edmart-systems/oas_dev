@@ -1,5 +1,14 @@
+// src/types/tasks.types.ts
+
 import { Sub_task, Task, Task_priority, Task_status } from "@prisma/client";
 import { FullUser } from "./user.types";
+
+export type TaskUser = {
+  co_user_id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+};
 
 export type TaskStatus =
   | "Pending"
@@ -55,6 +64,7 @@ export type TaskOut = Omit<
   time: number;
   priority: Task_priority;
   subTasks: SubTaskOut[];
+  user?: TaskUser;
 };
 
 export type TaskUpdateData = {
@@ -82,6 +92,7 @@ export type FullRawTask = Task & {
   taskStatus: Task_status;
   taskPriority: Task_priority;
   subTasks: FullRawSubTask[];
+   user?: TaskUser;
 };
 
 export type TasksOutGroups = {
@@ -96,3 +107,9 @@ export type TasksFetchResponse = {
   };
   tasks: TasksOutGroups;
 };
+
+export interface ActionResponse<T = any> {
+  status: boolean
+  message: string
+  data?: T
+}

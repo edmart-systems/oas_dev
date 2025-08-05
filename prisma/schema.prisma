@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  // binaryTargets = ["native", "debian-openssl-1.1.x"] // c-panel binary target
+  binaryTargets = ["native", "debian-openssl-1.1.x"] // c-panel binary target
 }
 
 datasource db {
@@ -101,6 +101,7 @@ model Currency {
   Edited_quotation Edited_quotation[]
 
   @@map("currency")
+  Product Product[]
 }
 
 model Unit {
@@ -112,6 +113,8 @@ model Unit {
   updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
 
   @@map("unit")
+  
+  Product Product[]
 }
 
 model Company {
@@ -489,4 +492,72 @@ model Sub_task {
   taskPriority Task_priority? @relation(fields: [priorityId], references: [id])
 
   @@map("sub_task")
+}
+
+
+
+model Tag{
+  tag_id Int @id @default(autoincrement()) 
+  tag String @unique 
+  created_by String?
+  updated_by String?
+  created_at DateTime @default(now())
+  updated_at DateTime  @updatedAt
+
+  Product Product[]
+}
+
+
+model Category{
+  category_id Int @id @default(autoincrement()) 
+  category String @unique 
+  created_by String?
+  updated_by String?
+  created_at DateTime @default(now())
+  updated_at DateTime  @updatedAt
+
+  Product Product[]
+}
+
+model Supplier {
+  supplier_id         Int       @id @default(autoincrement())
+  supplier_name       String    @unique
+  supplier_email      String?    @unique
+  supplier_phone      String?
+  supplier_address   String?
+  supplier_tinNumber Int?   @unique
+  created_by         String?
+  updated_by         String?
+  supplier_created_at DateTime @default(now())
+  supplier_updated_at DateTime @updatedAt
+
+  Product Product[]
+}
+
+model Product {
+  product_id          Int       @id @default(autoincrement())
+  product_name        String    @unique
+  product_barcode     Int       @unique
+  product_description String
+  product_location    String
+  product_quantity    Int      @default(0)
+  unit_id             Int
+  category_id         Int
+  tag_id              Int
+  buying_price        Int
+  selling_price       Int
+  vat_inclusive       Int      @default(0)
+  currency_id         Int
+  created_by               String?
+  updated_by              String?
+  product_status      Int
+  product_created_at  DateTime @default(now())
+  product_updated_at  DateTime @updatedAt
+  supplier_id         Int?
+
+  unit                Unit      @relation(fields: [unit_id], references: [unit_id])
+  category            Category  @relation(fields: [category_id], references: [category_id])
+  tag                 Tag       @relation(fields: [tag_id], references: [tag_id])
+  currency            Currency  @relation(fields: [currency_id], references: [currency_id])
+  supplier           Supplier? @relation(fields: [supplier_id], references: [supplier_id])
 }

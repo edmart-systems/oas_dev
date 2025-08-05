@@ -1,3 +1,5 @@
+// src/types/other.types.ts
+
 export type ItemRange = {
   min: number;
   max: number;

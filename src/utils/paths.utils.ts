@@ -25,6 +25,10 @@ export const paths = {
       main: "/dashboard/invoices",
       single: (id: String) => `/dashboard/invoices/${id}`,
     },
+    tasks: {
+      main: "/dashboard/tasks",      
+      create: "/dashboard/tasks/create",
+    },
     settings: "/dashboard/settings",
     account: "/dashboard/account",
   },

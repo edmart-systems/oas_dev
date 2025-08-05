@@ -1,3 +1,5 @@
+"use client";
+
 import AuthGuard from "@/components/auth/auth-guard";
 import UiActivityMonitor from "@/components/auth/ui-activity-monitor";
 import AppDataFetcher from "@/components/dashboard/common/app-data-fetcher";
@@ -5,13 +7,49 @@ import { MainNav } from "@/components/dashboard/nav-bar/main-nav";
 import NotificationsDrawer from "@/components/dashboard/nav-bar/notifications/notifications-drawer";
 import { SideNav } from "@/components/dashboard/nav-bar/side-nav";
 import { Box, Container, GlobalStyles } from "@mui/material";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 
 type Props = {
   children: ReactNode;
 };
 
 const DashboardLayout = ({ children }: Props) => {
+  const [sidebarWidth, setSidebarWidth] = useState(280);
+
+  useEffect(() => {
+    const detectSidebarWidth = () => {
+      const sidebars = document.querySelectorAll('div');
+      for (const sidebar of Array.from(sidebars)) {
+        const style = window.getComputedStyle(sidebar);
+        if (style.position === 'fixed' && 
+            style.left === '0px' && 
+            style.zIndex === '1100' &&
+            (style.width === '80px' || style.width === '280px')) {
+          const width = parseInt(style.width);
+          setSidebarWidth(width);
+          break;
+        }
+      }
+    };
+
+    detectSidebarWidth();
+    const interval = setInterval(detectSidebarWidth, 50);
+
+    // Add MutationObserver for immediate detection
+    const observer = new MutationObserver(detectSidebarWidth);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style']
+    });
+
+    return () => {
+      clearInterval(interval);
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     <div>
       <AuthGuard>
@@ -43,15 +81,20 @@ const DashboardLayout = ({ children }: Props) => {
                 display: "flex",
                 flex: "1 1 auto",
                 flexDirection: "column",
-                pl: { lg: "var(--SideNav-width)" },
+                pl: { lg: `${sidebarWidth}px` },
+                transition: "padding-left 0.3s ease",
               }}
             >
               <MainNav />
-              <main>
-                <Container maxWidth="xl" sx={{ py: "64px" }}>
-                  {children}
-                  <AppDataFetcher />
-                </Container>
+              <main
+                style={{
+                  padding: "64px 16px",
+                  width: "100%",
+                  transition: "all 0.3s ease",
+                }}
+              >
+                {children}
+                <AppDataFetcher />
               </main>
               <NotificationsDrawer />
             </Box>
