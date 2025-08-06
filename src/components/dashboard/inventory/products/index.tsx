@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import {
   Button,
@@ -26,8 +25,6 @@ import {
   MenuItem,
 } from "@mui/material";
 import { Plus, PencilSimple, Trash, MagnifyingGlass } from "@phosphor-icons/react";
-import PageTitle from "@/components/dashboard/common/page-title";
-import InventoryHorizontalNav from "@/components/dashboard/inventory/inventory-horizontal-nav";
 
 interface Product {
   id: number;
@@ -89,7 +86,7 @@ const ProductsPage = () => {
   );
 
   return (
-    <Stack spacing={3}>
+    <>
       <Card>
         <CardHeader
           title="Products"
@@ -208,7 +205,7 @@ const ProductsPage = () => {
           <Button onClick={handleSave} variant="contained">Save</Button>
         </DialogActions>
       </Dialog>
-    </Stack>
+    </>
   );
 };
 

@@ -191,8 +191,6 @@ const PurchasePage = () => {
 
   return (
     <Stack spacing={3}>
-      <PageTitle title="Purchase Orders" />
-      <InventoryHorizontalNav />
       
       <Stack direction="row" spacing={2}>
         <Button
@@ -232,7 +230,7 @@ const PurchasePage = () => {
               <CardContent>
                 <Grid container spacing={2}>
                   {filteredProducts.map((product) => (
-                    <Grid item xs={12} sm={6} md={4} key={product.id}>
+                    <Grid item xs={12} sm={6} md={4} >
                       <Card 
                         sx={{ 
                           cursor: 'pointer',

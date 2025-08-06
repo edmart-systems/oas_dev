@@ -118,9 +118,6 @@ const OrdersPage = () => {
 
   return (
     <Stack spacing={3}>
-      <PageTitle title="Orders Management" />
-      <InventoryHorizontalNav />
-      
       <Card>
         <CardHeader
           title="Orders"

@@ -92,9 +92,6 @@ const WarehousePage = () => {
 
   return (
     <Stack spacing={3}>
-      <PageTitle title="Warehouse Management" />
-      <InventoryHorizontalNav />
-      
       <Card>
         <CardHeader
           title="Warehouses"

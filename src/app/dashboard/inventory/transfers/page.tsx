@@ -118,9 +118,6 @@ const TransfersPage = () => {
 
   return (
     <Stack spacing={3}>
-      <PageTitle title="Stock Transfers" />
-      <InventoryHorizontalNav />
-      
       <Card>
         <CardHeader
           title="Stock Transfers"

@@ -88,9 +88,6 @@ const CustomersPage = () => {
 
   return (
     <Stack spacing={3}>
-      <PageTitle title="Customer Management" />
-      <InventoryHorizontalNav />
-      
       <Card>
         <CardHeader
           title="Customers"

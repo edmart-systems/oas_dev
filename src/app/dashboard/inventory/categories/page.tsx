@@ -92,9 +92,6 @@ const CategoriesPage = () => {
 
   return (
     <Stack spacing={3}>
-      <PageTitle title="Category Management" />
-      <InventoryHorizontalNav />
-      
       <Card>
         <CardHeader
           title="Categories"

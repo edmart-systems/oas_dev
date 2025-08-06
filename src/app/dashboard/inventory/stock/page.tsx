@@ -86,8 +86,6 @@ const StockPage = () => {
 
   return (
     <Stack spacing={3}>
-      <PageTitle title="Stock Management" />
-      <InventoryHorizontalNav />
       
       <Card>
         <CardHeader

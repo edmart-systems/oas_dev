@@ -150,8 +150,6 @@ const SalesPage = () => {
 
   return (
     <Stack spacing={3}>
-      <PageTitle title="Point of Sale" />
-      <InventoryHorizontalNav />
       
       <Stack direction="row" spacing={2}>
         <Button

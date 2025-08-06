@@ -88,7 +88,7 @@ const DashboardLayout = ({ children }: Props) => {
               <MainNav />
               <main
                 style={{
-                  padding: "64px 16px",
+                  padding: "16px 16px",
                   width: "100%",
                   transition: "all 0.3s ease",
                 }}

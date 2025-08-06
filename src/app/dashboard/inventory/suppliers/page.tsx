@@ -98,10 +98,7 @@ const SuppliersPage = () => {
   );
 
   return (
-    <Stack spacing={3}>
-      <PageTitle title="Supplier Management" />
-      <InventoryHorizontalNav />
-      
+    <Stack spacing={3} >
       <Card>
         <CardHeader
           title="Suppliers"
