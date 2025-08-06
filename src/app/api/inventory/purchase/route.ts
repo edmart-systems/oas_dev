@@ -1,14 +1,18 @@
-import { TagRepository } from "@/modules/inventory/repositories/tag.repository";
-import { TagService } from "@/modules/inventory/services/tag.services";
+import { PurchaseRepository } from "@/modules/inventory/repositories/purchase.repository";
+import { PurchaseService } from "@/modules/inventory/services/purchase.service";
 import prisma from "../../../../../db/db";
 import { NextRequest, NextResponse } from "next/server";
-import { TagDto } from "@/modules/inventory/dtos/tag.dto";
+import { PurchaseDto } from "@/modules/inventory/dtos/purchase.dto";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/server-actions/auth-actions/auth.actions";
 import { SessionService } from "@/services/auth-service/session.service";
 
 
-const service = new TagService(new TagRepository(prisma));
+import { PurchaseItemRepository } from "@/modules/inventory/repositories/purchase_item.repository";
+
+const purchaseRepo = new PurchaseRepository(prisma);
+const purchaseItemRepo = new PurchaseItemRepository(prisma);
+const service = new PurchaseService(prisma, purchaseRepo, purchaseItemRepo);
 const sessionService = new SessionService
 
 export async function POST(req: NextRequest) {
@@ -24,10 +28,10 @@ export async function POST(req: NextRequest) {
     // Inject logged-in user's email or id here
     const tagData = {
       ...body,
-      created_by: session.user?.email || session.user?.userId || "unknown",
+      purchase_created_by: session.user?.email || session.user?.userId || "unknown",
     };
 
-    const parsed = TagDto.safeParse(tagData);
+    const parsed = PurchaseDto.safeParse(tagData);
 
     if (!parsed.success) {
       return NextResponse.json(
@@ -36,9 +40,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const newTag = await service.createTag(parsed.data);
+    const newPurchase = await service.createPurchase(parsed.data);
     return NextResponse.json(
-      { message: "Tag created successfully", data: newTag },
+      { message: "Purchase created successfully", data: newPurchase },
       { status: 201 }
     );
   } catch (err: any) {
@@ -53,11 +57,7 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const session = await sessionService.checkIsUserSessionOk(await getServerSession(authOptions));
-    const tags = await service.getAllTags();
-    if(!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 }); 
-    }
+    const tags = await service.getAllPurchases();
     return NextResponse.json(tags);
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

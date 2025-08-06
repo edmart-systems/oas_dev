@@ -99,9 +99,11 @@ model Currency {
 
   quotations       Quotation[]
   Edited_quotation Edited_quotation[]
+  Product Product[]
 
   @@map("currency")
-  Product Product[]
+  
+  Sale Sale[]
 }
 
 model Unit {
@@ -112,9 +114,11 @@ model Unit {
   created_at DateTime @default(now())
   updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
 
+  Product Product[]
+
   @@map("unit")
   
-  Product Product[]
+  
 }
 
 model Company {
@@ -532,32 +536,136 @@ model Supplier {
   supplier_updated_at DateTime @updatedAt
 
   Product Product[]
+
+  Purchase Purchase[]
+}
+
+model Inventory_point{
+  inventory_point_id Int @id @default(autoincrement())
+  inventory_point String @unique
+  created_by String?
+  updated_by String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+
+
+  Purchase Purchase[]
+
+  Stock Stock[]
 }
 
 model Product {
   product_id          Int       @id @default(autoincrement())
+  supplier_id         Int?
   product_name        String    @unique
   product_barcode     Int       @unique
   product_description String
-  product_location    String
-  product_quantity    Int      @default(0)
   unit_id             Int
   category_id         Int
   tag_id              Int
-  buying_price        Int
-  selling_price       Int
-  vat_inclusive       Int      @default(0)
   currency_id         Int
+  product_quantity    Int  @default(0)
+  product_max_quantity Int? @default(0)
+  product_min_quantity Int? @default(0)
+  product_status      Int? @default(1)
+  buying_price        Int @default(0)
+  selling_price       Int @default(0)
+  markup_percentage  Int @default(0)
+  vat_inclusive       Int      @default(0)
   created_by               String?
   updated_by              String?
-  product_status      Int
   product_created_at  DateTime @default(now())
   product_updated_at  DateTime @updatedAt
-  supplier_id         Int?
+  
 
   unit                Unit      @relation(fields: [unit_id], references: [unit_id])
   category            Category  @relation(fields: [category_id], references: [category_id])
   tag                 Tag       @relation(fields: [tag_id], references: [tag_id])
   currency            Currency  @relation(fields: [currency_id], references: [currency_id])
   supplier           Supplier? @relation(fields: [supplier_id], references: [supplier_id])
+  Purchase_items Purchase_item[]
+
+  Stock Stock[]
+
+  Sale_item Sale_item[]
+}
+
+model Purchase {
+  purchase_id           Int      @id  @default(autoincrement())
+  purchase_quantity     Int
+  purchase_unit_cost    Int
+  purchase_total_cost   Int
+  purchase_created_by   String?
+  purchase_updated_by   String?
+  inventory_point_id  Int @default(1)
+  supplier_id         Int
+  purchase_created_at   DateTime @default(now())
+  purchase_updated_at   DateTime @updatedAt
+
+  supplier           Supplier @relation(fields: [supplier_id], references: [supplier_id])
+  inventory_point     Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
+
+
+  Purchase_items Purchase_item[]
+}
+
+model Purchase_item {
+  purchase_item_id Int @id @default(autoincrement())
+  purchase_id Int
+  product_id Int
+  quantity Int
+  unit_cost Int
+  total_cost Int
+
+  purchase Purchase @relation(fields: [purchase_id], references: [purchase_id])
+  product Product @relation(fields: [product_id], references: [product_id])
+}
+
+model Stock {
+  stock_id         Int       @id @default(autoincrement())
+  product_id       Int
+  inventory_point_id Int
+  change_type      String     
+  quantity_change  Int        
+  resulting_stock  Int        
+  reference_id     Int?       
+  created_at       DateTime   @default(now())
+
+  product          Product    @relation(fields: [product_id], references: [product_id])
+  inventory_point Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
+  
+}
+
+model Sale{
+  sale_id             Int      @id @default(autoincrement())
+  sale_no             String   @unique @db.VarChar(12)
+  seller_id           Int
+  sale_total_quantity Int@default(0)
+  sale_total_amount   Int
+  sale_total_discount Int @default(0)
+  sale_total_tax      Int @default(0)
+  sale_grand_total Int @default(0)
+  currency_id         Int
+  inventory_point_id  Int @default(1)
+  sale_status         Int @default(1)
+  sale_created_at     DateTime @default(now())
+  sale_updated_at     DateTime @updatedAt
+
+  currency            Currency  @relation(fields: [currency_id], references: [currency_id])
+  Sale_items          Sale_item[]
+}
+
+model Sale_item {
+  sale_item_id   Int    @id @default(autoincrement())
+  sale_id        Int
+  product_id     Int
+  quantity       Int
+  unit_price     Int
+  total_price    Int
+  discount       Int @default(0)
+  tax            Int @default(0)
+
+  sale           Sale    @relation(fields: [sale_id], references: [sale_id])
+  product        Product @relation(fields: [product_id], references: [product_id])
 }
