@@ -28,13 +28,6 @@ const TasksPage = () => {
   
   return (
     <Stack spacing={3}>
-      <Stack
-        spacing={1}
-        sx={{ flex: "1 1 auto" }}
-        justifyContent="space-between"
-        direction="row"
-      >
-      </Stack>
       <TaskManager userId={userId} />
     </Stack>
   );
