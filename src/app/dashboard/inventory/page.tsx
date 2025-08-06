@@ -6,12 +6,11 @@ import { Stack } from "@mui/material";
 
 const InventoryPage = () => {
   return (
-    <Stack spacing={3} direction={"column"}>
-      
+    <Stack m={1}>
+
       <InventoryStatsCards />
       <InventoryCharts />
-      
-      
+    
     </Stack>
   );
 };

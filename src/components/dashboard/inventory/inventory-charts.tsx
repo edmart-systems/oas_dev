@@ -97,7 +97,7 @@ const InventoryCharts = () => {
   const categoryDistributionSeries = [35, 25, 15, 15, 10];
 
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={3} mt={1}>
       <Grid item xs={12} md={8}>
         <Card>
           <CardHeader title="Stock Levels by Category" />

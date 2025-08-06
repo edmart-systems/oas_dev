@@ -190,7 +190,7 @@ const PurchasePage = () => {
   });
 
   return (
-    <Stack spacing={3}>
+    <Stack>
       
       <Stack direction="row" spacing={2}>
         <Button
@@ -210,7 +210,7 @@ const PurchasePage = () => {
       </Stack>
       
       {tabValue === 0 ? (
-        <Grid container spacing={3}>
+        <Grid container spacing={3} mt={0}>
           <Grid item xs={12} md={8}>
             <Card>
               <CardHeader
