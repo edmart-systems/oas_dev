@@ -39,6 +39,13 @@ const navItems: NavItemConfig[] = [
     icon: "tasks",
     adminOnly: false,
   },
+   {
+    key: "inventory",
+    title: "Inventory",
+    href: paths.dashboard.inventory.main,
+    icon: "inventory",
+    adminOnly: false,
+  },
   {
     key: "settings",
     title: "Settings",

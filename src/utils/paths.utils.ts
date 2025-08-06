@@ -29,6 +29,10 @@ export const paths = {
       main: "/dashboard/tasks",      
       create: "/dashboard/tasks/create",
     },
+    inventory: {
+      main: "/dashboard/inventory",      
+      
+    },
     settings: "/dashboard/settings",
     account: "/dashboard/account",
   },
