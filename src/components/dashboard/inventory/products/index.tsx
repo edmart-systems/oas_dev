@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -23,70 +24,173 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  CircularProgress,
 } from "@mui/material";
 import { Plus, PencilSimple, Trash, MagnifyingGlass } from "@phosphor-icons/react";
+import PageTitle from "@/components/dashboard/common/page-title";
+import InventoryHorizontalNav from "@/components/dashboard/inventory/inventory-horizontal-nav";
+import { toast } from "react-toastify";
+import { Product, CreateProductRequest } from "@/types/product.types";
+import ProductForm from "./add-products";
 
-interface Product {
-  id: number;
-  name: string;
-  sku: string;
-  category: string;
-  price: number;
-  stock: number;
-  status: "Active" | "Inactive";
-}
+
+
 
 const ProductsPage = () => {
-  const [products, setProducts] = useState<Product[]>([
-    { id: 1, name: "Laptop Dell XPS", sku: "DELL001", category: "Electronics", price: 1200, stock: 25, status: "Active" },
-    { id: 2, name: "Office Chair", sku: "CHAIR001", category: "Furniture", price: 250, stock: 15, status: "Active" },
-    { id: 3, name: "Wireless Mouse", sku: "MOUSE001", category: "Electronics", price: 35, stock: 0, status: "Inactive" },
-  ]);
-
-  const [open, setOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [formData, setFormData] = useState({
-    name: "",
-    sku: "",
-    category: "",
-    price: 0,
-    stock: 0,
-    status: "Active" as "Active" | "Inactive",
+    
+    const [product, setproduct] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [deleteOpen, setDeleteOpen] = useState(false);
+    const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+    const [formData, setFormData] = useState<CreateProductRequest>({
+    product_name: "",
+    product_barcode: 0,
+    product_description: "",
+    unit_id: 1,
+    category_id: 1,
+    tag_id: 1,
+    buying_price: 0,
+    selling_price: 0,
+    currency_id: 1,
   });
 
-  const handleAdd = () => {
-    setEditingProduct(null);
-    setFormData({ name: "", sku: "", category: "", price: 0, stock: 0, status: "Active" });
-    setOpen(true);
-  };
-
-  const handleEdit = (product: Product) => {
-    setEditingProduct(product);
-    setFormData(product);
-    setOpen(true);
-  };
-
-  const handleSave = () => {
-    if (editingProduct) {
-      setProducts(products.map(p => p.id === editingProduct.id ? { ...formData, id: editingProduct.id } : p));
-    } else {
-      setProducts([...products, { ...formData, id: Date.now() }]);
+  const fetchproduct = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/inventory/product`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to fetch');
+      setproduct(data);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to fetch product");
+    } finally {
+      setLoading(false);
     }
-    setOpen(false);
   };
 
-  const handleDelete = (id: number) => {
-    setProducts(products.filter(p => p.id !== id));
+  useEffect(() => {
+      fetchproduct();
+    }, []);
+  
+    const handleAdd = () => {
+      setEditingProduct(null);
+      setFormData({
+        product_name: "",
+        product_barcode: 0,
+        product_description: "",
+        unit_id: 1,
+        category_id: 1,
+        tag_id: 1,
+        buying_price: 0,
+        selling_price: 0,
+        currency_id: 1,
+      });
+      setOpen(true);
+    };
+
+ const handleEdit = (product: Product) => {
+    setEditingProduct(product);
+    setFormData({
+      product_name: product.product_name,
+      product_barcode: product.product_barcode,
+      product_description: product.product_description,
+      unit_id: product.unit_id,
+      category_id: product.category_id,
+      tag_id: product.tag_id,
+      buying_price: product.buying_price,
+      selling_price: product.selling_price,
+      currency_id: product.currency_id,
+    });
+    setOpen(true);
+  };
+    const handleSave = async (formData: any) => {
+      setSaving(true);
+      try {
+        console.log('Submitting data:', formData);
+        console.log('URL:', editingProduct ? `/api/inventory/product/${editingProduct.product_id}` : `/api/inventory/product`);
+        console.log('Method:', editingProduct ? 'PATCH' : 'POST');
+        
+        const res = await fetch(
+          editingProduct ? `/api/inventory/product/${editingProduct.product_id}` : `/api/inventory/product`,
+          {
+            method: editingProduct ? 'PATCH' : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          }
+        );
+        
+        console.log('Response status:', res.status);
+        console.log('Response headers:', res.headers);
+        
+        let data = null;
+        const contentType = res.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          data = await res.json();
+        } else {
+          const text = await res.text();
+          console.log('Response text:', text);
+          if (text) {
+            try {
+              data = JSON.parse(text);
+            } catch {
+              data = { message: text };
+            }
+          }
+        }
+        
+        console.log('Parsed data:', data);
+        
+        if (!res.ok) {
+          const errorMsg = data?.error || data?.message || `HTTP ${res.status}: Save failed`;
+          console.error('Save failed:', errorMsg);
+          throw new Error(errorMsg);
+        }
+        
+        toast.success(editingProduct ? "Product updated" : "Product created");
+        fetchproduct();
+        setOpen(false);
+      } catch (error: any) {
+        console.error('Save error:', error);
+        toast.error(error.message || "Save failed");
+      } finally {
+        setSaving(false);
+      }
+    };
+     
+
+  const handleDeleteClick = (product: Product) => {
+    setProductToDelete(product);
+    setDeleteOpen(true);
   };
 
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.sku.toLowerCase().includes(searchTerm.toLowerCase())
+  const handleDeleteConfirm = async () => {
+    if (!productToDelete) return;
+    
+    try {
+      const res = await fetch(`/api/inventory/product/${productToDelete.product_id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Delete failed');
+      toast.success("Product deleted");
+      fetchproduct();
+    } catch (error: any) {
+      toast.error(error.message || "Delete failed");
+    } finally {
+      setDeleteOpen(false);
+      setProductToDelete(null);
+    }
+  };
+
+  const filteredproduct = product.filter(product =>
+    product.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.product_barcode.toString().includes(searchTerm)
   );
-
+  
   return (
-    <>
+    <Stack spacing={3}>
       <Card>
         <CardHeader
           title="Products"
@@ -112,100 +216,70 @@ const ProductsPage = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>SKU</TableCell>
-                  <TableCell>Category</TableCell>
-                  <TableCell>Price</TableCell>
-                  <TableCell>Stock</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Actions</TableCell>
+                   <TableCell>Name</TableCell>
+                    <TableCell>Barcode</TableCell>
+                    <TableCell>Description</TableCell>
+                    <TableCell>Buying Price</TableCell>
+                    <TableCell>Selling Price</TableCell>
+                    <TableCell>Status</TableCell>
+                    <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredProducts.map((product) => (
-                  <TableRow key={product.id}>
-                    <TableCell>{product.name}</TableCell>
-                    <TableCell>{product.sku}</TableCell>
-                    <TableCell>{product.category}</TableCell>
-                    <TableCell>${product.price}</TableCell>
-                    <TableCell>{product.stock}</TableCell>
-                    <TableCell>
-                      <Chip
-                        label={product.status}
-                        color={product.status === "Active" ? "success" : "error"}
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <IconButton onClick={() => handleEdit(product)}>
-                        <PencilSimple />
-                      </IconButton>
-                      <IconButton onClick={() => handleDelete(product.id)} color="error">
-                        <Trash />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {filteredproduct.map((product) => (
+                    <TableRow key={product.product_id}>
+                      <TableCell>{product.product_name}</TableCell>
+                      <TableCell>{product.product_barcode}</TableCell>
+                      <TableCell>{product.product_description}</TableCell>
+                      <TableCell>${product.buying_price}</TableCell>
+                      <TableCell>${product.selling_price}</TableCell>
+                      <TableCell>
+                        <Chip
+                          label={product.product_status === 1 ? "Active" : "Inactive"}
+                          color={product.product_status === 1 ? "success" : "error"}
+                          size="small"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <IconButton onClick={() => handleEdit(product)}>
+                          <PencilSimple />
+                        </IconButton>
+                        <IconButton onClick={() => handleDeleteClick(product)} color="error">
+                          <Trash />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>
         </CardContent>
       </Card>
 
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>{editingProduct ? "Edit Product" : "Add Product"}</DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} sx={{ mt: 1 }}>
-            <TextField
-              label="Product Name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              fullWidth
-            />
-            <TextField
-              label="SKU"
-              value={formData.sku}
-              onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-              fullWidth
-            />
-            <TextField
-              label="Category"
-              value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              fullWidth
-            />
-            <TextField
-              label="Price"
-              type="number"
-              value={formData.price}
-              onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-              fullWidth
-            />
-            <TextField
-              label="Stock"
-              type="number"
-              value={formData.stock}
-              onChange={(e) => setFormData({ ...formData, stock: Number(e.target.value) })}
-              fullWidth
-            />
-            <FormControl fullWidth>
-              <InputLabel>Status</InputLabel>
-              <Select
-                value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value as "Active" | "Inactive" })}
-              >
-                <MenuItem value="Active">Active</MenuItem>
-                <MenuItem value="Inactive">Inactive</MenuItem>
-              </Select>
-            </FormControl>
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={handleSave} variant="contained">Save</Button>
-        </DialogActions>
-      </Dialog>
-    </>
+    
+          <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
+            <DialogContent>
+              <ProductForm 
+                onSubmit={handleSave} 
+                onCancel={() => setOpen(false)} 
+                initialData={editingProduct}
+              />
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)}>
+            <DialogTitle>Confirm Delete</DialogTitle>
+            <DialogContent>
+              Are you sure you want to delete "{productToDelete?.product_name}"? This action cannot be undone.
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setDeleteOpen(false)}>Cancel</Button>
+              <Button onClick={handleDeleteConfirm} color="error" variant="contained">
+                Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
+    </Stack>
   );
 };
 
