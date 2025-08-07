@@ -4,7 +4,6 @@ import {
   Button,
   Card,
   CardContent,
-  Grid,
   Stack,
   TextField,
   Typography,
@@ -15,10 +14,17 @@ import {
   DialogContent,
   DialogActions,
 } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import AddIcon from '@mui/icons-material/Add';
 import { useState, useEffect } from 'react';
 import { getUnits, getCurrencies } from '@/server-actions/user-actions/inventory.actions';
 import { toast } from 'react-toastify';
+import UnitForm from '../units/unitForm';
+import SupplierForm from '../supplier/supplierForm';
+import CategoryForm from '../tags/CategoryForm';
+import TagForm from '../tags/tagForm';
+import { Currency } from 'lucide-react';
+import CurrencyForm from '../units/CurrencyForm';
 
 interface ProductFormProps {
   onSubmit: (data: any) => Promise<void>;
@@ -126,7 +132,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
           Add New Product
         </Typography>
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <TextField
               label="Product Name"
               fullWidth
@@ -135,7 +141,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
               required
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <TextField
               label="Barcode"
               type="number"
@@ -146,7 +152,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
             />
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12, md: 12 }}>
             <TextField
               label="Description"
               multiline
@@ -157,7 +163,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <TextField
               label="Buying Price"
               type="number"
@@ -167,7 +173,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <TextField
               label="Selling Price"
               type="number"
@@ -177,7 +183,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Stack direction="row" alignItems="center">
               <TextField
                 label="Unit"
@@ -198,7 +204,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
             </Stack>
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Stack direction="row" alignItems="center">
               <TextField
                 label="Category"
@@ -219,7 +225,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
             </Stack>
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Stack direction="row" alignItems="center">
               <TextField
                 label="Tag"
@@ -240,7 +246,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
             </Stack>
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Stack direction="row" alignItems="center">
               <TextField
                 label="Currency"
@@ -261,7 +267,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
             </Stack>
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Stack direction="row" alignItems="center">
               <TextField
                 label="Supplier"
@@ -282,7 +288,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
             </Stack>
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <TextField
               label="Max Quantity"
               type="number"
@@ -293,7 +299,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
               }
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <TextField
               label="Min Quantity"
               type="number"
@@ -305,7 +311,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
             />
           </Grid>
           
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12, md: 12 }}>
             <Stack direction="row" spacing={2}>
               <Button onClick={onCancel} fullWidth>
                 Cancel
@@ -316,23 +322,60 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
                 fullWidth
                 onClick={handleSubmit}
               >
-                Submit Product
+                Save
               </Button>
             </Stack>
           </Grid>
         </Grid>
       </CardContent>
+      <CategoryForm
+        open={openDialog.category}
+        onClose={() => handleDialogClose('category')}
+        onSuccess={() => {
+          fetch('/api/inventory/category').then(res => res.json()).then(data => 
+            setCategories(data.map((cat: any) => ({ id: cat.category_id, name: cat.category })))
+          );
+          handleDialogClose('category');
+        }}
+      />
+      <TagForm
+        open={openDialog.tag}
+        onClose={() => handleDialogClose('tag')}
+        onSuccess={() => {
+          fetch('/api/inventory/tag').then(res => res.json()).then(data => 
+            setTags(data.map((tag: any) => ({ id: tag.tag_id, name: tag.tag })))
+          );
+          handleDialogClose('tag');
+        }}
+      />
+      <CurrencyForm
+        open={openDialog.currency}
+        onClose={() => handleDialogClose('currency')}
+        onSuccess={() => {
+          getCurrencies().then(setCurrencies);
+          handleDialogClose('currency');
+        }}
+      />
+      <SupplierForm
+        open={openDialog.supplier}
+        onClose={() => handleDialogClose('supplier')}
+        onSuccess={() => {
+          fetch('/api/inventory/supplier').then(res => res.json()).then(data => 
+            setSuppliers(data.map((sup: any) => ({ id: sup.supplier_id, name: sup.supplier_name })))
+          );
+          handleDialogClose('supplier');
+        }}
+      />
 
-      <Dialog open={openDialog.unit} onClose={() => handleDialogClose('unit')}>
-        <DialogTitle>Add New Unit</DialogTitle>
-        <DialogContent>
-          <TextField fullWidth label="Unit Name" />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => handleDialogClose('unit')}>Cancel</Button>
-          <Button variant="contained">Save</Button>
-        </DialogActions>
-      </Dialog>
+      <UnitForm
+        open={openDialog.unit}
+        onClose={() => handleDialogClose('unit')}
+        onSuccess={() => {
+          // Refresh units list
+          getUnits().then(setUnits);
+          handleDialogClose('unit');
+        }}
+      />
     </Card>
   );
 }

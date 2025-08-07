@@ -31,7 +31,7 @@ import PageTitle from "@/components/dashboard/common/page-title";
 import InventoryHorizontalNav from "@/components/dashboard/inventory/inventory-horizontal-nav";
 import { toast } from "react-toastify";
 import { Product, CreateProductRequest } from "@/types/product.types";
-import ProductForm from "./add-products";
+import ProductForm from "./productForm";
 
 
 

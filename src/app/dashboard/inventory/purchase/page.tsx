@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
+import { saveOrUpdate } from "@/components/dashboard/inventory/form-handlers";
 import {
   Button,
   Card,
@@ -8,7 +10,6 @@ import {
   CardHeader,
   Chip,
   Divider,
-  Grid,
   IconButton,
   Stack,
   Table,
@@ -29,10 +30,17 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
+import Grid from '@mui/material/Grid2';
 import { Plus, Minus, Eye, Trash, MagnifyingGlass, ShoppingCart, Receipt, List as ListIcon } from "@phosphor-icons/react";
 import PageTitle from "@/components/dashboard/common/page-title";
 import InventoryHorizontalNav from "@/components/dashboard/inventory/inventory-horizontal-nav";
+import ProductForm from "@/components/dashboard/inventory/products/productForm";
+
 
 interface Product {
   product_id: number;
@@ -67,31 +75,58 @@ interface PurchaseOrder {
   purchase_items: CartItem[];
 }
 
-const PurchasePage = () => {
-  const [products] = useState<Product[]>([
-    { product_id: 1, product_name: "Laptop Dell XPS", product_barcode: 123001, product_description: "High-performance laptop", buying_price: 1000, selling_price: 1200, product_quantity: 25, category_id: 1, unit_id: 1, supplier_id: 1 },
-    { product_id: 2, product_name: "Office Chair", product_barcode: 123002, product_description: "Ergonomic office chair", buying_price: 200, selling_price: 250, product_quantity: 15, category_id: 2, unit_id: 1, supplier_id: 2 },
-    { product_id: 3, product_name: "Wireless Mouse", product_barcode: 123003, product_description: "Bluetooth wireless mouse", buying_price: 25, selling_price: 35, product_quantity: 50, category_id: 1, unit_id: 1, supplier_id: 1 },
-    { product_id: 4, product_name: "Keyboard", product_barcode: 123004, product_description: "Mechanical keyboard", buying_price: 60, selling_price: 75, product_quantity: 30, category_id: 1, unit_id: 1, supplier_id: 1 },
-    { product_id: 5, product_name: "Monitor", product_barcode: 123005, product_description: "24-inch LED monitor", buying_price: 250, selling_price: 300, product_quantity: 20, category_id: 1, unit_id: 1, supplier_id: 3 },
-    { product_id: 6, product_name: "Desk Lamp", product_barcode: 123006, product_description: "LED desk lamp", buying_price: 35, selling_price: 45, product_quantity: 40, category_id: 2, unit_id: 1, supplier_id: 2 },
-  ]);
 
-  const [orders, setOrders] = useState<PurchaseOrder[]>([
-    { purchase_id: 1, supplier_id: 1, inventory_point_id: 1, purchase_quantity: 15, purchase_unit_cost: 1000, purchase_total_cost: 15000, created_at: "2024-01-15", purchase_items: [] },
-    { purchase_id: 2, supplier_id: 2, inventory_point_id: 1, purchase_quantity: 8, purchase_unit_cost: 1062.5, purchase_total_cost: 8500, created_at: "2024-01-14", purchase_items: [] },
-    { purchase_id: 3, supplier_id: 3, inventory_point_id: 1, purchase_quantity: 100, purchase_unit_cost: 250, purchase_total_cost: 25000, created_at: "2024-01-13", purchase_items: [] },
-  ]);
+const PurchasePage = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const [orders, setOrders] = useState<PurchaseOrder[]>([]);
 
   const [cart, setCart] = useState<CartItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [supplierId, setSupplierId] = useState<number>(1);
-  const [suppliers] = useState([
-    { id: 1, name: "Tech Supplies Ltd" },
-    { id: 2, name: "Office Furniture Co" },
-    { id: 3, name: "Electronics Hub" },
-  ]);
+  const [suppliers, setSuppliers] = useState<{id: number, name: string}[]>([]);
+  const [inventoryPoints, setInventoryPoints] = useState<{id: number, name: string}[]>([]);
+  const [inventoryPointId, setInventoryPointId] = useState<number>(1);
   const [tabValue, setTabValue] = useState(0);
+  const [openDialog, setOpenDialog] = useState({
+    supplier: false,
+    inventoryPoint: false,
+    product: false
+  });
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const [productsRes, suppliersRes, purchasesRes, inventoryPointsRes] = await Promise.all([
+        fetch('/api/inventory/product'),
+        fetch('/api/inventory/supplier'),
+        fetch('/api/inventory/purchase'),
+        fetch('/api/inventory/inventory_point')
+      ]);
+      
+      const [productsData, suppliersData, purchasesData, inventoryPointsData] = await Promise.all([
+        productsRes.json(),
+        suppliersRes.json(),
+        purchasesRes.json(),
+        inventoryPointsRes.json()
+      ]);
+      
+      setProducts(productsData);
+      setSuppliers(suppliersData.map((sup: any) => ({ id: sup.supplier_id, name: sup.supplier_name })));
+      setInventoryPoints(inventoryPointsData.map((ip: any) => ({ id: ip.inventory_point_id, name: ip.inventory_point })));
+      setOrders(purchasesData);
+    } catch (error) {
+      console.error('Failed to fetch data:', error);
+      toast.error('Failed to load data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const addToCart = (product: Product) => {
     const existingItem = cart.find(item => item.product_id === product.product_id);
@@ -147,33 +182,116 @@ const PurchasePage = () => {
     return getSubtotal() + getTax();
   };
 
-  const processPurchase = () => {
+  const processPurchase = async () => {
     if (cart.length === 0) return;
     
-    const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
-    const totalCost = getTotal();
-    const avgUnitCost = totalCost / totalQuantity;
-    
-    const newOrder: PurchaseOrder = {
-      purchase_id: Date.now(),
+    const purchaseData = {
+      inventory_point_id: inventoryPointId,
       supplier_id: supplierId,
-      inventory_point_id: 1,
-      purchase_quantity: totalQuantity,
-      purchase_unit_cost: avgUnitCost,
-      purchase_total_cost: totalCost,
-      purchase_created_by: 'current_user',
-      created_at: new Date().toISOString().split('T')[0],
-      purchase_items: [...cart]
+      purchase_items: cart.map(item => ({
+        product_id: item.product_id,
+        quantity: item.quantity,
+        unit_cost: item.unit_cost
+      }))
     };
     
-    setOrders([newOrder, ...orders]);
-    const supplierName = suppliers.find(s => s.id === supplierId)?.name || 'Unknown Supplier';
-    alert(`Purchase order created for ${supplierName}\nTotal: $${totalCost.toFixed(2)}`);
-    clearCart();
+    try {
+      const res = await fetch('/api/inventory/purchase', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(purchaseData)
+      });
+      
+      if (!res.ok) throw new Error('Failed to create purchase order');
+      
+      const newOrder = await res.json();
+      setOrders([newOrder, ...orders]);
+      
+      const supplierName = suppliers.find(s => s.id === supplierId)?.name || 'Unknown Supplier';
+      toast.success(`Purchase order created for ${supplierName}`);
+      clearCart();
+      fetchData(); // Refresh data
+    } catch (error) {
+      console.error('Failed to create purchase:', error);
+      toast.error('Failed to create purchase order');
+    }
   };
 
-  const handleDelete = (purchase_id: number) => {
-    setOrders(orders.filter(o => o.purchase_id !== purchase_id));
+  const handleDelete = async (purchase_id: number) => {
+    try {
+      const res = await fetch(`/api/inventory/purchase/${purchase_id}`, {
+        method: 'DELETE'
+      });
+      
+      if (!res.ok) throw new Error('Failed to delete purchase order');
+      
+      setOrders(orders.filter(o => o.purchase_id !== purchase_id));
+      toast.success('Purchase order deleted');
+    } catch (error) {
+      console.error('Failed to delete purchase:', error);
+      toast.error('Failed to delete purchase order');
+    }
+  };
+
+  const handleAddSupplier = async (supplierData: any) => {
+    try {
+      const res = await fetch('/api/inventory/supplier', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(supplierData)
+      });
+      
+      if (!res.ok) throw new Error('Failed to add supplier');
+      
+      const newSupplier = await res.json();
+      const supplierOption = { id: newSupplier.supplier_id, name: newSupplier.supplier_name };
+      setSuppliers([...suppliers, supplierOption]);
+      setSupplierId(newSupplier.supplier_id);
+      setOpenDialog({ ...openDialog, supplier: false });
+      toast.success('Supplier added successfully');
+    } catch (error) {
+      toast.error('Failed to add supplier');
+    }
+  };
+
+  const handleAddInventoryPoint = async (pointData: any) => {
+    try {
+      const res = await fetch('/api/inventory/inventory_point', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(pointData)
+      });
+      
+      if (!res.ok) throw new Error('Failed to add inventory point');
+      
+      const newPoint = await res.json();
+      const pointOption = { id: newPoint.inventory_point_id, name: newPoint.inventory_point };
+      setInventoryPoints([...inventoryPoints, pointOption]);
+      setInventoryPointId(newPoint.inventory_point_id);
+      setOpenDialog({ ...openDialog, inventoryPoint: false });
+      toast.success('Inventory point added successfully');
+    } catch (error) {
+      toast.error('Failed to add inventory point');
+    }
+  };
+
+  const handleAddProduct = async (productData: any) => {
+    try {
+      const res = await fetch('/api/inventory/product', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(productData)
+      });
+      
+      if (!res.ok) throw new Error('Failed to add product');
+      
+      const newProduct = await res.json();
+      setProducts([...products, newProduct]);
+      setOpenDialog({ ...openDialog, product: false });
+      toast.success('Product added successfully');
+    } catch (error) {
+      toast.error('Failed to add product');
+    }
   };
 
 
@@ -186,7 +304,7 @@ const PurchasePage = () => {
   const filteredOrders = orders.filter(order => {
     const supplier = suppliers.find(s => s.id === order.supplier_id);
     return supplier?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-           order.purchase_id.toString().includes(searchTerm);
+           order.purchase_id?.toString().includes(searchTerm);
   });
 
   return (
@@ -198,39 +316,54 @@ const PurchasePage = () => {
           startIcon={<ShoppingCart size={20} />}
           onClick={() => setTabValue(0)}
         >
-          Create Order
+          Create Purchase
         </Button>
         <Button
           variant={tabValue === 1 ? "contained" : "outlined"}
           startIcon={<ListIcon size={20} />}
           onClick={() => setTabValue(1)}
         >
-          Order History
+          Purchase History
         </Button>
       </Stack>
       
       {tabValue === 0 ? (
         <Grid container spacing={3} mt={0}>
-          <Grid item xs={12} md={8}>
+          <Grid size={{xs:12 , md:8}} >
             <Card>
               <CardHeader
                 title="Products"
                 action={
-                  <TextField
-                    size="small"
-                    placeholder="Search products..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    InputProps={{
-                      startAdornment: <MagnifyingGlass size={20} />,
-                    }}
-                  />
+                  <Stack direction="row" spacing={1}>
+                    <TextField
+                      size="small"
+                      placeholder="Search products..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      slotProps={{
+                        input: {
+                          startAdornment: <MagnifyingGlass size={20} />,
+                        },
+                      }}
+                    />
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      startIcon={<Plus size={16} />}
+                      onClick={() => setOpenDialog({ ...openDialog, product: true })}
+                    >
+                      Add Product
+                    </Button>
+                  </Stack>
                 }
               />
               <CardContent>
+                {loading ? (
+                  <Typography>Loading products...</Typography>
+                ) : (
                 <Grid container spacing={2}>
                   {filteredProducts.map((product) => (
-                    <Grid item xs={12} sm={6} md={4} >
+                    <Grid size={{xs:12 , md:4, sm:6}} >
                       <Card 
                         sx={{ 
                           cursor: 'pointer',
@@ -265,11 +398,12 @@ const PurchasePage = () => {
                     </Grid>
                   ))}
                 </Grid>
+                )}
               </CardContent>
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid size={{xs:12 , md:4}}>
             <Card sx={{ position: 'sticky', top: 20 }}>
               <CardHeader
                 title={
@@ -287,20 +421,45 @@ const PurchasePage = () => {
                 }
               />
               <CardContent>
-                <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-                  <InputLabel>Supplier</InputLabel>
-                  <Select
-                    value={supplierId}
-                    onChange={(e) => setSupplierId(Number(e.target.value))}
-                    label="Supplier"
-                  >
-                    {suppliers.map((supplier) => (
-                      <MenuItem key={supplier.id} value={supplier.id}>
-                        {supplier.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel>Supplier</InputLabel>
+                    <Select
+                      value={supplierId}
+                      onChange={(e) => setSupplierId(Number(e.target.value))}
+                      label="Supplier"
+                    >
+                      {suppliers.map((supplier) => (
+                        <MenuItem key={supplier.id} value={supplier.id}>
+                          {supplier.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <IconButton onClick={() => setOpenDialog({ ...openDialog, supplier: true })}>
+                    <Plus size={20} />
+                  </IconButton>
+                </Stack>
+                
+                <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel>Inventory Point</InputLabel>
+                    <Select
+                      value={inventoryPointId}
+                      onChange={(e) => setInventoryPointId(Number(e.target.value))}
+                      label="Inventory Point"
+                    >
+                      {inventoryPoints.map((point) => (
+                        <MenuItem key={point.id} value={point.id}>
+                          {point.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <IconButton onClick={() => setOpenDialog({ ...openDialog, inventoryPoint: true })}>
+                    <Plus size={20} />
+                  </IconButton>
+                </Stack>
                 
                 {cart.length === 0 ? (
                   <Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
@@ -426,6 +585,56 @@ const PurchasePage = () => {
           </CardContent>
         </Card>
       )}
+      
+      {/* Add Supplier Dialog */}
+      <Dialog open={openDialog.supplier} onClose={() => setOpenDialog({ ...openDialog, supplier: false })}>
+        <DialogTitle>Add New Supplier</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} sx={{ mt: 1, minWidth: 300 }}>
+            <TextField label="Supplier Name" fullWidth />
+            <TextField label="Email" type="email" fullWidth />
+            <TextField label="Phone" fullWidth />
+            <TextField label="Address" multiline rows={2} fullWidth />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog({ ...openDialog, supplier: false })}>Cancel</Button>
+          <Button variant="contained">Add Supplier</Button>
+        </DialogActions>
+      </Dialog>
+      
+      {/* Add Inventory Point Dialog */}
+      <Dialog open={openDialog.inventoryPoint} onClose={() => setOpenDialog({ ...openDialog, inventoryPoint: false })}>
+        <DialogTitle>Add New Inventory Point</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} sx={{ mt: 1, minWidth: 300 }}>
+            <TextField label="Inventory Point Name" fullWidth />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog({ ...openDialog, inventoryPoint: false })}>Cancel</Button>
+          <Button variant="contained">Add Inventory Point</Button>
+        </DialogActions>
+      </Dialog>
+      
+      {/* Add Product Dialog */}
+      <Dialog open={openDialog.product} onClose={() => setOpenDialog({ ...openDialog, product: false })} maxWidth="md" fullWidth>
+        <DialogContent>
+          <ProductForm
+            onSubmit={async (data) => {
+              await saveOrUpdate({
+                endpoint: '/api/inventory/product',
+                data,
+                onSuccess: () => {
+                  fetchData();
+                  setOpenDialog({ ...openDialog, product: false });
+                }
+              });
+            }}
+            onCancel={() => setOpenDialog({ ...openDialog, product: false })}
+          />
+        </DialogContent>
+      </Dialog>
     </Stack>
   );
 };
