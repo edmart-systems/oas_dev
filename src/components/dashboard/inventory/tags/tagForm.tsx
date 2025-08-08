@@ -1,51 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid2 } from '@mui/material';
-import { saveOrUpdate } from '../form-handlers';
 
-interface TagFormProps {
+
+interface UnitFormProps {
   open: boolean;
   onClose: () => void;
-  onSuccess: () => void;
-  tag?: any;
+  onSuccess: (newTag: any) => void;
+  initialData?: any;
 }
 
-const TagForm: React.FC<TagFormProps> = ({ open, onClose, onSuccess, tag }) => {
+const TagForm: React.FC<UnitFormProps> = ({ open, onClose, onSuccess, initialData }) => {
   const [formData, setFormData] = useState({
     tag: ''
   });
 
-  useEffect(() => {
-    if (tag) {
-      setFormData({
-        tag: tag.tag || ''
-      });
-    } else {
-      setFormData({ tag: '' });
-    }
-  }, [tag]);
+useEffect(()=>{
+  if(initialData){
+    setFormData({
+      tag: initialData.tag || ''
+    });
+  }
+}), [initialData];
 
-  const handleSubmit = async (e: React.FormEvent) => {
+
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const submitData = {
+      ...formData,
+    };
     
     try {
-      await saveOrUpdate({
-        endpoint: '/api/inventory/tags',
-        data: formData,
-        id: tag?.id,
-        onSuccess: () => {
-          onSuccess();
-          onClose();
-        }
+      const res = await fetch('/api/inventory/tag',{
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(submitData)
       });
+
+      if (!res.ok) throw new Error('Failed to save tag');
+
+      const newTag = await res.json();
+      onSuccess(newTag);
+      onClose();
     } catch (error) {
-      // Error is already handled in saveOrUpdate
+      console.error('Error saving tag:', error);
     }
   };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <form onSubmit={handleSubmit}>
-        <DialogTitle>{tag ? 'Edit Tag' : 'Add Tag'}</DialogTitle>
+        <DialogTitle>
+          { initialData?.tag ? 'Edit Tag' : 'Add Tag'}
+
+        </DialogTitle>
         <DialogContent>
           <Grid2 container spacing={2} sx={{ mt: 1 }}>
             <Grid2 size={12}>
@@ -62,7 +70,7 @@ const TagForm: React.FC<TagFormProps> = ({ open, onClose, onSuccess, tag }) => {
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
           <Button type="submit" variant="contained">
-            {tag ? 'Update' : 'Create'}
+            {initialData?.tag ? 'Update' : 'Add'} 
           </Button>
         </DialogActions>
       </form>

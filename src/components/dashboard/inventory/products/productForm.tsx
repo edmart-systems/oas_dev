@@ -331,51 +331,54 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
       <CategoryForm
         open={openDialog.category}
         onClose={() => handleDialogClose('category')}
-        onSuccess={() => {
-          fetch('/api/inventory/category').then(res => res.json()).then(data => 
-            setCategories(data.map((cat: any) => ({ id: cat.category_id, name: cat.category })))
-          );
-          handleDialogClose('category');
+        onSuccess={(newCategory) => {
+          const categoryOption = { id: newCategory.category_id, name: newCategory.category };
+         setTags([...categories, categoryOption]);
+          toast.success('Category added successfully');
+         
         }}
       />
       <TagForm
         open={openDialog.tag}
         onClose={() => handleDialogClose('tag')}
-        onSuccess={() => {
-          fetch('/api/inventory/tag').then(res => res.json()).then(data => 
-            setTags(data.map((tag: any) => ({ id: tag.tag_id, name: tag.tag })))
-          );
-          handleDialogClose('tag');
+        onSuccess={(newTag) => {
+          const tagOption = { id: newTag.tag_id, name: newTag.tag };
+         setTags([...tags, tagOption]);
+          toast.success('Tag added successfully');
         }}
       />
-      <CurrencyForm
+      {/* <CurrencyForm
         open={openDialog.currency}
         onClose={() => handleDialogClose('currency')}
         onSuccess={() => {
-          getCurrencies().then(setCurrencies);
-          handleDialogClose('currency');
+          const currency = {id: newCurrency_id, name:newCurrency.currency};
+          toast.success('Currency added successfully')
         }}
-      />
-      <SupplierForm
+      /> */}
+
+      {/* Supplier Dialog  */}
+            <SupplierForm
         open={openDialog.supplier}
         onClose={() => handleDialogClose('supplier')}
-        onSuccess={() => {
-          fetch('/api/inventory/supplier').then(res => res.json()).then(data => 
-            setSuppliers(data.map((sup: any) => ({ id: sup.supplier_id, name: sup.supplier_name })))
-          );
-          handleDialogClose('supplier');
+        onSuccess={(newSupplier) => {
+          const supplierOption = { id: newSupplier.supplier_id, name: newSupplier.supplier_name };
+          setSuppliers([...suppliers, supplierOption]);
+          toast.success('Supplier added successfully');
         }}
       />
 
-      <UnitForm
+
+
+      {/* <UnitForm
         open={openDialog.unit}
         onClose={() => handleDialogClose('unit')}
         onSuccess={() => {
-          // Refresh units list
-          getUnits().then(setUnits);
-          handleDialogClose('unit');
+          const unitOption = { id: newUnit.supplier_id, name: newUnit.supplier_name };
+          setUnits([...suppliers, unitOption ]);
+          toast.success('Supplier added successfully');
+          
         }}
-      />
+      /> */}
     </Card>
   );
 }

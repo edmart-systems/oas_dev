@@ -307,6 +307,14 @@ const PurchasePage = () => {
            order.purchase_id?.toString().includes(searchTerm);
   });
 
+  const updateUnitCost = (product_id: number, unit_cost: number) => {
+  setCart(cart.map(item => 
+    item.product_id === product_id 
+      ? { ...item, unit_cost, total_cost: unit_cost * item.quantity }
+      : item
+  ));
+};
+
   return (
     <Stack>
       
@@ -331,6 +339,8 @@ const PurchasePage = () => {
         <Grid container spacing={3} mt={0}>
           <Grid size={{xs:12 , md:8}} >
             <Card>
+
+              {/* Search form  */}
               <CardHeader
                 title="Products"
                 action={
@@ -357,6 +367,8 @@ const PurchasePage = () => {
                   </Stack>
                 }
               />
+
+              {/* Products List  */}
               <CardContent>
                 {loading ? (
                   <Typography>Loading products...</Typography>
@@ -403,13 +415,15 @@ const PurchasePage = () => {
             </Card>
           </Grid>
 
+          {/* Purchase cart  */}
+
           <Grid size={{xs:12 , md:4}}>
             <Card sx={{ position: 'sticky', top: 20 }}>
               <CardHeader
                 title={
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <ShoppingCart size={20} />
-                    <span>Cart ({cart.length})</span>
+                    <span> Purchase Cart ({cart.length})</span>
                   </Stack>
                 }
                 action={
@@ -421,6 +435,8 @@ const PurchasePage = () => {
                 }
               />
               <CardContent>
+
+                {/* Supplier Form  */}
                 <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
                   <FormControl fullWidth size="small">
                     <InputLabel>Supplier</InputLabel>
@@ -441,6 +457,7 @@ const PurchasePage = () => {
                   </IconButton>
                 </Stack>
                 
+                {/* Inventory point Form  */}
                 <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
                   <FormControl fullWidth size="small">
                     <InputLabel>Inventory Point</InputLabel>
@@ -463,46 +480,55 @@ const PurchasePage = () => {
                 
                 {cart.length === 0 ? (
                   <Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
-                    Cart is empty
+                   Purchase Cart is empty
                   </Typography>
                 ) : (
                   <>
-                    <List dense>
-                      {cart.map((item) => (
-                        <ListItem key={item.product_id} sx={{ px: 0 }}>
-                          <ListItemText
-                            primary={item.product_name}
-                            secondary={`$${item.unit_cost} x ${item.quantity} = $${item.total_cost.toFixed(2)}`}
-                          />
-                          <ListItemSecondaryAction>
-                            <Stack direction="row" alignItems="center" spacing={1}>
-                              <IconButton 
-                                size="small" 
-                                onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
-                              >
-                                <Minus size={16} />
-                              </IconButton>
-                              <Typography variant="body2" sx={{ minWidth: 20, textAlign: 'center' }}>
-                                {item.quantity}
-                              </Typography>
-                              <IconButton 
-                                size="small" 
-                                onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
-                              >
-                                <Plus size={16} />
-                              </IconButton>
-                              <IconButton 
-                                size="small" 
-                                color="error"
-                                onClick={() => removeFromCart(item.product_id)}
-                              >
-                                <Trash size={16} />
-                              </IconButton>
-                            </Stack>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                      ))}
-                    </List>
+                    <TableContainer>
+                      <Table size="small">
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Product</TableCell>
+                            <TableCell align="center">Qty</TableCell>
+                            <TableCell align="center">Unit Cost</TableCell>
+                            <TableCell align="center">Total</TableCell>
+                            <TableCell align="center">Action</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {cart.map((item) => (
+                            <TableRow key={item.product_id}>
+                              <TableCell>{item.product_name}</TableCell>
+                              <TableCell align="center">
+                                <TextField
+                                  size="small"
+                                  type="number"
+                                  value={item.quantity}
+                                  onChange={(e) => updateQuantity(item.product_id, parseInt(e.target.value) || 0)}
+                                  sx={{ width: 70 }}
+                                />
+                              </TableCell>
+                              <TableCell align="center">
+                                <TextField
+                                  size="small"
+                                  type="number"
+                                  value={item.unit_cost}
+                                  onChange={(e) => updateUnitCost(item.product_id, parseFloat(e.target.value) || 0)}
+                                  sx={{ width: 90 }}
+                                />
+                              </TableCell>
+                              <TableCell align="center">${item.total_cost.toFixed(2)}</TableCell>
+                              <TableCell align="center">
+                                <IconButton size="small" color="error" onClick={() => removeFromCart(item.product_id)}>
+                                  <Trash size={16} />
+                                </IconButton>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+
                     
                     <Divider sx={{ my: 2 }} />
                     

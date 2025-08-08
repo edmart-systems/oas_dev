@@ -1,51 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid2 } from '@mui/material';
-import { saveOrUpdate } from '../form-handlers';
 
-interface CategoryFormProps {
+
+interface UnitFormProps {
   open: boolean;
   onClose: () => void;
-  onSuccess: () => void;
-  category?: any;
+  onSuccess: (newCategory: any) => void;
+  initialData?: any;
 }
 
-const CategoryForm: React.FC<CategoryFormProps> = ({ open, onClose, onSuccess, category }) => {
+const CategoryForm: React.FC<UnitFormProps> = ({ open, onClose, onSuccess, initialData }) => {
   const [formData, setFormData] = useState({
     category: ''
   });
 
-  useEffect(() => {
-    if (category) {
-      setFormData({
-        category: category.category || ''
-      });
-    } else {
-      setFormData({ category: '' });
-    }
-  }, [category]);
+useEffect(()=>{
+  if(initialData){
+    setFormData({
+      category: initialData.category || ''
+    });
+  }
+}), [initialData];
 
-  const handleSubmit = async (e: React.FormEvent) => {
+
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const submitData = {
+      ...formData,
+    };
     
     try {
-      await saveOrUpdate({
-        endpoint: '/api/inventory/categories',
-        data: formData,
-        id: category?.id,
-        onSuccess: () => {
-          onSuccess();
-          onClose();
-        }
+      const res = await fetch('/api/inventory/category',{
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(submitData)
       });
+
+      if (!res.ok) throw new Error('Failed to save category');
+
+      const newCategory = await res.json();
+      onSuccess(newCategory);
+      onClose();
     } catch (error) {
-      // Error is already handled in saveOrUpdate
+      console.error('Error saving category:', error);
     }
   };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <form onSubmit={handleSubmit}>
-        <DialogTitle>{category ? 'Edit Category' : 'Add Category'}</DialogTitle>
+        <DialogTitle>
+          { initialData?.category ? 'Edit Category' : 'Add Category'}
+
+        </DialogTitle>
         <DialogContent>
           <Grid2 container spacing={2} sx={{ mt: 1 }}>
             <Grid2 size={12}>
@@ -62,7 +70,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ open, onClose, onSuccess, c
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
           <Button type="submit" variant="contained">
-            {category ? 'Update' : 'Create'}
+            {initialData?.category ? 'Update' : 'Add'} 
           </Button>
         </DialogActions>
       </form>
