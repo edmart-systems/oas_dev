@@ -19,8 +19,8 @@ import AddIcon from '@mui/icons-material/Add';
 import { useState, useEffect } from 'react';
 import { getUnits, getCurrencies } from '@/server-actions/user-actions/inventory.actions';
 import { toast } from 'react-toastify';
-import UnitForm from '../units/unitForm';
-import SupplierForm from '../supplier/supplierForm';
+import UnitForm from '../units/UnitForm';
+import SupplierForm from '../supplier/SupplierForm';
 import CategoryForm from '../tags/CategoryForm';
 import TagForm from '../tags/tagForm';
 import { Currency } from 'lucide-react';
@@ -129,7 +129,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
     <Card sx={{ width: '100%', mt: 2 }}>
       <CardContent>
         <Typography variant="h5" gutterBottom>
-          Add New Product
+          New Product
         </Typography>
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 6 }}>
