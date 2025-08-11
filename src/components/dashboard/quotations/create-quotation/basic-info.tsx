@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import { Quotation_category, Quotation_type } from "@prisma/client";
 import React, { ChangeEvent, Dispatch, SetStateAction } from "react";
+import PaymentTermsInput from "./payment-terms-input";
 
 type Props = {
   tin: string;
@@ -105,23 +106,7 @@ const BasicInfo = ({
     }
   };
 
-  const graceDaysChangeHandler = (
-    evt: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    try {
-      if (!editTcs) return;
-      const str = evt.target.value;
-      const num = parseInt(str, 10);
-      if (isNaN(num)) return; // Only reject if not a number
 
-      setSelectedTcs((prev) => ({
-        ...prev,
-        edited_payment_grace_days: num,
-      }));
-    } catch (err) {
-      // console.log(err);
-    }
-  };
 
   const initialPaymentPercentageChangeHandler = (
     evt: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -294,22 +279,10 @@ const BasicInfo = ({
         </Grid>
         {selectedQuoteType.type_id === 1 ? (
           <Grid size={{ lg: 6, md: 6, sm: 12, xs: 12 }}>
-            <TextField
-              label="Payment Grace Period"
-              value={selectedTcs.edited_payment_grace_days}
-              size="small"
-              type="number"
-              fullWidth
-              onChange={graceDaysChangeHandler}
-              inputProps={{ min: -365, max: 365, inputMode: "numeric", pattern: "[0-9]*", }}
-              helperText="Use negative for days before delivery, 0 for on delivery day, positive for days after delivery."
-              slotProps={{
-                input: {
-                  endAdornment: (
-                    <InputAdornment position="end">Days</InputAdornment>
-                  ),
-                },
-              }}
+            <PaymentTermsInput
+              selectedTcs={selectedTcs}
+              setSelectedTcs={setSelectedTcs}
+              editTcs={editTcs}
             />
           </Grid>
         ) : (
