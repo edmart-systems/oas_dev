@@ -9,6 +9,8 @@ export const PurchaseDto = z.object({
   supplier_id: z.number(),
   purchase_created_by: z.string().optional(),
   purchase_updated_by: z.string().optional(),
+  purchase_created_at: z.date().optional(),
+  purchase_updated_at: z.date().optional(),
   purchase_items: z.array(PurchaseItemDto),
 });
 
@@ -20,6 +22,8 @@ export const CreatePurchaseDto = z.object({
   supplier_id: z.number(),
   purchase_created_by: z.string().optional(),
   purchase_updated_by: z.string().optional(),
+  purchase_created_at: z.date().optional(),
+  purchase_updated_at: z.date().optional(),
   purchase_items: z.array(PurchaseItemDto),
 });
 

@@ -167,22 +167,38 @@ const ProductsPage = () => {
     setDeleteOpen(true);
   };
 
-  const handleDeleteConfirm = async () => {
-    if (!productToDelete) return;
-    
-    try {
-      const res = await fetch(`/api/inventory/product/${productToDelete.product_id}`, { method: 'DELETE' });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Delete failed');
-      toast.success("Product deleted");
-      fetchproduct();
-    } catch (error: any) {
-      toast.error(error.message || "Delete failed");
-    } finally {
-      setDeleteOpen(false);
-      setProductToDelete(null);
+const handleDeleteConfirm = async () => {
+  if (!productToDelete) return;
+  
+  try {
+    // Check if product is referenced in other tables
+    const checkRes = await fetch(`/api/inventory/product/${productToDelete.product_id}/check-references`);
+    if (checkRes.ok) {
+      const { hasReferences, references } = await checkRes.json();
+      if (hasReferences) {
+        toast.error(`Cannot delete product. It's referenced in: ${references.join(', ')}`);
+        setDeleteOpen(false);
+        return;
+      }
     }
-  };
+    
+    const res = await fetch(`/api/inventory/product/${productToDelete.product_id}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Delete failed');
+    toast.success("Product deleted");
+    fetchproduct();
+  } catch (error: any) {
+    if (error.message.includes('foreign key constraint')) {
+      toast.error("Cannot delete product. It's being used in purchase orders or other records.");
+    } else {
+      toast.error(error.message || "Delete failed");
+    }
+  } finally {
+    setDeleteOpen(false);
+    setProductToDelete(null);
+  }
+};
+
 
   const filteredproduct = product.filter(product =>
     product.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||

@@ -52,7 +52,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
   const [units, setUnits] = useState<{id: number, name: string}[]>([]);
   const [categories, setCategories] = useState<{id: number, name: string}[]>([]);
   const [tags, setTags] = useState<{id: number, name: string}[]>([]);
-  const [currencies, setCurrencies] = useState<{id: number, name: string}[]>([]);
+  const [currencies, setCurrencies] = useState<{currency_id: number, currency_code: string, currency_name: string}[]>([]);
   const [suppliers, setSuppliers] = useState<{id: number, name: string}[]>([]);
 
   const [openDialog, setOpenDialog] = useState({
@@ -256,8 +256,8 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
                 onChange={(e) => setFormData({ ...formData, currency_id: e.target.value })}
               >
                 {currencies.map((cur) => (
-                  <MenuItem key={cur.id} value={cur.id}>
-                    {cur.name}
+                  <MenuItem key={cur.currency_id} value={cur.currency_id}>
+                    {cur.currency_code} - {cur.currency_name}
                   </MenuItem>
                 ))}
               </TextField>

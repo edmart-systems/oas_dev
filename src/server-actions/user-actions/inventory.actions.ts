@@ -22,10 +22,11 @@ export async function getCurrencies() {
     const currencies = await prisma.currency.findMany({
       select: {
         currency_id: true,
+        currency_code: true,
         currency_name: true,
       },
     });
-    return currencies.map(currency => ({ id: currency.currency_id, name: currency.currency_name }));
+    return currencies;
   } catch (error) {
     console.error('Failed to fetch currencies:', error);
     return [];

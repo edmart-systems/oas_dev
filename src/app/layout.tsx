@@ -6,6 +6,7 @@ import "@/styles/global.css";
 import { LocalizationProvider } from "@/components/core/localization-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import AuthProvider from "@/components/auth/auth-provider";
+import { CurrencyProvider } from "@/components/currency/currency-context";
 import "react-toastify/dist/ReactToastify.css";
 import ToastProvider from "@/components/toast/toast-provider";
 import ReduxProvider from "@/components/redux/redux-provider";
@@ -47,8 +48,10 @@ const RootLayout = ({ children }: Props): JSX.Element => {
             <Fragment>
               <ReduxProvider>
                 <ThemeProvider>
-                  <SessionMonitor>{children}</SessionMonitor>
-                  <ToastProvider />
+                  <CurrencyProvider>
+                    <SessionMonitor>{children}</SessionMonitor>
+                    <ToastProvider />
+                  </CurrencyProvider>
                 </ThemeProvider>
               </ReduxProvider>
             </Fragment>
