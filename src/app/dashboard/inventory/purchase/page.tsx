@@ -5,6 +5,11 @@ import { toast } from "react-toastify";
 import {
   Button,
   Stack,
+  TablePagination,
+  TextField,
+  Box,
+  Chip,
+  Typography,
 } from "@mui/material";
 import {ShoppingCart, List as ListIcon } from "@phosphor-icons/react";
 import PurchaseMain from "@/components/dashboard/inventory/purchase/purchaseMain";
@@ -15,6 +20,8 @@ import { Supplier } from "@/modules/inventory/types";
 import { InventoryPoint } from "@/modules/inventory/types";
 import PurchaseHistory from "@/components/dashboard/inventory/purchase/purchaseHistory";
 import PurchaseDialogs from "@/components/dashboard/inventory/purchase/purchaseDialoges";
+import { usePagination } from "@/hooks/usePagination";
+import { useCurrency } from "@/components/currency/currency-context";
 
 
 
@@ -22,9 +29,10 @@ import PurchaseDialogs from "@/components/dashboard/inventory/purchase/purchaseD
 
 
 const PurchasePage = () => {
+    const { formatCurrency } = useCurrency();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [orders, setOrders] = useState<PurchaseOrder[]>([]);
+  const [purchases, setPurchases] = useState<PurchaseOrder[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [supplierId, setSupplierId] = useState<number>(1);
@@ -42,6 +50,14 @@ const PurchasePage = () => {
     deleteConfirm: false
   });
 
+  const safeCurrency = (amount: number) => {
+    try {
+      return formatCurrency(amount);
+    } catch {
+      return `$${amount.toFixed(2)}`;
+    }
+  };
+  
   useEffect(() => {
     fetchData();
   }, []);
@@ -75,7 +91,7 @@ const PurchasePage = () => {
         name: ip.inventory_point,
         inventory_point: ip.inventory_point
       })));
-      setOrders(purchasesData);
+      setPurchases(purchasesData);
     } catch (error) {
       console.error('Failed to fetch data:', error);
       toast.error('Failed to load data');
@@ -156,18 +172,18 @@ const PurchasePage = () => {
         body: JSON.stringify(purchaseData)
       });
       
-      if (!res.ok) throw new Error('Failed to create purchase order');
+      if (!res.ok) throw new Error('Failed to create purchase purchase');
       
-      const newOrder = await res.json();
-      setOrders([newOrder, ...orders]);
+      const newPurchase = await res.json();
+      setPurchases([newPurchase, ...purchases]);
       
       const supplierName = suppliers.find(s => s.id === supplierId)?.name || 'Unknown Supplier';
-      toast.success(`Purchase order created for ${supplierName}`);
+      toast.success(`Purchase purchase created for ${supplierName}`);
       clearCart();
       fetchData();
     } catch (error) {
       console.error('Failed to create purchase:', error);
-      toast.error('Failed to create purchase order');
+      toast.error('Failed to create purchase purchase');
     }
   };
 
@@ -177,13 +193,13 @@ const PurchasePage = () => {
         method: 'DELETE'
       });
       
-      if (!res.ok) throw new Error('Failed to delete purchase order');
+      if (!res.ok) throw new Error('Failed to delete purchase purchase');
       
-      setOrders(orders.filter(o => o.purchase_id !== purchase_id));
-      toast.success('Purchase order deleted');
+      setPurchases(purchases.filter(o => o.purchase_id !== purchase_id));
+      toast.success('Purchase purchase deleted');
     } catch (error) {
       console.error('Failed to delete purchase:', error);
-      toast.error('Failed to delete purchase order');
+      toast.error('Failed to delete purchase purchase');
     }
   };
 
@@ -230,20 +246,104 @@ const PurchasePage = () => {
   const handleSearchFocus = () => setShowDropdown(true);
   const handleSearchBlur = () => setTimeout(() => setShowDropdown(false), 200);
 
-  const filteredOrders = orders.filter(order => {
-    const supplier = suppliers.find(s => s.id === order.supplier_id);
-    return supplier?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-           order.purchase_id?.toString().includes(searchTerm);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+  const [dateError, setDateError] = useState('');
+
+  const handleEndDateChange = (value: string) => {
+    if (value && startDate && new Date(value) < new Date(startDate)) {
+      setDateError('End date cannot be earlier than start date');
+      toast.error('End date cannot be earlier than start date');
+      return;
+    }
+    setDateError('');
+    setEndDate(value);
+  };
+
+  const handleQuickFilter = (filter: string) => {
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    
+    switch (filter) {
+      case 'today':
+        setStartDate(todayStr);
+        setEndDate(todayStr);
+        break;
+      case 'yesterday':
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split('T')[0];
+        setStartDate(yesterdayStr);
+        setEndDate(yesterdayStr);
+        break;
+      case 'week':
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        setStartDate(weekAgo.toISOString().split('T')[0]);
+        setEndDate(todayStr);
+        break;
+      case 'month':
+        const monthAgo = new Date();
+        monthAgo.setDate(monthAgo.getDate() - 30);
+        setStartDate(monthAgo.toISOString().split('T')[0]);
+        setEndDate(todayStr);
+        break;
+    }
+    setDateError('');
+  };
+
+  const filteredPurchases = purchases.filter(order => {
+    const orderDate = order.purchase_created_at ? new Date(order.purchase_created_at) : null;
+    if (!orderDate) return false;
+    
+    // Get date in local timezone to match input format
+    const year = orderDate.getFullYear();
+    const month = String(orderDate.getMonth() + 1).padStart(2, '0');
+    const day = String(orderDate.getDate()).padStart(2, '0');
+    const orderDateStr = `${year}-${month}-${day}`;
+    
+    // If both start and end dates are provided, check for date range
+    if (startDate && endDate) {
+      return orderDateStr >= startDate && orderDateStr <= endDate;
+    }
+    
+    // If only start date is provided, check for specific date
+    if (startDate && !endDate) {
+      return orderDateStr === startDate;
+    }
+    
+    // If only end date is provided, check for specific date
+    if (!startDate && endDate) {
+      return orderDateStr === endDate;
+    }
+    
+    return false;
   });
+  
+  const paginatedPurchases = filteredPurchases.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+  
+  const totalPurchases = filteredPurchases.reduce((sum, purchase) => {
+    return sum + (purchase.purchase_total_cost || 0);
+  }, 0);
+  
+  const totalItems = filteredPurchases.reduce((sum, purchase) => {
+    return sum + (purchase.purchase_quantity || 0);
+  }, 0);
   
 
   return (
     <Stack>
-      <Stack direction="row" spacing={2}>
+      <Stack direction="row" spacing={2} alignItems="center">
         <Button
           variant={tabValue === 0 ? "contained" : "outlined"}
           startIcon={<ShoppingCart size={20} />}
           onClick={() => setTabValue(0)}
+          color="primary"
         >
           Create Purchase
         </Button>
@@ -251,9 +351,42 @@ const PurchasePage = () => {
           variant={tabValue === 1 ? "contained" : "outlined"}
           startIcon={<ListIcon size={20} />}
           onClick={() => setTabValue(1)}
+          color="primary"
         >
           Purchase History
         </Button>
+        {tabValue === 1 && (
+          <>
+            <Box display="flex" gap={2}>
+              <TextField
+                type="date"
+                label="Start Date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                slotProps={{ inputLabel: { shrink: true } }}
+                size="small"
+                color="primary"
+              />
+              <TextField
+                type="date"
+                label="End Date"
+                value={endDate}
+                onChange={(e) => handleEndDateChange(e.target.value)}
+                slotProps={{ inputLabel: { shrink: true } }}
+                size="small"
+                error={!!dateError}
+                helperText={dateError}
+                color="primary"
+              />
+            </Box>
+            <Box display="flex" gap={1}>
+              <Chip label="Today" onClick={() => handleQuickFilter('today')} clickable size="small" color="primary" />
+              <Chip label="Yesterday" onClick={() => handleQuickFilter('yesterday')} clickable size="small" color="primary" />
+              <Chip label="Last Week" onClick={() => handleQuickFilter('week')} clickable size="small" color="primary" />
+              <Chip label="Last Month" onClick={() => handleQuickFilter('month')} clickable size="small" color="primary" />
+            </Box>
+          </>
+        )}
       </Stack>
       
       {tabValue === 0 ? (
@@ -285,11 +418,43 @@ const PurchasePage = () => {
           onOpenDialog={handleDialogOpen}
         />
       ) : (
-        <PurchaseHistory
-          orders={filteredOrders}
-          suppliers={suppliers}
-          onDelete={handleDelete}
-        />
+        <>
+          <PurchaseHistory
+            orders={paginatedPurchases}
+            suppliers={suppliers}
+            onDelete={handleDelete}
+          />
+          <Box display="flex" alignItems="center" justifyContent="space-between">
+            <Typography variant="body2" color="primary" fontWeight={600}>
+              Total Purchase: {safeCurrency(totalPurchases || 0)}
+            </Typography>
+            <Typography variant="body2" color="primary" fontWeight={600}>
+                Purchase Items: {totalItems}
+            </Typography>
+            <TablePagination
+              component="div"
+              count={filteredPurchases.length}
+              page={page}
+              onPageChange={(_, newPage) => setPage(newPage)}
+              rowsPerPage={rowsPerPage}
+              onRowsPerPageChange={(e) => {
+                setRowsPerPage(parseInt(e.target.value, 10));
+                setPage(0);
+              }}
+              rowsPerPageOptions={[5]}
+              sx={{
+                '& .MuiTablePagination-actions button': {
+                  color: 'primary.main',
+                },
+                '& .MuiTablePagination-selectIcon': {
+                  color: 'primary.main',
+                }
+              }}
+            />
+          </Box>
+        </>
+
+        
       )}
       
       <PurchaseDialogs

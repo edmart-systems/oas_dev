@@ -12,14 +12,13 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { Eye, Trash } from "@phosphor-icons/react";
+import { Eye } from "@phosphor-icons/react";
 import { useCurrency } from "@/components/currency/currency-context";
 import { PurchaseHistoryProps } from "@/modules/inventory/types";
 
-
 export default function PurchaseHistory({ orders, suppliers, onDelete }: PurchaseHistoryProps) {
   const { formatCurrency } = useCurrency();
-  
+
   const safeCurrency = (amount: number) => {
     try {
       return formatCurrency(amount);
@@ -30,7 +29,7 @@ export default function PurchaseHistory({ orders, suppliers, onDelete }: Purchas
 
   return (
     <Card>
-      <CardHeader title="Purchase Orders" />
+      <CardHeader title="Purchases" />
       <CardContent>
         <TableContainer>
           <Table>
@@ -51,11 +50,11 @@ export default function PurchaseHistory({ orders, suppliers, onDelete }: Purchas
                 return (
                   <TableRow key={purchase.purchase_id}>
                     <TableCell>PO-{purchase.purchase_id}</TableCell>
-                    <TableCell>{supplier?.name || 'Unknown'}</TableCell>
+                    <TableCell>{supplier?.name || "Unknown"}</TableCell>
                     <TableCell>
-                      {purchase.purchase_created_at 
-                        ? new Date(purchase.purchase_created_at).toLocaleDateString() 
-                        : 'N/A'}
+                      {purchase.purchase_created_at
+                        ? new Date(purchase.purchase_created_at).toLocaleDateString()
+                        : "N/A"}
                     </TableCell>
                     <TableCell>{purchase.purchase_quantity || 0}</TableCell>
                     <TableCell>{safeCurrency(purchase.purchase_unit_cost || 0)}</TableCell>
@@ -63,9 +62,6 @@ export default function PurchaseHistory({ orders, suppliers, onDelete }: Purchas
                     <TableCell>
                       <IconButton>
                         <Eye />
-                      </IconButton>
-                      <IconButton onClick={() => onDelete(purchase.purchase_id)} color="error">
-                        <Trash />
                       </IconButton>
                     </TableCell>
                   </TableRow>
