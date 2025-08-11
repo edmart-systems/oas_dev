@@ -1,11 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import { CreatePurchaseInput } from "../dtos/purchase.dto";
-import { Purchase } from "@prisma/client";
+import { purchase } from "@prisma/client";
 
 export class PurchaseRepository {
     constructor(private prisma: any) {} // Accepts both PrismaClient and transaction client
 
-    async create(data: CreatePurchaseInput): Promise<Purchase> {
+    async create(data: CreatePurchaseInput): Promise<purchase> {
         // Only keep allowed fields for nested creation
         const purchaseItems = data.purchase_items.map(item => ({
             product_id: item.product_id,
@@ -23,30 +23,30 @@ export class PurchaseRepository {
                 supplier_id: data.supplier_id,
                 purchase_created_by: data.purchase_created_by,
                 purchase_updated_by: data.purchase_updated_by,
-                Purchase_items: purchaseItems.length
+                purchase_item: purchaseItems.length
                     ? { create: purchaseItems }
                     : undefined,
             },
             include: {
-                Purchase_items: true,
+                purchase_item: true,
             },
         });
     }
 
-    async getAll(): Promise<Purchase[]> {
+    async getAll(): Promise<purchase[]> {
         return this.prisma.purchase.findMany({
-            include: { Purchase_items: true },
+            include: { purchase_item: true },
         });
     }
 
-    async getById(id: number): Promise<Purchase | null> {
+    async getById(id: number): Promise<purchase | null> {
         return this.prisma.purchase.findUnique({
             where: { purchase_id: id },
-            include: { Purchase_items: true },
+            include: { purchase_item: true },
         });
     }
 
-    async update(id: number, data: Partial<CreatePurchaseInput>): Promise<Purchase> {
+    async update(id: number, data: Partial<CreatePurchaseInput>): Promise<purchase> {
         return this.prisma.purchase.update({
             where: { purchase_id: id },
             data,

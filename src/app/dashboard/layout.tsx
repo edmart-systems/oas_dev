@@ -83,14 +83,17 @@ const DashboardLayout = ({ children }: Props) => {
                 flexDirection: "column",
                 pl: { lg: `${sidebarWidth}px` },
                 transition: "padding-left 0.3s ease",
+                minWidth: 0,
+                width: "100%",
               }}
             >
               <MainNav />
               <main
                 style={{
-                  padding: "64px 16px",
+                  padding: "16px 16px",
                   width: "100%",
                   transition: "all 0.3s ease",
+                  overflow: "hidden",
                 }}
               >
                 {children}

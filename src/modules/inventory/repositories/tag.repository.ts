@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { Tag } from "@prisma/client";
+import { tag } from "@prisma/client";
 import { TagDtoInput } from "../dtos/tag.dto";
 
 
@@ -12,21 +12,21 @@ export class TagRepository{
         })
     }
 
-    async create(data: TagDtoInput):Promise<Tag>{
+    async create(data: TagDtoInput):Promise<tag>{
         return this.prisma.tag.create({data});
     }
 
     
-    async getAll():Promise<Tag[]>{
+    async getAll():Promise<tag[]>{
         return this.prisma.tag.findMany({});
     }
-    async getById(id: number): Promise<Tag | null> {
+    async getById(id: number): Promise<tag | null> {
         return this.prisma.tag.findUnique({
             where: { tag_id: id },
         });
     }
 
-    async updateTag(id: number, data: { tag: string }): Promise<Tag> {
+    async updateTag(id: number, data: { tag: string }): Promise<tag> {
         return this.prisma.tag.update({
             where: { tag_id: id },
             data,

@@ -1,12 +1,12 @@
 import { ProductRepository } from "../repositories/product.repository";
 import { CreateProductInput } from "../dtos/product.dto";
-import { Product } from "@prisma/client";
+import { product } from "@prisma/client";
 import { calculateProductStatus, calculateMarkupPercentage } from "../methods/purchase.method";
 
 export class ProductService {
   constructor(private productRepo: ProductRepository) {}
 
-  async createProduct(data: CreateProductInput): Promise<Product> {
+  async createProduct(data: CreateProductInput): Promise<product> {
     const existingBarcode = await this.productRepo.findByBarcode(data.product_barcode);
     if (existingBarcode) {
       throw new Error("Product with this barcode already exists.");
@@ -26,15 +26,15 @@ export class ProductService {
     return this.productRepo.create(productData);
   }
 
-  async getAllProducts(): Promise<Product[]> {
+  async getAllProducts(): Promise<product[]> {
     return this.productRepo.getAll();
   }
 
-  async getProductById(id: number): Promise<Product | null> {
+  async getProductById(id: number): Promise<product | null> {
     return this.productRepo.getById(id);
   }
 
-  async updateProduct(id: number, data: Partial<Product>): Promise<Product> {
+  async updateProduct(id: number, data: Partial<product>): Promise<product> {
   const existing = await this.productRepo.getById(id);
   if (!existing) throw new Error("Product not found");
 
@@ -72,13 +72,13 @@ export class ProductService {
   return this.productRepo.update(id, updateData);
 }
 
-  async deleteProduct(id: number): Promise<Product> {
+  async deleteProduct(id: number): Promise<product> {
     const existing = await this.productRepo.getById(id);
     if (!existing) throw new Error("Product not found");
     return this.productRepo.delete(id);
   }
 
-  async updateProductQuantityAndStatus(id: number, newQuantity: number): Promise<Product> {
+  async updateProductQuantityAndStatus(id: number, newQuantity: number): Promise<product> {
     const existing = await this.productRepo.getById(id);
     if (!existing) throw new Error("Product not found");
     

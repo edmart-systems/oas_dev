@@ -1,4 +1,4 @@
-import { PrismaClient, Stock } from "@prisma/client";
+import { PrismaClient, stock } from "@prisma/client";
 import { StockDtoInput } from "../dtos/stock.dto"; 
 
 export class StockRepository {
@@ -7,7 +7,7 @@ export class StockRepository {
   /**
    * Create a stock record
    */
-  async create(data: StockDtoInput): Promise<Stock> {
+  async create(data: StockDtoInput): Promise<stock> {
     return this.prisma.stock.create({
       data,
     });
@@ -16,7 +16,7 @@ export class StockRepository {
   /**
    * Get all stock records
    */
-  async getAll(): Promise<Stock[]> {
+  async getAll(): Promise<stock[]> {
     return this.prisma.stock.findMany({
       orderBy: { created_at: "desc" },
     });
@@ -25,7 +25,7 @@ export class StockRepository {
   /**
    * Get stock record by ID
    */
-  async getById(stock_id: number): Promise<Stock | null> {
+  async getById(stock_id: number): Promise<stock | null> {
     return this.prisma.stock.findUnique({
       where: { stock_id },
     });
@@ -34,7 +34,7 @@ export class StockRepository {
   /**
    * Get all stock entries for a specific product
    */
-  async getByProduct(product_id: number): Promise<Stock[]> {
+  async getByProduct(product_id: number): Promise<stock[]> {
     return this.prisma.stock.findMany({
       where: { product_id },
       orderBy: { created_at: "desc" },
@@ -44,7 +44,7 @@ export class StockRepository {
   /**
    * Get stock for a specific inventory point and product
    */
-  async getByInventoryPoint(product_id: number, inventory_point_id: number): Promise<Stock[]> {
+  async getByInventoryPoint(product_id: number, inventory_point_id: number): Promise<stock[]> {
     return this.prisma.stock.findMany({
       where: {
         product_id,

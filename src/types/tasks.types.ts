@@ -16,7 +16,8 @@ export type TaskStatus =
   | "Stalled"
   | "Failed"
   | "Done"
-  | "Completed";
+  | "Completed"
+  | "Cancelled";
 
 export type TaskPriority = "Urgent" | "High" | "Moderate" | "Low";
 

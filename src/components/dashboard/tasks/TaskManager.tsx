@@ -2,7 +2,9 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo, Suspense, useCallback } from "react";
+import React, { useState, useEffect, useMemo, Suspense, useCallback } from "react";
+import { toast } from "react-toastify";
+
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -12,12 +14,13 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Tooltip from "@mui/material/Tooltip";
-import { Box, Button, Card, CardContent, TextField, Typography, FormControl,InputLabel, Select, MenuItem, IconButton, Stack, Checkbox, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, Snackbar, Alert, Divider, Chip, Skeleton, Tabs, Tab, Avatar, Menu, LinearProgress,
+import { Box, Button, Card, CardContent, TextField, Typography, FormControl,InputLabel, Select, MenuItem, IconButton, Stack, Checkbox, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, Divider, Chip, Skeleton, Tabs, Tab, Avatar, Menu, LinearProgress, Fab,
 } from "@mui/material";
-import { Add, Delete, Edit, Save, Refresh, Launch, Sort, ArrowDropDown, ExpandMore, ChevronRight,
+import { Add, Save, Refresh, Launch, ArrowDropDown, ExpandMore, ChevronRight, KeyboardArrowUp,
 } from "@mui/icons-material";
+import { PencilSimple, Trash } from "@phosphor-icons/react/dist/ssr";
 
-type TaskStatus = "Pending" | "In-Progress" | "Stalled" | "Failed" | "Done" | "Completed";
+type TaskStatus = "Pending" | "In-Progress" | "Stalled" | "Failed" | "Done" | "Completed" | "Cancelled";
 type TaskPriority = "Urgent" | "High" | "Moderate" | "Low";
 type SortDirection = "asc" | "desc";
 type SortField = "taskName" | "startTime" | "priority" | "status" | "user";
@@ -53,6 +56,10 @@ interface ApiTask {
   taskDetails?: string;
   comments?: string;
   taskLocked: boolean;
+  deleted: number;
+  push_count: number;
+  archived: number;
+  archived_at?: string;
   status: {
     id: number;
     status: TaskStatus;
@@ -109,6 +116,7 @@ interface SubTask {
 interface Task {
   id: string; // Client-side generated ID for new tasks or stringified taskId from API
   apiTaskId?: number; // Backend ID for existing tasks
+  taskId?: number; // Add taskId property for compatibility
   userId: number;
   taskName: string;
   taskDetails?: string;
@@ -119,6 +127,10 @@ interface Task {
   endTime: number;
   subTasks: SubTask[];
   completed: boolean;
+  deleted: boolean;
+  push_count: number;
+  archived: boolean;
+  archived_at?: string;
   user?: {
     co_user_id: number;
     firstName: string;
@@ -164,17 +176,32 @@ const TASK_STATUSES: TaskStatus[] = [
   "Failed",
   "Done",
   "Completed",
+  "Cancelled",
 ];
 const TASK_PRIORITIES: TaskPriority[] = ["Urgent", "High", "Moderate", "Low"];
 
-const nowISO = new Date().toISOString().slice(0, 16);
+const now = new Date();
+// Set to Uganda timezone (UTC+3)
+const ugandaNow = new Date(now.getTime() + (3 * 60 * 60 * 1000));
+const nowISO = ugandaNow.getFullYear() + '-' + 
+  String(ugandaNow.getMonth() + 1).padStart(2, '0') + '-' + 
+  String(ugandaNow.getDate()).padStart(2, '0') + 'T09:00';
+const endISO = ugandaNow.getFullYear() + '-' + 
+  String(ugandaNow.getMonth() + 1).padStart(2, '0') + '-' + 
+  String(ugandaNow.getDate()).padStart(2, '0') + 'T18:00';
+const todayISO = new Date().toISOString().slice(0, 10);
 
 function isoToTimestamp(iso: string): number {
   return new Date(iso).getTime();
 }
 
 function timestampToISO(ts: number): string {
-  return new Date(ts).toISOString().slice(0, 16);
+  const date = new Date(ts);
+  return date.getFullYear() + '-' + 
+    String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+    String(date.getDate()).padStart(2, '0') + 'T' + 
+    String(date.getHours()).padStart(2, '0') + ':' + 
+    String(date.getMinutes()).padStart(2, '0');
 }
 
 function generateId() {
@@ -249,6 +276,8 @@ const TaskStatusChip = ({ status }: { status: TaskStatus }) => {
         return "error";
       case "Failed":
         return "error";
+      case "Cancelled":
+        return "error";
       default:
         return "default";
     }
@@ -304,6 +333,8 @@ const InlineStatusSelect = ({ value, taskId, onUpdate}: {value: TaskStatus;taskI
         return "error";
       case "Failed":
         return "error";
+      case "Cancelled":
+        return "error";
       default:
         return "default";
     }
@@ -351,6 +382,8 @@ const InlineStatusSelect = ({ value, taskId, onUpdate}: {value: TaskStatus;taskI
               case "Stalled":
                 return "error";
               case "Failed":
+                return "error";
+              case "Cancelled":
                 return "error";
               default:
                 return "default";
@@ -543,13 +576,18 @@ const TaskTableTabs = ({
           )})`}
           value="All"
         />
-        {TASK_STATUSES.map((status) => (
+        {TASK_STATUSES.filter(status => status !== "Cancelled").map((status) => (
           <Tab
             key={status}
             label={`${status} (${statusCounts[status] || 0})`}
             value={status}
           />
         ))}
+        <Tab
+          key="Cancelled"
+          label={`Drafts (${statusCounts["Cancelled"] || 0})`}
+          value="Cancelled"
+        />
       </Tabs>
     </Box>
   );
@@ -628,7 +666,8 @@ const TaskStatusFilter = ({
         onChange={(e) => onChange(e.target.value)}
       >
         <MenuItem value="">All</MenuItem>
-        {TASK_STATUSES.map((status) => (
+        <MenuItem value="Drafts">Drafts</MenuItem>
+        {TASK_STATUSES.filter(status => status !== "Cancelled").map((status) => (
           <MenuItem key={status} value={status}>
             {status}
           </MenuItem>
@@ -726,6 +765,26 @@ const TaskDayFilter = ({
   );
 };
 
+const TaskDateFilter = ({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) => {
+  return (
+    <TextField
+      size="small"
+      label="Date"
+      type="date"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      InputLabelProps={{ shrink: true }}
+      sx={{ minWidth: 150 }}
+    />
+  );
+};
+
 // API Service Functions
 class TaskApiService {
   private baseUrl: string;
@@ -816,16 +875,8 @@ class TaskApiService {
       taskData: {
         userId,
         taskId,
-        taskName: taskData.taskName || "",
-        taskDetails: taskData.taskDetails || "",
-        comments: taskData.comments || "",
-        status: taskData.status,
-        priority: taskData.priority,
         statusStr: taskData.status,
         priorityStr: taskData.priority,
-        startTime: taskData.startTime,
-        endTime: taskData.endTime,
-        time: taskData.endTime,
       },
     };
     
@@ -941,6 +992,10 @@ function convertApiTaskToLocal(apiTask: ApiTask): Task {
     startTime: apiTask.startTime,
     user: apiTask.user,
     endTime: apiTask.endTime,
+    deleted: (apiTask.deleted || 0) === 1,
+    push_count: apiTask.push_count || 0,
+    archived: (apiTask.archived || 0) === 1,
+    archived_at: apiTask.archived_at,
     completed:
       apiTask.status.status === "Done" || apiTask.status.status === "Completed",
     subTasks: apiTask.subTasks.map((st) => ({
@@ -966,19 +1021,17 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
   // State for tasks
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   // State for table
   const [selected, setSelected] = useState<string[]>([]);
   const [page, setPage] = useState(0);
-  const [dense, setDense] = useState(false);
+
   const [rowsPerPage, setRowsPerPage] = useState(30);
   const [selectedStatusTab, setSelectedStatusTab] = useState<string>("All");
   const [inSearchMode, setInSearchMode] = useState(false);
 
   // State for sorting
-  const [order, setOrder] = useState<SortDirection>("asc");
+  const [order, setOrder] = useState<SortDirection>("desc");
   const [orderBy, setOrderBy] = useState<SortField>("startTime");
 
   // State for filtering
@@ -987,31 +1040,33 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
   const [priorityFilter, setPriorityFilter] = useState("");
   const [userFilter, setUserFilter] = useState("");
   const [dayFilter, setDayFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState("");
+  const [taskNameFilter, setTaskNameFilter] = useState("");
   const [filterLoading, setFilterLoading] = useState(false);
 
   // State for task form
-  const [openForm, setOpenForm] = useState(false);
+
   const [editTaskId, setEditTaskId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<TaskForm>({
-    taskName: "",
-    taskDetails: "",
-    comments: "",
-    status: "Pending",
-    priority: "Moderate",
-    startTime: nowISO,
-    endTime: nowISO,
-    subTasks: [],
-    completed: false,
-  });
+
+
+
+
 
   // state for expanded tasks
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
+  
+  // State for back-to-top button
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
   // State for multi-task operations
   const [openMultiAdd, setOpenMultiAdd] = useState(false);
   const [openMultiEdit, setOpenMultiEdit] = useState(false);
   const [multiTaskData, setMultiTaskData] = useState<TaskForm[]>([]);
   const [multiEditData, setMultiEditData] = useState<Partial<TaskForm>>({});
+
+  // State for delete confirmation
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
 
 
 
@@ -1044,10 +1099,36 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
 
   // Filter and sort tasks
   const filteredAndSortedTasks = useMemo(() => {
-    // First filter by tab
+    // First filter by tab and view mode
     let result = tasks;
-    if (selectedStatusTab !== "All") {
-      result = result.filter((task) => task.status === selectedStatusTab);
+    
+    console.log('Filtering tasks. statusFilter:', statusFilter);
+    console.log('Total tasks before filtering:', result.length);
+    
+    if (statusFilter === "Drafts") {
+      result = result.filter((task) => task.status === "Cancelled");
+    } else if (statusFilter) {
+      result = result.filter((task) => task.status === statusFilter);
+    } else {
+      if (selectedStatusTab === "Cancelled") {
+        result = result.filter((task) => task.status === "Cancelled");
+      } else if (selectedStatusTab !== "All") {
+        result = result.filter((task) => task.status === selectedStatusTab);
+      } else {
+        // Filter out cancelled tasks and show only the latest version of pushed tasks
+        result = result.filter((task) => task.status !== "Cancelled");
+        
+        // Group by task name and keep only the latest (highest push_count) version
+        const taskGroups = new Map<string, Task>();
+        result.forEach(task => {
+          const existing = taskGroups.get(task.taskName);
+          if (!existing || task.push_count > existing.push_count || 
+              (task.push_count === existing.push_count && task.startTime > existing.startTime)) {
+            taskGroups.set(task.taskName, task);
+          }
+        });
+        result = Array.from(taskGroups.values());
+      }
     }
 
     // Then apply additional filters
@@ -1061,9 +1142,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
     }
     // Remove default month filtering - show all months when no filter is selected
 
-    if (statusFilter) {
-      result = result.filter((task) => task.status === statusFilter);
-    }
+
 
     if (priorityFilter) {
       result = result.filter((task) => task.priority === priorityFilter);
@@ -1095,6 +1174,23 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         }
         return true;
       });
+    }
+
+    if (dateFilter) {
+      const selectedDate = new Date(dateFilter);
+      selectedDate.setHours(0, 0, 0, 0);
+
+      result = result.filter((task) => {
+        const taskDate = new Date(task.startTime);
+        taskDate.setHours(0, 0, 0, 0);
+        return taskDate.getTime() === selectedDate.getTime();
+      });
+    }
+
+    if (taskNameFilter) {
+      result = result.filter((task) =>
+        task.taskName.toLowerCase().includes(taskNameFilter.toLowerCase())
+      );
     }
 
     // Then sort
@@ -1139,6 +1235,8 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
     priorityFilter,
     userFilter,
     dayFilter,
+    dateFilter,
+    taskNameFilter,
     order,
     orderBy,
   ]);
@@ -1212,7 +1310,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
     
     // Only allow users to update their own tasks
     if (task.userId !== userId) {
-      setError("You can only update your own tasks");
+      toast("You can only update your own tasks", { type: "error" });
       return;
     }
 
@@ -1226,9 +1324,11 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         prev.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t))
       );
 
-      setSuccess("Status updated successfully");
+      if (newStatus !== "Cancelled" && newStatus !== "Pending") {
+        toast("Status updated successfully", { type: "success" });
+      }
     } catch (err) {
-      setError("Failed to update status");
+      toast("Failed to update status", { type: "error" });
     }
   };
 
@@ -1241,7 +1341,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
     
     // Only allow users to update their own tasks
     if (task.userId !== userId) {
-      setError("You can only update your own tasks");
+      toast("You can only update your own tasks", { type: "error" });
       return;
     }
 
@@ -1255,9 +1355,9 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         prev.map((t) => (t.id === taskId ? { ...t, priority: newPriority } : t))
       );
 
-      setSuccess("Priority updated successfully");
+      toast("Priority updated successfully", { type: "success" });
     } catch (err) {
-      setError("Failed to update priority");
+      toast("Failed to update priority", { type: "error" });
     }
   };
 
@@ -1269,6 +1369,8 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
     setPriorityFilter("");
     setUserFilter("");
     setDayFilter("");
+    setDateFilter("");
+    setTaskNameFilter("");
   };
 
   const refreshHandler = async () => {
@@ -1284,9 +1386,13 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         0 // Use 0 to get all users' tasks
       );
       const transformedTasks: Task[] = [];
+      let currentUserName = "";
+
+      console.log('Raw API response tasks:', response.tasks);
 
       for (const taskGroup of Object.values(response.tasks)) {
         for (const apiTask of taskGroup) {
+          console.log('Processing task:', apiTask.taskId, 'deleted:', apiTask.deleted, 'archived:', apiTask.archived);
           // Don't override user data - keep whatever comes from API
           if (!apiTask.user) {
             // Only add fallback if no user data exists
@@ -1298,393 +1404,82 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
             };
           }
 
-          transformedTasks.push(convertApiTaskToLocal(apiTask));
+          // Set current user name for default filter
+          if (apiTask.userId === userId && apiTask.user) {
+            currentUserName = `${apiTask.user.firstName} ${apiTask.user.lastName}`;
+          }
+
+          const localTask = convertApiTaskToLocal(apiTask);
+          console.log('Converted task:', localTask.taskId || localTask.id, 'deleted:', localTask.deleted, 'archived:', localTask.archived);
+          transformedTasks.push(localTask);
         }
       }
+      
+      console.log('Total tasks loaded:', transformedTasks.length);
+      console.log('Deleted tasks:', transformedTasks.filter(t => t.deleted).length);
+      console.log('Archived tasks:', transformedTasks.filter(t => t.archived).length);
 
       setTasks(transformedTasks);
     } catch (err) {
       console.error("Failed to fetch tasks:", err);
-      setError(err instanceof Error ? err.message : "Failed to fetch tasks");
+      toast(err instanceof Error ? err.message : "Failed to fetch tasks", { type: "error" });
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle form field changes
-  const handleFormChange = (field: keyof TaskForm, value: any) => {
-    console.log(`Updating ${field} to:`, value);
-    setFormData((prev) => ({ ...prev, [field]: value }));
+
+
+  // Soft delete task (mark as cancelled)
+  const handleDeleteTask = (taskId: string) => {
+    setTaskToDelete(taskId);
+    setDeleteDialogOpen(true);
   };
 
-  // Subtask helpers
-  const addSubTask = () => {
-    // Create a new subtask with default values
-    const newSubTask: SubTaskForm = {
-      id: generateId(),
-      taskName: "",
-      taskDetails: "",
-      comments: "",
-      status: "Pending",
-      priority: "Moderate",
-      startTime: nowISO,
-      endTime: nowISO,
-      completed: false,
-    };
-
-    // Add the new subtask to the form data
-    setFormData((prev) => ({
-      ...prev,
-      subTasks: [...prev.subTasks, newSubTask],
-    }));
-
-    console.log("Added new subtask:", newSubTask);
-  };
-
-  const updateSubTask = (id: string, field: keyof SubTaskForm, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      subTasks: prev.subTasks.map((st) =>
-        st.id === id ? { ...st, [field]: value } : st
-      ),
-    }));
-  };
-
-  const removeSubTask = (id: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      subTasks: prev.subTasks.filter((st) => st.id !== id),
-    }));
-  };
-
-  // Open form for new task
-  const handleOpenNew = () => {
-    setFormData({
-      taskName: "",
-      taskDetails: "",
-      comments: "",
-      status: "Pending",
-      priority: "Moderate",
-      startTime: nowISO,
-      endTime: nowISO,
-      subTasks: [],
-      completed: false,
-    });
-    setEditTaskId(null);
-    setOpenForm(true);
-  };
-
-  // Open form for edit
-  const handleOpenEdit = (task: Task) => {
-    const mappedSubTasks: SubTaskForm[] = task.subTasks.map((st) => ({
-      id: st.id,
-      apiSubTaskId: st.apiSubTaskId,
-      taskName: st.taskName,
-      taskDetails: st.taskDetails || "",
-      comments: st.comments || "",
-      status: st.status,
-      priority: st.priority,
-      startTime: timestampToISO(st.startTime),
-      endTime: timestampToISO(st.endTime),
-      completed: st.completed,
-    }));
-
-    setFormData({
-      taskName: task.taskName,
-      taskDetails: task.taskDetails || "",
-      comments: task.comments || "",
-      status: task.status,
-      priority: task.priority,
-      startTime: timestampToISO(task.startTime),
-      endTime: timestampToISO(task.endTime),
-      subTasks: mappedSubTasks,
-      completed: task.completed,
-    });
-    setEditTaskId(task.id);
-    setOpenForm(true);
-  };
-
-  // Validate form
-  const validateForm = () => {
-    if (!formData.taskName.trim()) {
-      setError("Task Name is required");
-      return false;
-    }
-    if (isoToTimestamp(formData.endTime) < isoToTimestamp(formData.startTime)) {
-      setError("End time must be after start time");
-      return false;
-    }
-
-    // Validate each subtask
-    for (let i = 0; i < formData.subTasks.length; i++) {
-      const st = formData.subTasks[i];
-      if (!st.taskName.trim()) {
-        setError(`Subtask ${i + 1}: Name is required`);
-        return false;
-      }
-      if (isoToTimestamp(st.endTime) < isoToTimestamp(st.startTime)) {
-        setError(`Subtask ${i + 1}: End time must be after start time`);
-        return false;
-      }
-      // Ensure status and priority are set
-      if (!st.status) {
-        setError(`Subtask ${i + 1}: Status is required`);
-        return false;
-      }
-      if (!st.priority) {
-        setError(`Subtask ${i + 1}: Priority is required`);
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  // Handle form submit (create or update)
-  const handleSubmit = async () => {
-    if (!validateForm()) return;
-
-    setLoading(true);
-    setError(null);
-
+  const confirmDeleteTask = async () => {
+    if (!taskToDelete) return;
+    
     try {
-      if (editTaskId) {
-        // Update existing task
-        const task = tasks.find((t) => t.id === editTaskId);
-        if (!task || !task.apiTaskId) {
-          throw new Error("Could not find task to update");
-        }
-
-        // Update main task
-        const taskDetailsValue = formData.taskDetails?.trim();
-        const commentsValue = formData.comments?.trim();
-        
-        const updatePayload = {
-          taskName: formData.taskName.trim(),
-          taskDetails: taskDetailsValue === "" ? "" : (taskDetailsValue || ""),
-          comments: commentsValue === "" ? "" : (commentsValue || ""),
-          status: formData.status,
-          priority: formData.priority,
-          startTime: isoToTimestamp(formData.startTime),
-          endTime: isoToTimestamp(formData.endTime),
-        };
-        
-        console.log('Updating task with payload:', updatePayload);
-        await apiService.updateTask(task.apiTaskId, userId, updatePayload);
-
-        // Handle subtasks
-        // New subtasks to create
-        const newSubTasks = formData.subTasks.filter((st) => !st.apiSubTaskId);
-        if (newSubTasks.length > 0) {
-          try {
-            await apiService.addSubTasks(
-              task.apiTaskId,
-              userId,
-              newSubTasks.map((st) => ({
-                taskName: st.taskName.trim(),
-                taskDetails: st.taskDetails?.trim() || "",
-                comments: st.comments?.trim() || "",
-                status: st.status,
-                priority: st.priority,
-                startTime: isoToTimestamp(st.startTime),
-                endTime: isoToTimestamp(st.endTime),
-              }))
-            );
-          } catch (subTaskError) {
-            console.error("Error adding subtasks:", subTaskError);
-            setError(
-              `Error adding subtasks: ${
-                subTaskError instanceof Error
-                  ? subTaskError.message
-                  : "Unknown error"
-              }`
-            );
-          }
-        }
-
-        // Update existing subtasks
-        for (const st of formData.subTasks) {
-          if (st.apiSubTaskId) {
-            try {
-              await apiService.updateSubTask(st.apiSubTaskId, userId, {
-                taskId: task.apiTaskId,
-                taskName: st.taskName.trim(),
-                taskDetails: st.taskDetails?.trim() || "",
-                comments: st.comments?.trim() || "",
-                status: st.status,
-                priority: st.priority,
-                startTime: isoToTimestamp(st.startTime),
-                endTime: isoToTimestamp(st.endTime),
-              });
-            } catch (updateError) {
-              console.error(
-                `Error updating subtask ${st.apiSubTaskId}:`,
-                updateError
-              );
-            }
-          }
-        }
-
-        // Delete removed subtasks
-        const currentSubTaskIds = new Set(
-          formData.subTasks
-            .filter((st) => st.apiSubTaskId)
-            .map((st) => st.apiSubTaskId)
-        );
-
-        const removedSubTasks = task.subTasks.filter(
-          (st) => st.apiSubTaskId && !currentSubTaskIds.has(st.apiSubTaskId)
-        );
-
-        for (const st of removedSubTasks) {
-          if (st.apiSubTaskId) {
-            try {
-              await apiService.deleteSubTask(
-                st.apiSubTaskId,
-                userId,
-                task.apiTaskId
-              );
-            } catch (deleteError) {
-              console.error(
-                `Error deleting subtask ${st.apiSubTaskId}:`,
-                deleteError
-              );
-            }
-          }
-        }
-
-        // Update local state immediately instead of refreshing from API
-        setTasks((prev) =>
-          prev.map((t) =>
-            t.id === editTaskId
-              ? {
-                  ...t,
-                  taskName: formData.taskName.trim(),
-                  taskDetails: taskDetailsValue || undefined,
-                  comments: commentsValue || undefined,
-                  status: formData.status,
-                  priority: formData.priority,
-                  startTime: isoToTimestamp(formData.startTime),
-                  endTime: isoToTimestamp(formData.endTime),
-                  subTasks: formData.subTasks.map((st) => ({
-                    id: st.id,
-                    apiSubTaskId: st.apiSubTaskId,
-                    taskName: st.taskName,
-                    taskDetails: st.taskDetails?.trim() || undefined,
-                    comments: st.comments?.trim() || undefined,
-                    status: st.status,
-                    priority: st.priority,
-                    startTime: isoToTimestamp(st.startTime),
-                    endTime: isoToTimestamp(st.endTime),
-                    completed: st.completed,
-                  })),
-                }
-              : t
-          )
-        );
-        
-        setSuccess("Task updated successfully");
+      if (taskToDelete === 'multiple') {
+        await confirmDeleteSelected();
       } else {
-        // Create new task with subtasks
-        try {
-          const subtasksPayload = formData.subTasks
-            .filter(st => st.taskName.trim()) // Only include subtasks with names
-            .map((st) => ({
-              userId,
-              taskId: 0, // Placeholder - will be set by backend
-              taskName: st.taskName.trim(),
-              taskDetails: st.taskDetails?.trim() || "",
-              comments: st.comments?.trim() || "",
-              status: st.status,
-              priority: st.priority,
-              startTime: isoToTimestamp(st.startTime),
-              endTime: isoToTimestamp(st.endTime),
-              time: isoToTimestamp(st.endTime),
-            }));
-
-          const mainTaskPayload = {
-            userId,
-            taskName: formData.taskName.trim(),
-            taskDetails: formData.taskDetails?.trim() || "",
-            comments: formData.comments?.trim() || "",
-            status: formData.status,
-            priority: formData.priority,
-            startTime: isoToTimestamp(formData.startTime),
-            endTime: isoToTimestamp(formData.endTime),
-            time: isoToTimestamp(formData.endTime),
-            subTasks: subtasksPayload,
-          };
-
-          await apiService.createTask(userId, mainTaskPayload);
-          setSuccess("Task created successfully");
-        } catch (createError) {
-          console.error("Error creating task:", createError);
-          setError(
-            `Error creating task: ${
-              createError instanceof Error
-                ? createError.message
-                : "Unknown error"
-            }`
-          );
-          setLoading(false);
-          return; // Don't close the form if there was an error
-        }
+        await handleStatusUpdate(taskToDelete, "Cancelled");
+        toast("Task moved to drafts", { type: "success" });
       }
-
-      // Only refresh for new tasks, not updates
-      if (!editTaskId) {
-        await refreshHandler();
-      }
-      setOpenForm(false);
     } catch (err) {
-      console.error("Operation failed:", err);
-      setError(err instanceof Error ? err.message : "Operation failed");
+      toast(err instanceof Error ? err.message : "Failed to delete task", { type: "error" });
     } finally {
-      setLoading(false);
+      setDeleteDialogOpen(false);
+      setTaskToDelete(null);
     }
   };
 
-  // Delete task
-  const handleDeleteTask = async (taskId: string) => {
-    const task = tasks.find((t) => t.id === taskId);
-    if (!task || !task.apiTaskId) return;
-
-    if (!window.confirm("Are you sure you want to delete this task?")) return;
-
-    setLoading(true);
+  // Restore deleted task
+  const handleRestoreTask = async (taskId: string) => {
     try {
-      await apiService.deleteTask(task.apiTaskId, userId);
-      setSuccess("Task deleted successfully");
-      await refreshHandler();
+      await handleStatusUpdate(taskId, "Pending");
+      toast("Task restored", { type: "success" });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete task");
-    } finally {
-      setLoading(false);
+      toast(err instanceof Error ? err.message : "Failed to restore task", { type: "error" });
     }
   };
 
   // Delete selected tasks
-  const handleDeleteSelected = async () => {
-    if (
-      !window.confirm(
-        `Are you sure you want to delete ${selected.length} tasks?`
-      )
-    )
-      return;
+  const handleDeleteSelected = () => {
+    setTaskToDelete('multiple');
+    setDeleteDialogOpen(true);
+  };
 
+  const confirmDeleteSelected = async () => {
     setLoading(true);
     try {
       for (const id of selected) {
-        const task = tasks.find((t) => t.id === id);
-        if (task?.apiTaskId) {
-          await apiService.deleteTask(task.apiTaskId, userId);
-        }
+        await handleStatusUpdate(id, "Cancelled");
       }
-      setSuccess(`${selected.length} tasks deleted successfully`);
+      toast(`${selected.length} tasks moved to drafts`, { type: "success" });
       setSelected([]);
-      await refreshHandler();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete tasks");
+      toast(err instanceof Error ? err.message : "Failed to delete tasks", { type: "error" });
     } finally {
       setLoading(false);
     }
@@ -1692,6 +1487,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
 
   // Multi-task operations
   const handleOpenMultiAdd = () => {
+    setEditTaskId(null);
     setMultiTaskData([
       {
         taskName: "",
@@ -1700,7 +1496,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         status: "Pending",
         priority: "Moderate",
         startTime: nowISO,
-        endTime: nowISO,
+        endTime: endISO,
         subTasks: [],
         completed: false,
       },
@@ -1711,7 +1507,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         status: "Pending",
         priority: "Moderate",
         startTime: nowISO,
-        endTime: nowISO,
+        endTime: endISO,
         subTasks: [],
         completed: false,
       },
@@ -1729,7 +1525,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         status: "Pending",
         priority: "Moderate",
         startTime: nowISO,
-        endTime: nowISO,
+        endTime: endISO,
         subTasks: [],
         completed: false,
       },
@@ -1749,15 +1545,16 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
   }, []);
 
   const addMultiSubTask = useCallback((taskIndex: number) => {
+    const parentTask = multiTaskData[taskIndex];
     const newSubTask: SubTaskForm = {
       id: generateId(),
       taskName: "",
       taskDetails: "",
       comments: "",
-      status: "Pending",
-      priority: "Moderate",
+      status: parentTask?.status || "Pending",
+      priority: parentTask?.priority || "Moderate",
       startTime: nowISO,
-      endTime: nowISO,
+      endTime: endISO,
       completed: false,
     };
     setMultiTaskData((prev) => {
@@ -1843,13 +1640,13 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
           }
         }
       }
-      setSuccess(`${successCount} tasks ${editTaskId ? 'updated' : 'created'} successfully`);
+      toast(`${successCount} tasks ${editTaskId ? 'updated' : 'created'} successfully`, { type: "success" });
       setEditTaskId(null);
       setOpenMultiAdd(false);
       await refreshHandler();
     } catch (err) {
       console.error('Multi-add error:', err);
-      setError(err instanceof Error ? err.message : "Failed to process tasks");
+      toast(`Error: ${err instanceof Error ? err.message : "Failed to process tasks"}`, { type: "error" });
     } finally {
       setLoading(false);
     }
@@ -1886,19 +1683,47 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         })
       );
       
-      setSuccess(`${successCount} tasks updated successfully`);
+      toast(`${successCount} tasks updated successfully`, { type: "success" });
       setSelected([]);
       setOpenMultiEdit(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update tasks");
+      toast(`Error: ${err instanceof Error ? err.message : "Failed to update tasks"}`, { type: "error" });
     } finally {
       setLoading(false);
     }
   };
 
+  // Back to top handler
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+
+
   // Load tasks on component mount
   useEffect(() => {
-    refreshHandler();
+    const initializeData = async () => {
+      // Process expired tasks first
+      try {
+        await fetch('/api/tasks/expire', { method: 'POST' });
+      } catch (err) {
+        console.log('Failed to process expired tasks on load:', err);
+      }
+      // Then load tasks
+      await refreshHandler();
+    };
+    initializeData();
+  }, []);
+
+
+
+  // Handle scroll for back-to-top button
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 300);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Update search mode when filters change
@@ -1909,6 +1734,8 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         priorityFilter !== "" ||
         userFilter !== "" ||
         dayFilter !== "" ||
+        dateFilter !== "" ||
+        taskNameFilter !== "" ||
         selectedStatusTab !== "All"
     );
   }, [
@@ -1917,6 +1744,8 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
     priorityFilter,
     userFilter,
     dayFilter,
+    dateFilter,
+    taskNameFilter,
     selectedStatusTab,
   ]);
 
@@ -1937,65 +1766,85 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         </Suspense>
         <Divider />
         <CardContent>
-          <Stack direction="row" justifyContent="space-between">
-            <Stack spacing={2} direction="row">
-              <Suspense fallback={<MyCircularProgress />}>
-                <TaskMonthFilter value={monthFilter} onChange={setMonthFilter} onLoadingChange={setFilterLoading} />
-              </Suspense>
-              <Suspense fallback={<MyCircularProgress />}>
-                <TaskStatusFilter
-                  value={statusFilter}
-                  onChange={setStatusFilter}
-                />
-              </Suspense>
-              <Suspense fallback={<MyCircularProgress />}>
-                <TaskPriorityFilter
-                  value={priorityFilter}
-                  onChange={setPriorityFilter}
+          <Box sx={{ overflowX: "auto", width: "100%", p: 1, "&::-webkit-scrollbar": {height: 4} }}>
+            <Stack 
+              direction="row" 
+              justifyContent="space-between"
+              sx={{ minWidth: "max-content" }}
+            >
+              <Stack spacing={2} direction="row" sx={{ minWidth: "max-content" }}>
+                <TextField
+                  size="small"
+                  placeholder="Search tasks..."
+                  value={taskNameFilter}
+                  onChange={(e) => setTaskNameFilter(e.target.value)}
+                  sx={{ minWidth: 150 }}
                 />
                 <Suspense fallback={<MyCircularProgress />}>
-                  <TaskUserFilter
-                    value={userFilter}
-                    onChange={setUserFilter}
-                    tasks={tasks}
+                  <TaskMonthFilter value={monthFilter} onChange={setMonthFilter} onLoadingChange={setFilterLoading} />
+                </Suspense>
+                <Suspense fallback={<MyCircularProgress />}>
+                  <TaskStatusFilter
+                    value={statusFilter}
+                    onChange={setStatusFilter}
                   />
                 </Suspense>
                 <Suspense fallback={<MyCircularProgress />}>
-                  <TaskDayFilter value={dayFilter} onChange={setDayFilter} />
+                  <TaskPriorityFilter
+                    value={priorityFilter}
+                    onChange={setPriorityFilter}
+                  />
+                  <Suspense fallback={<MyCircularProgress />}>
+                    <TaskUserFilter
+                      value={userFilter}
+                      onChange={setUserFilter}
+                      tasks={tasks}
+                    />
+                  </Suspense>
+                  <Suspense fallback={<MyCircularProgress />}>
+                    <TaskDayFilter value={dayFilter} onChange={setDayFilter} />
+                  </Suspense>
+                  <Suspense fallback={<MyCircularProgress />}>
+                    <TaskDateFilter value={dateFilter} onChange={setDateFilter} />
+                  </Suspense>
                 </Suspense>
-              </Suspense>
-              {inSearchMode && (
-                <Button variant="text" onClick={resetSearchParams}>
-                  Clear Filters
+                {inSearchMode && (
+                  <Button variant="text" onClick={resetSearchParams}>
+                    Clear Filters
+                  </Button>
+                )}
+              </Stack>
+
+              <Stack direction="row" spacing={1} sx={{ minWidth: "max-content", paddingLeft:"15px" }}>
+                <Button
+                  variant="contained"
+                  startIcon={<Add />}
+                  onClick={handleOpenMultiAdd}
+                  size="small"
+                >
+                  Add Tasks
                 </Button>
-              )}
-            </Stack>
+                
 
-            <Stack direction="row" spacing={1}>
-              <Button
-                variant="contained"
-                startIcon={<Add />}
-                onClick={handleOpenMultiAdd}
-                size="small"
-              >
-                Add Tasks
-              </Button>
+                
 
-              {loading ? (
-                <MyCircularProgress />
-              ) : (
-                <Tooltip title="Refresh">
-                  <IconButton
-                    size="small"
-                    onClick={refreshHandler}
-                    color="primary"
-                  >
-                    <Refresh />
-                  </IconButton>
-                </Tooltip>
-              )}
+
+                {loading ? (
+                  <MyCircularProgress />
+                ) : (
+                  <Tooltip title="Refresh">
+                    <IconButton
+                      size="small"
+                      onClick={refreshHandler}
+                      color="primary"
+                    >
+                      <Refresh />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </Stack>
             </Stack>
-          </Stack>
+          </Box>
 
           {selected.length > 0 && (
             <Box mt={2}>
@@ -2003,23 +1852,40 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                 <Typography variant="subtitle1">
                   {selected.length} Selected
                 </Typography>
-                <Button
-                  variant="outlined"
-                  startIcon={<Edit />}
-                  onClick={() => setOpenMultiEdit(true)}
-                  size="small"
-                >
-                  Edit Selected
-                </Button>
-                <Button
-                  variant="contained"
-                  color="error"
-                  size="small"
-                  startIcon={<Delete />}
-                  onClick={handleDeleteSelected}
-                >
-                  Delete Selected
-                </Button>
+                {(statusFilter === "Drafts" || selectedStatusTab === "Cancelled") ? (
+                  <Button
+                    variant="contained"
+                    color="success"
+                    size="small"
+                    startIcon={<Launch />}
+                    onClick={() => {
+                      selected.forEach(id => handleRestoreTask(id));
+                      setSelected([]);
+                    }}
+                  >
+                    Restore Selected
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      variant="outlined"
+                      startIcon={<PencilSimple />}
+                      onClick={() => setOpenMultiEdit(true)}
+                      size="small"
+                    >
+                      Edit Selected
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      size="small"
+                      startIcon={<Trash />}
+                      onClick={handleDeleteSelected}
+                    >
+                      Delete Selected
+                    </Button>
+                  </>
+                )}
               </Stack>
             </Box>
           )}
@@ -2056,8 +1922,8 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                   overflow: "auto",
                   width: "100%",
                   '&::-webkit-scrollbar': {
-                    height: '4px',
-                    width: '4px',
+                    height: '2px',
+                    width: '2px',
                   },
                   '&::-webkit-scrollbar-track': {
                     backgroundColor: '#f1f1f1',
@@ -2070,7 +1936,28 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
               >
                 <Table
                   size="small"
-                  sx={{ width: "100%", tableLayout: "auto", minWidth: 800 }}
+                  sx={{ 
+                    width: "100%", 
+                    tableLayout: "auto", 
+                    minWidth: 800,
+                    borderCollapse: 'separate',
+                    '& .MuiTableCell-root': {
+                      padding: '0px 4px',
+                      border: '1px solid #e0e0e0',
+                      fontSize: '0.75rem',
+                      lineHeight: 1.2
+                    },
+                    '& .MuiTableHead-root .MuiTableCell-root': {
+                      backgroundColor: 'action.hover',
+                      fontWeight: 600,
+                      borderBottom: '2px solid',
+                      borderBottomColor: 'divider',
+                      color: 'text.primary'
+                    },
+                    '& .MuiTableRow-root:hover': {
+                      backgroundColor: 'action.hover'
+                    }
+                  }}
                 >
                   <TableHead>
                     <TableRow>
@@ -2223,17 +2110,8 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                                     variant="subtitle2"
                                     sx={{ fontWeight: 600, lineHeight: 1.2 }}
                                   >
-                                    {task.taskName}
+                                    {task.taskName}{task.push_count > 0 && ` (x${task.push_count})`}
                                   </Typography>
-                                  {task.taskDetails && (
-                                    <Typography
-                                      variant="caption"
-                                      color="text.secondary"
-                                      sx={{ lineHeight: 1.1, mt: 0.25 }}
-                                    >
-                                      {task.taskDetails}
-                                    </Typography>
-                                  )}
                                 </Box>
                               </Box>
 
@@ -2279,7 +2157,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                               />
                             </TableCell>
                             <TableCell sx={{ minWidth: "140px", width: "140px" }}>
-                              {task.userId === userId ? (
+                              {task.userId === userId && task.endTime >= Date.now() ? (
                                 <InlineStatusSelect
                                   value={task.status}
                                   taskId={task.id}
@@ -2296,7 +2174,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                               {new Date(task.endTime).toLocaleDateString()}
                             </TableCell>
                             <TableCell sx={{ minWidth: "140px", width: "140px" }}>
-                              {task.userId === userId ? (
+                              {task.userId === userId && task.endTime >= Date.now() ? (
                                 <InlinePrioritySelect
                                   value={task.priority}
                                   taskId={task.id}
@@ -2318,58 +2196,80 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                               >
                                 {task.comments || task.taskDetails || "-"}
                               </Typography>
+
                             </TableCell>
 
                             <TableCell sx={{ maxWidth: "80px" }}>
                               {task.userId === userId ? (
                                 <>
-                                  <Tooltip title="Edit">
-                                    <IconButton
-                                      color="primary"
-                                      onClick={() => {
-                                        setMultiTaskData([{
-                                          taskName: task.taskName,
-                                          taskDetails: task.taskDetails || "",
-                                          comments: task.comments || "",
-                                          status: task.status,
-                                          priority: task.priority,
-                                          startTime: timestampToISO(task.startTime),
-                                          endTime: timestampToISO(task.endTime),
-                                          subTasks: task.subTasks.map((st) => ({
-                                            id: st.id,
-                                            apiSubTaskId: st.apiSubTaskId,
-                                            taskName: st.taskName,
-                                            taskDetails: st.taskDetails || "",
-                                            comments: st.comments || "",
-                                            status: st.status,
-                                            priority: st.priority,
-                                            startTime: timestampToISO(st.startTime),
-                                            endTime: timestampToISO(st.endTime),
-                                            completed: st.completed,
-                                          })),
-                                          completed: task.completed,
-                                        }]);
-                                        setEditTaskId(task.id);
-                                        setOpenMultiAdd(true);
-                                      }}
-                                      size="small"
-                                    >
-                                      <Edit
-                                        sx={{ width: "18px", height: "18px" }}
-                                      />
-                                    </IconButton>
-                                  </Tooltip>
-                                  <Tooltip title="Delete">
-                                    <IconButton
-                                      color="error"
-                                      onClick={() => handleDeleteTask(task.id)}
-                                      size="small"
-                                    >
-                                      <Delete
-                                        sx={{ width: "18px", height: "18px" }}
-                                      />
-                                    </IconButton>
-                                  </Tooltip>
+                                  {(statusFilter === "Drafts" || selectedStatusTab === "Cancelled") ? (
+                                    <Tooltip title="Restore">
+                                      <IconButton
+                                        color="success"
+                                        onClick={() => handleRestoreTask(task.id)}
+                                        size="small"
+                                      >
+                                        <Launch
+                                          sx={{ width: "18px", height: "18px" }}
+                                        />
+                                      </IconButton>
+                                    </Tooltip>
+                                  ) : task.status === "Failed" ? (
+                                    <Typography variant="caption" color="text.secondary">
+                                      View Only
+                                    </Typography>
+                                  ) : (
+                                    <>
+                                      <Tooltip title={task.endTime < Date.now() ? "Task ended - cannot edit" : "Edit"}>
+                                        <IconButton
+                                          color="primary"
+                                          onClick={() => {
+                                            setMultiTaskData([{
+                                              taskName: task.taskName,
+                                              taskDetails: task.taskDetails || "",
+                                              comments: task.comments || "",
+                                              status: task.status,
+                                              priority: task.priority,
+                                              startTime: timestampToISO(task.startTime),
+                                              endTime: timestampToISO(task.endTime),
+                                              subTasks: task.subTasks.map((st) => ({
+                                                id: st.id,
+                                                apiSubTaskId: st.apiSubTaskId,
+                                                taskName: st.taskName,
+                                                taskDetails: st.taskDetails || "",
+                                                comments: st.comments || "",
+                                                status: st.status,
+                                                priority: st.priority,
+                                                startTime: timestampToISO(st.startTime),
+                                                endTime: timestampToISO(st.endTime),
+                                                completed: st.completed,
+                                              })),
+                                              completed: task.completed,
+                                            }]);
+                                            setEditTaskId(task.id);
+                                            setOpenMultiAdd(true);
+                                          }}
+                                          size="small"
+                                          disabled={task.endTime < Date.now()}
+                                        >
+                                          <PencilSimple
+                                            size={18}
+                                          />
+                                        </IconButton>
+                                      </Tooltip>
+                                      <Tooltip title="Delete">
+                                        <IconButton
+                                          color="error"
+                                          onClick={() => handleDeleteTask(task.id)}
+                                          size="small"
+                                        >
+                                          <Trash
+                                            size={18}
+                                          />
+                                        </IconButton>
+                                      </Tooltip>
+                                    </>
+                                  )}
                                 </>
                               ) : (
                                 <Typography variant="caption" color="text.secondary">
@@ -2400,7 +2300,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         {Object.keys(groupedTasks).length === 0 && !loading && (
           <Box p={4} textAlign="center">
             <Typography variant="body1" color="text.secondary">
-              No tasks found. Click &ldquo;New Task&rdquo; to create one.
+              {(statusFilter === "Drafts" || selectedStatusTab === "Cancelled") ? "No tasks in drafts." : "No tasks found. Click \"Add Tasks\" to create one."}
             </Typography>
           </Box>
         )}
@@ -2460,7 +2360,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                       onClick={() => removeMultiTask(index)}
                       disabled={loading}
                     >
-                      <Delete sx={{ fontSize: 16 }} />
+                      <Trash size={16} />
                     </IconButton>
                   )}
                 </Box>
@@ -2486,20 +2386,13 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                     size="small"
                   />
                   <Box sx={{ display: "flex", gap: 1 }}>
-                    <FormControl fullWidth disabled={loading} size="small">
-                      <InputLabel>Status</InputLabel>
-                      <Select
-                        value={task.status}
-                        onChange={(e) => updateMultiTask(index, "status", e.target.value)}
-                        label="Status"
-                      >
-                        {TASK_STATUSES.map((status) => (
-                          <MenuItem key={status} value={status}>
-                            {status}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+                    <TextField
+                      label="Status"
+                      value="Pending"
+                      fullWidth
+                      size="small"
+                      disabled={true}
+                    />
                     <FormControl fullWidth disabled={loading} size="small">
                       <InputLabel>Priority</InputLabel>
                       <Select
@@ -2516,10 +2409,19 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                     </FormControl>
                   </Box>
                   <TextField
+                    label="Start Date"
+                    type="date"
+                    value={task.startTime.slice(0, 10)}
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                    disabled={true}
+                    size="small"
+                  />
+                  <TextField
                     label="Start Time"
-                    type="datetime-local"
-                    value={task.startTime}
-                    onChange={(e) => updateMultiTask(index, "startTime", e.target.value)}
+                    type="time"
+                    value={task.startTime.slice(11, 16)}
+                    onChange={(e) => updateMultiTask(index, "startTime", task.startTime.slice(0, 11) + e.target.value)}
                     fullWidth
                     InputLabelProps={{ shrink: true }}
                     disabled={loading}
@@ -2529,7 +2431,15 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                     label="End Time"
                     type="datetime-local"
                     value={task.endTime}
-                    onChange={(e) => updateMultiTask(index, "endTime", e.target.value)}
+                    onChange={(e) => {
+                      const endDate = e.target.value.slice(0, 10);
+                      const today = new Date().toISOString().slice(0, 10);
+                      if (endDate < today) {
+                        toast("End date cannot be in the past", { type: "error" });
+                        return;
+                      }
+                      updateMultiTask(index, "endTime", e.target.value);
+                    }}
                     fullWidth
                     InputLabelProps={{ shrink: true }}
                     disabled={loading}
@@ -2550,7 +2460,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                     </Box>
                     
                     {task.subTasks.map((subTask, subIndex) => (
-                      <Box key={subTask.id} sx={{ mb: 1, p: 1, bgcolor: 'grey.50', borderRadius: 1 }}>
+                      <Box key={subTask.id} sx={{ mb: 1, p: 1, bgcolor: 'action.hover', borderRadius: 1 }}>
                         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
                           <Typography variant="caption">Sub {subIndex + 1}</Typography>
                           <IconButton
@@ -2559,7 +2469,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                             onClick={() => removeMultiSubTask(index, subIndex)}
                             disabled={loading}
                           >
-                            <Delete sx={{ fontSize: 12 }} />
+                            <Trash size={12} />
                           </IconButton>
                         </Box>
                         <TextField
@@ -2572,34 +2482,20 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                           sx={{ mb: 1 }}
                         />
                         <Box sx={{ display: "flex", gap: 1 }}>
-                          <FormControl fullWidth size="small" disabled={loading}>
-                            <InputLabel>Status</InputLabel>
-                            <Select
-                              value={subTask.status}
-                              onChange={(e) => updateMultiSubTask(index, subIndex, "status", e.target.value)}
-                              label="Status"
-                            >
-                              {TASK_STATUSES.map((status) => (
-                                <MenuItem key={status} value={status}>
-                                  {status}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                          <FormControl fullWidth size="small" disabled={loading}>
-                            <InputLabel>Priority</InputLabel>
-                            <Select
-                              value={subTask.priority}
-                              onChange={(e) => updateMultiSubTask(index, subIndex, "priority", e.target.value)}
-                              label="Priority"
-                            >
-                              {TASK_PRIORITIES.map((priority) => (
-                                <MenuItem key={priority} value={priority}>
-                                  {priority}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
+                          <TextField
+                            label="Status"
+                            value={task?.status || "Pending"}
+                            fullWidth
+                            size="small"
+                            disabled={true}
+                          />
+                          <TextField
+                            label="Priority"
+                            value={task?.priority || "Moderate"}
+                            fullWidth
+                            size="small"
+                            disabled={true}
+                          />
                         </Box>
                       </Box>
                     ))}
@@ -2610,7 +2506,10 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenMultiAdd(false)} disabled={loading}>
+          <Button onClick={() => {
+            setOpenMultiAdd(false);
+            setEditTaskId(null);
+          }} disabled={loading}>
             Cancel
           </Button>
           <Button
@@ -2688,36 +2587,47 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
 
 
 
-      {/* Notifications */}
-      <Snackbar
-        open={!!success}
-        autoHideDuration={3000}
-        onClose={() => setSuccess(null)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
       >
-        <Alert
-          onClose={() => setSuccess(null)}
-          severity="success"
-          sx={{ width: "100%" }}
-        >
-          {success}
-        </Alert>
-      </Snackbar>
+        <DialogTitle>Delete Task</DialogTitle>
+        <DialogContent>
+          <Typography>
+            {taskToDelete === 'multiple' 
+              ? `${selected.length} tasks will be moved to drafts.`
+              : 'Task will be moved to drafts.'}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+          <Button onClick={confirmDeleteTask} color="error" variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-      <Snackbar
-        open={!!error}
-        autoHideDuration={4000}
-        onClose={() => setError(null)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert
-          onClose={() => setError(null)}
-          severity="error"
-          sx={{ width: "100%" }}
+
+
+      {/* Back to Top Button */}
+      {showBackToTop && (
+        <Fab
+          color="primary"
+          size="small"
+          onClick={scrollToTop}
+          sx={{
+            position: 'fixed',
+            bottom: 20,
+            right: 20,
+            zIndex: 1000,
+          }}
         >
-          {error}
-        </Alert>
-      </Snackbar>
+          <KeyboardArrowUp />
+        </Fab>
+      )}
     </>
   );
 };

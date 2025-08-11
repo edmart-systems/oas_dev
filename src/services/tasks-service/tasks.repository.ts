@@ -403,20 +403,81 @@ export class TasksRepository {
 
   lockExpiredTasks = async (): Promise<string> => {
     try {
-      const expiryThreshold =
-        Date.now() - daysToMilliseconds(MAX_TASK_EXPIRY_DAYS);
+      const now = Date.now();
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(9, 0, 0, 0);
+      const tomorrowEnd = new Date(tomorrow);
+      tomorrowEnd.setHours(18, 0, 0, 0);
+      
+      const [cancelledStatus, pendingStatus] = await Promise.all([
+        this.prisma.task_status.findFirst({ where: { status: "Cancelled" } }),
+        this.prisma.task_status.findFirst({ where: { status: "Pending" } })
+      ]);
+      
+      if (!cancelledStatus || !pendingStatus) {
+        return Promise.resolve("Required statuses not found in database.");
+      }
 
-      const lockedRecords = await this.prisma.task.updateMany({
+      const expiredTasks = await this.prisma.task.findMany({
         where: {
-          taskLocked: 0,
-          time: { lte: BigInt(expiryThreshold) },
+          endTime: { lt: BigInt(now) },
+          taskStatus: {
+            status: { in: ["Pending", "In-Progress"] }
+          }
         },
-        data: {
-          taskLocked: 1,
-        },
+        include: { subTasks: true }
       });
 
-      return Promise.resolve(`${lockedRecords.count} expired tasks locked.`);
+      let processedCount = 0;
+      
+      for (const task of expiredTasks) {
+        await this.prisma.$transaction(async (txn) => {
+          // Move original task to drafts (Cancelled)
+          await txn.task.update({
+            where: { taskId: task.taskId },
+            data: { statusId: cancelledStatus.id }
+          });
+
+          // Create new task for next day with incremented push_count
+          const newTask = await txn.task.create({
+            data: {
+              userId: task.userId,
+              taskName: task.taskName,
+              taskDetails: task.taskDetails,
+              comments: task.comments,
+              statusId: pendingStatus.id,
+              priorityId: task.priorityId,
+              startTime: BigInt(tomorrow.getTime()),
+              endTime: BigInt(tomorrowEnd.getTime()),
+              time: BigInt(Date.now()),
+              push_count: (task.push_count || 0) + 1
+            }
+          });
+
+          if (task.subTasks.length > 0) {
+            const newSubTasks = task.subTasks.map(st => ({
+              taskId: newTask.taskId,
+              taskName: st.taskName,
+              taskDetails: st.taskDetails,
+              comments: st.comments,
+              statusId: pendingStatus.id,
+              priorityId: st.priorityId,
+              startTime: BigInt(tomorrow.getTime()),
+              endTime: BigInt(tomorrowEnd.getTime()),
+              time: BigInt(Date.now())
+            }));
+            
+            await txn.sub_task.createMany({
+              data: newSubTasks
+            });
+          }
+        });
+        
+        processedCount++;
+      }
+
+      return Promise.resolve(`${processedCount} expired tasks moved to drafts and pushed to next day.`);
     } catch (err) {
       logger.error(err);
       return Promise.reject(err);
