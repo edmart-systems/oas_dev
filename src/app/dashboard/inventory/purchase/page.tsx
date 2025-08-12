@@ -21,6 +21,7 @@ import { InventoryPoint } from "@/modules/inventory/types";
 import PurchaseHistory from "@/components/dashboard/inventory/purchase/purchaseHistory";
 import PurchaseDialogs from "@/components/dashboard/inventory/purchase/purchaseDialoges";
 import { useCurrency } from "@/components/currency/currency-context";
+import { CompanyDto } from "@/types/company.types";
 
 
 
@@ -39,6 +40,7 @@ const PurchasePage = () => {
   const [inventoryPoints, setInventoryPoints] = useState<InventoryPoint[]>([]);
   const [inventoryPointId, setInventoryPointId] = useState<number>(1);
   const [tabValue, setTabValue] = useState(0);
+  const [company, setCompany] = useState<CompanyDto | undefined>(undefined);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedProductIndex, setSelectedProductIndex] = useState(-1);
@@ -91,6 +93,36 @@ const PurchasePage = () => {
         inventory_point: ip.inventory_point
       })));
       setPurchases(purchasesData);
+      // Set hardcoded company data for now
+      setCompany({
+        co_id: 1,
+        legal_name: "Edmart Systems (U) Limited",
+        business_name: "Edmart Systems",
+        tin: "1234567890",
+        email: "info@edmartsystems.com",
+        phone_number_1: "+256700000000",
+        phone_number_2: null,
+        landline_number: null,
+        logo: null,
+        web: "www.edmartsystems.com",
+        address: {
+          co_ad_id: 1,
+          co_id: 1,
+          branch_number: "001",
+          branch_name: "Main Branch",
+          box_number: "123",
+          street: "Kampala Road",
+          plot_number: "456",
+          building_name: "Edmart Plaza",
+          floor_number: 1,
+          room_number: "101",
+          country: "Uganda",
+          district: "Kampala",
+          county: "Central",
+          subcounty: "Nakawa",
+          village: "Kampala"
+        }
+      });
     } catch (error) {
       console.error('Failed to fetch data:', error);
       toast.error('Failed to load data');
@@ -423,35 +455,7 @@ const PurchasePage = () => {
             suppliers={suppliers}
             onDelete={handleDelete}
 
-            company={{
-              co_id: 1,
-              legal_name: "Your Company Name",
-              business_name: "Your Business",
-              tin: null,
-              email: "company@example.com",
-              phone_number_1: "+256700000000",
-              phone_number_2: null,
-              landline_number: null,
-              logo: null,
-              web: null,
-              address: {
-                co_ad_id: 1,
-                co_id: 1,
-                branch_number: "001",
-                branch_name: "Main Branch",
-                box_number: "123",
-                street: "123 Business St",
-                plot_number: "456",
-                building_name: "Business Plaza",
-                floor_number: 1,
-                room_number: "101",
-                country: "Uganda",
-                district: "Kampala",
-                county: "Central",
-                subcounty: "Nakawa",
-                village: "Business Village"
-              }
-            }}
+            company={company || undefined}
             inventoryPoints={inventoryPoints}
             products={products}
           />

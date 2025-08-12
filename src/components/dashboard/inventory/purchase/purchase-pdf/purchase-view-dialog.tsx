@@ -42,11 +42,12 @@ const PaperComponent = (props: PaperProps) => {
 };
 
 
-const PurchaseViewDialog = ({ open, setOpen, company, purchase, formatCurrency, supplierName, inventoryPointName, productNames }: PurchaseViewDialogProps & { 
+const PurchaseViewDialog = ({ open, setOpen, company, purchase, formatCurrency, supplierName, inventoryPointName, productNames, qrDataUrl }: PurchaseViewDialogProps & { 
   formatCurrency: (amount: number) => string;
   supplierName: string;
   inventoryPointName: string;
   productNames: Record<number, string>;
+  qrDataUrl?: string;
 }) => {
   const handleClose = () => {
     setOpen(false);
@@ -86,6 +87,7 @@ const PurchaseViewDialog = ({ open, setOpen, company, purchase, formatCurrency, 
               supplierName={supplierName}
               inventoryPointName={inventoryPointName}
               productNames={productNames}
+              qrDataUrl={qrDataUrl}
             />
           </PDFViewer>
         </DialogContent>

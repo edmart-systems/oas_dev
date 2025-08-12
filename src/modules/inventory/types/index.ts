@@ -17,6 +17,7 @@ export interface CartItem extends PurchaseItemDtoInput {
 }
 export interface PurchaseOrder extends PurchaseDtoInput {
   purchase_id: number;
+  Purchase_items?: PurchaseItemDtoInput[];
 }
 
 export interface Supplier extends SupplierDtoInput {

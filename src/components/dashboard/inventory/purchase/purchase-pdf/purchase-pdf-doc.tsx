@@ -1,8 +1,9 @@
 import React from "react";
-import { Page, View, Document, StyleSheet, Font, Text } from "@react-pdf/renderer";
+import { Page, View, Document, StyleSheet, Font, Text, Image } from "@react-pdf/renderer";
 import DocHeader from "../../../quotations/quotation/quotation-pdf/doc-components/doc-header";
 import DocFooter from "../../../quotations/quotation/quotation-pdf/doc-components/doc-footer";
 import { PurchasePdfDocProps } from "@/modules/inventory/types";
+import QRCode from "qrcode";
 
 
 
@@ -15,11 +16,12 @@ Font.register({
 });
 
 
-const PurchasePdfDoc = ({ company, purchase, formatCurrency, supplierName, inventoryPointName, productNames }: PurchasePdfDocProps & { 
+const PurchasePdfDoc = ({ company, purchase, formatCurrency, supplierName, inventoryPointName, productNames, qrDataUrl }: PurchasePdfDocProps & { 
   formatCurrency: (amount: number) => string;
   supplierName: string;
   inventoryPointName: string;
   productNames: Record<number, string>;
+  qrDataUrl?: string;
 }) => {
   const date = new Date(purchase.purchase_created_at || new Date());
   
@@ -45,8 +47,8 @@ const PurchasePdfDoc = ({ company, purchase, formatCurrency, supplierName, inven
         <DocHeader />
         <View style={styles.mainContainer}>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>PURCHASE</Text>
             <Text style={styles.companyName}>{company.legal_name ?? company.business_name}</Text>
+            <Text style={styles.title}>PURCHASE</Text>
           </View>
           
           <View style={styles.detailsContainer}>
@@ -55,14 +57,19 @@ const PurchasePdfDoc = ({ company, purchase, formatCurrency, supplierName, inven
               <Text style={styles.detailValue}>PO-{purchase.purchase_id}</Text>
               <Text style={styles.detailLabel}>Date:</Text>
               <Text style={styles.detailValue}>{date.toLocaleDateString()}</Text>
+              <Text style={styles.detailLabel}>Total Purchase Items:</Text>
+              <Text style={styles.detailValue}>{purchase.purchase_quantity}</Text>
             </View>
             <View style={styles.detailsRight}>
               <Text style={styles.detailLabel}>Supplier:</Text>
               <Text style={styles.detailValue}>{supplierName}</Text>
               <Text style={styles.detailLabel}>Inventory Point:</Text>
               <Text style={styles.detailValue}>{inventoryPointName}</Text>
+              <Text style={styles.detailLabel}>By:</Text>
+              <Text style={styles.detailValue}>{purchase.purchase_created_by}</Text>
             </View>
           </View>
+          
 
           <View style={styles.tableContainer}>
             <View style={styles.tableHeader}>
@@ -71,7 +78,7 @@ const PurchasePdfDoc = ({ company, purchase, formatCurrency, supplierName, inven
               <Text style={[styles.tableCell, styles.costCell]}>Unit Cost</Text>
               <Text style={[styles.tableCell, styles.totalCell]}>Total</Text>
             </View>
-            {(purchase.purchase_items || []).map((item) => (
+            {(purchase.Purchase_items || []).map((item) => (
               <View key={item.product_id} style={[styles.tableRow, item.product_id % 2 === 0 ? styles.evenRow : {}]}>
                 <Text style={[styles.tableCell, styles.productCell]}>{productNames[item.product_id] || 'Unknown Product'}</Text>
                 <Text style={[styles.tableCell, styles.qtyCell]}>{item.quantity || 0}</Text>
@@ -81,19 +88,27 @@ const PurchasePdfDoc = ({ company, purchase, formatCurrency, supplierName, inven
             ))}
           </View>
 
-          <View style={styles.summaryContainer}>
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Subtotal:</Text>
-              <Text style={styles.summaryValue}>{purchase.purchase_total_cost}</Text>
+          <View style={styles.summarySection}>
+            <View style={styles.summaryContainer}>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Subtotal:</Text>
+                <Text style={styles.summaryValue}>{safeCurrency(purchase.purchase_total_cost || 0)}</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Tax (0%):</Text>
+                <Text style={styles.summaryValue}>{safeCurrency(0)}</Text>
+              </View>
+              <View style={[styles.summaryRow, styles.totalRow]}>
+                <Text style={styles.totalLabel}>Total:</Text>
+                <Text style={styles.totalValue}>{safeCurrency(purchase.purchase_total_cost || 0)}</Text>
+              </View>
             </View>
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Tax (0):</Text>
-              <Text style={styles.summaryValue}>{ 0}</Text>
-            </View>
-            <View style={[styles.summaryRow, styles.totalRow]}>
-              <Text style={styles.totalLabel}>Total:</Text>
-              <Text style={styles.totalValue}>{safeCurrency( purchase.purchase_total_cost ||0)}</Text>
-            </View>
+            {qrDataUrl && (
+              <View style={styles.qrContainer}>
+                <Image src={qrDataUrl} style={styles.qrCode} />
+                <Text style={styles.qrLabel}>Scan to verify</Text>
+              </View>
+            )}
           </View>
         </View>
         <DocFooter company={company} />
@@ -105,7 +120,7 @@ const PurchasePdfDoc = ({ company, purchase, formatCurrency, supplierName, inven
 const styles = StyleSheet.create({
   page: {
     fontFamily: "Comic Sans MS",
-    fontSize: "11px",
+    fontSize: "12px",
     flexDirection: "column",
     backgroundColor: "#fff",
     alignItems: "center",
@@ -185,9 +200,27 @@ const styles = StyleSheet.create({
     flex: 1.5,
     textAlign: "right",
   },
+  summarySection: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
   summaryContainer: {
-    alignSelf: "flex-end",
     width: "200px",
+  },
+  qrContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  qrCode: {
+    width: "100px",
+    height: "100px",
+  },
+  qrLabel: {
+    fontSize: "8px",
+    color: "#666",
+    marginTop: "4px",
+    textAlign: "center",
   },
   summaryRow: {
     flexDirection: "row",

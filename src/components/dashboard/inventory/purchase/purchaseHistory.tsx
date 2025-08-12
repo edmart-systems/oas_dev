@@ -77,10 +77,10 @@ export default function PurchaseHistory({ orders, suppliers, onDelete, company, 
                         company={company}
                         supplierName={supplier?.name || "Unknown Supplier"}
                         inventoryPointName={inventoryPoints.find(ip => ip.id === purchase.inventory_point_id)?.name || "Unknown Location"}
-                        productNames={purchase.purchase_items?.reduce((acc, item) => {
+                        productNames={purchase.Purchase_items?.reduce((acc, item) => {
                         acc[item.product_id] = productNameMap[item.product_id] || "Unknown Product";
                         return acc;
-                        }, {} as Record<number, string>)}
+                        }, {} as Record<number, string>) || {}}
                       />
                       
                       )}
