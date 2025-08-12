@@ -423,6 +423,35 @@ const PurchasePage = () => {
             orders={paginatedPurchases}
             suppliers={suppliers}
             onDelete={handleDelete}
+            company={{
+              co_id: 1,
+              legal_name: "Your Company Name",
+              business_name: "Your Business",
+              tin: null,
+              email: "company@example.com",
+              phone_number_1: "+256700000000",
+              phone_number_2: null,
+              landline_number: null,
+              logo: null,
+              web: null,
+              address: {
+                co_ad_id: 1,
+                co_id: 1,
+                branch_number: "001",
+                branch_name: "Main Branch",
+                box_number: "123",
+                street: "123 Business St",
+                plot_number: "456",
+                building_name: "Business Plaza",
+                floor_number: 1,
+                room_number: "101",
+                country: "Uganda",
+                district: "Kampala",
+                county: "Central",
+                subcounty: "Nakawa",
+                village: "Business Village"
+              }
+            }}
           />
           <Box display="flex" alignItems="center" justifyContent="space-between">
             <Typography variant="body2" color="primary" fontWeight={600}>

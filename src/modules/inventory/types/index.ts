@@ -3,6 +3,7 @@ import { PurchaseItemDtoInput  } from "@/modules/inventory/dtos/purchase_item.dt
 import { PurchaseDtoInput  } from "@/modules/inventory/dtos/purchase.dto";
 import { SupplierDtoInput } from "../dtos/supplier.dto";
 import { Inventory_pointDtoInput } from "../dtos/inventory_point.dto";
+import { CompanyDto } from "@/types/company.types";
 
 
 
@@ -84,6 +85,7 @@ export interface PurchaseHistoryProps {
   orders: PurchaseOrder[];
   suppliers: Supplier[];
   onDelete: (purchaseId: number) => void;
+  company?: CompanyDto;
 }
 export interface OpenDialog {
   supplier: boolean;
