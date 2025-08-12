@@ -20,7 +20,6 @@ import { Supplier } from "@/modules/inventory/types";
 import { InventoryPoint } from "@/modules/inventory/types";
 import PurchaseHistory from "@/components/dashboard/inventory/purchase/purchaseHistory";
 import PurchaseDialogs from "@/components/dashboard/inventory/purchase/purchaseDialoges";
-import { usePagination } from "@/hooks/usePagination";
 import { useCurrency } from "@/components/currency/currency-context";
 
 
@@ -422,9 +421,8 @@ const PurchasePage = () => {
           <PurchaseHistory
             orders={paginatedPurchases}
             suppliers={suppliers}
-            inventoryPoints={inventoryPoints}
-            products={products}
             onDelete={handleDelete}
+
             company={{
               co_id: 1,
               legal_name: "Your Company Name",
@@ -454,6 +452,8 @@ const PurchasePage = () => {
                 village: "Business Village"
               }
             }}
+            inventoryPoints={inventoryPoints}
+            products={products}
           />
           <Box display="flex" alignItems="center" justifyContent="space-between">
             <Typography variant="body2" color="primary" fontWeight={600}>
