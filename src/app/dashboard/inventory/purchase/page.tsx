@@ -422,6 +422,8 @@ const PurchasePage = () => {
           <PurchaseHistory
             orders={paginatedPurchases}
             suppliers={suppliers}
+            inventoryPoints={inventoryPoints}
+            products={products}
             onDelete={handleDelete}
             company={{
               co_id: 1,

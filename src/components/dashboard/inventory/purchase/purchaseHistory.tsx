@@ -14,11 +14,18 @@ import {
 } from "@mui/material";
 import { Eye } from "@phosphor-icons/react";
 import { useCurrency } from "@/components/currency/currency-context";
-import { PurchaseHistoryProps } from "@/modules/inventory/types";
+import { PurchaseHistoryProps, InventoryPoint, Product } from "@/modules/inventory/types";
 import PurchaseDownloadButtons from "./purchase-pdf/purchase-download-buttons";
 import { CompanyDto } from "@/types/company.types";
 
-export default function PurchaseHistory({ orders, suppliers, onDelete, company }: PurchaseHistoryProps & { company?: CompanyDto }) {
+export default function PurchaseHistory({ 
+  orders, 
+  suppliers, 
+  onDelete, 
+  company,
+  inventoryPoints,
+  products
+}: PurchaseHistoryProps) {
   const { formatCurrency } = useCurrency();
 
   const safeCurrency = (amount: number) => {
@@ -64,23 +71,15 @@ export default function PurchaseHistory({ orders, suppliers, onDelete, company }
                     <TableCell>
                       {company && (
                         <PurchaseDownloadButtons
-                          purchase={{
-                            purchase_id: purchase.purchase_id,
-                            supplier_name: supplier?.name || "Unknown",
-                            inventory_point_name: "Main Warehouse",
-                            purchase_created_at: typeof purchase.purchase_created_at === 'string' ? purchase.purchase_created_at : new Date().toISOString(),
-                            purchase_items: [{
-                              product_id: 1,
-                              product_name: "Purchase Item",
-                              quantity: purchase.purchase_quantity || 0,
-                              unit_cost: purchase.purchase_unit_cost || 0,
-                              total_cost: purchase.purchase_total_cost || 0
-                            }],
-                            subtotal: purchase.purchase_total_cost || 0,
-                            tax: (purchase.purchase_total_cost || 0) * 0.1,
-                            total: (purchase.purchase_total_cost || 0) * 1.1
-                          }}
+                          purchase={purchase}
                           company={company}
+                          supplierName={supplier?.name || "Unknown Supplier"}
+                          inventoryPointName={inventoryPoints.find(ip => ip.id === purchase.inventory_point_id)?.name || "Unknown Location"}
+                          productNames={purchase.purchase_items?.reduce((acc, item) => {
+                            const product = products.find(p => p.product_id === item.product_id);
+                            acc[item.product_id] = product?.product_name || "Unknown Product";
+                            return acc;
+                          }, {} as Record<number, string>) || {}}
                         />
                       )}
                     </TableCell>

@@ -17,6 +17,7 @@ import PurchasePdfDoc from "./purchase-pdf-doc";
 import { Close } from "@mui/icons-material";
 import { CompanyDto } from "@/types/company.types";
 import { PurchaseOrder } from "@/types/purchase.types";
+import {PurchaseViewDialogProps } from "@/modules/inventory/types";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -40,14 +41,13 @@ const PaperComponent = (props: PaperProps) => {
   );
 };
 
-type Props = {
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-  purchase: PurchaseOrder;
-  company: CompanyDto;
-};
 
-const PurchaseViewDialog = ({ open, setOpen, company, purchase }: Props) => {
+const PurchaseViewDialog = ({ open, setOpen, company, purchase, formatCurrency, supplierName, inventoryPointName, productNames }: PurchaseViewDialogProps & { 
+  formatCurrency: (amount: number) => string;
+  supplierName: string;
+  inventoryPointName: string;
+  productNames: Record<number, string>;
+}) => {
   const handleClose = () => {
     setOpen(false);
   };
@@ -58,7 +58,7 @@ const PurchaseViewDialog = ({ open, setOpen, company, purchase }: Props) => {
         maxWidth="xl"
         fullWidth={true}
         open={open}
-        TransitionComponent={Transition}
+        slots={{ transition: Transition }}
         PaperComponent={PaperComponent}
         keepMounted
         onClose={handleClose}
@@ -71,7 +71,7 @@ const PurchaseViewDialog = ({ open, setOpen, company, purchase }: Props) => {
             justifyContent="space-between"
             alignItems="center"
           >
-            <Typography>Purchase Order PO-{purchase.purchase_id}</Typography>
+            <Typography>Purchase PO-{purchase.purchase_id}</Typography>
             <IconButton onClick={handleClose}>
               <Close />
             </IconButton>
@@ -79,7 +79,14 @@ const PurchaseViewDialog = ({ open, setOpen, company, purchase }: Props) => {
         </DialogTitle>
         <DialogContent sx={{ height: "85vh" }}>
           <PDFViewer showToolbar width="100%" height="99%">
-            <PurchasePdfDoc purchase={purchase} company={company} />
+            <PurchasePdfDoc 
+              purchase={purchase} 
+              company={company} 
+              formatCurrency={formatCurrency}
+              supplierName={supplierName}
+              inventoryPointName={inventoryPointName}
+              productNames={productNames}
+            />
           </PDFViewer>
         </DialogContent>
       </Dialog>

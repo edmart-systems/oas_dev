@@ -4,6 +4,7 @@ import { PurchaseDtoInput  } from "@/modules/inventory/dtos/purchase.dto";
 import { SupplierDtoInput } from "../dtos/supplier.dto";
 import { Inventory_pointDtoInput } from "../dtos/inventory_point.dto";
 import { CompanyDto } from "@/types/company.types";
+import React, { Dispatch, forwardRef, Fragment, Ref, SetStateAction } from "react";
 
 
 
@@ -86,6 +87,9 @@ export interface PurchaseHistoryProps {
   suppliers: Supplier[];
   onDelete: (purchaseId: number) => void;
   company?: CompanyDto;
+  inventoryPoints: InventoryPoint[];
+  products: Product[];
+  
 }
 export interface OpenDialog {
   supplier: boolean;
@@ -101,3 +105,24 @@ export interface PurchaseDialogsProps {
   onConfirmDelete: () => void;
   onRefreshData: () => void;
 }
+
+export interface PurchasePdfDocProps {
+  purchase: PurchaseOrder;
+  company: CompanyDto;
+}
+
+
+export interface PurchaseViewDialogProps {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  purchase: PurchaseOrder; //Purchase 
+  company: CompanyDto;
+};
+
+export interface PurchaseDownloadButtonsProps {
+  purchase: PurchaseOrder;
+  company: CompanyDto;
+  supplierName: string;
+  inventoryPointName: string;
+  productNames: Record<number, string>;
+};

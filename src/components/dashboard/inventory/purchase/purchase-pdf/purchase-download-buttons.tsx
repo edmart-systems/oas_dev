@@ -4,19 +4,25 @@ import { usePDF } from "@react-pdf/renderer";
 import { Eye, Download } from "@phosphor-icons/react";
 import PurchasePdfDoc from "./purchase-pdf-doc";
 import PurchaseViewDialog from "./purchase-view-dialog";
-import { CompanyDto } from "@/types/company.types";
-import { PurchaseOrder } from "@/types/purchase.types";
+import { useCurrency } from "@/components/currency/currency-context";
 import Link from "next/link";
+import { PurchaseDownloadButtonsProps } from "@/modules/inventory/types";
 
-type Props = {
-  purchase: PurchaseOrder;
-  company: CompanyDto;
-};
 
-const PurchaseDownloadButtons = ({ purchase, company }: Props) => {
+
+const PurchaseDownloadButtons = ({ purchase, company,supplierName,inventoryPointName,productNames }: PurchaseDownloadButtonsProps) => {
   const [viewOpen, setViewOpen] = useState(false);
+  const { formatCurrency } = useCurrency();
+  
   const [instance] = usePDF({
-    document: <PurchasePdfDoc purchase={purchase} company={company} />,
+    document: <PurchasePdfDoc 
+      purchase={purchase} 
+      company={company} 
+      formatCurrency={formatCurrency}
+      supplierName={supplierName}
+      inventoryPointName={inventoryPointName}
+      productNames={productNames}
+    />,
   });
 
   const fileName = `Purchase-Order-PO-${purchase.purchase_id}.pdf`;
@@ -56,6 +62,10 @@ const PurchaseDownloadButtons = ({ purchase, company }: Props) => {
         setOpen={setViewOpen}
         purchase={purchase}
         company={company}
+        formatCurrency={formatCurrency}
+        supplierName={supplierName}
+        inventoryPointName={inventoryPointName}
+        productNames={productNames}
       />
     </>
   );

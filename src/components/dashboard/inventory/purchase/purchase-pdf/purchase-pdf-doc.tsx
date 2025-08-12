@@ -2,8 +2,9 @@ import React from "react";
 import { Page, View, Document, StyleSheet, Font, Text } from "@react-pdf/renderer";
 import DocHeader from "../../../quotations/quotation/quotation-pdf/doc-components/doc-header";
 import DocFooter from "../../../quotations/quotation/quotation-pdf/doc-components/doc-footer";
-import { CompanyDto } from "@/types/company.types";
-import { PurchaseOrder } from "@/types/purchase.types";
+import { PurchasePdfDocProps } from "@/modules/inventory/types";
+
+
 
 Font.register({
   family: "Comic Sans MS",
@@ -13,13 +14,24 @@ Font.register({
   ],
 });
 
-type Props = {
-  purchase: PurchaseOrder;
-  company: CompanyDto;
-};
 
-const PurchasePdfDoc = ({ company, purchase }: Props) => {
-  const date = new Date(purchase.purchase_created_at);
+const PurchasePdfDoc = ({ company, purchase, formatCurrency, supplierName, inventoryPointName, productNames }: PurchasePdfDocProps & { 
+  formatCurrency: (amount: number) => string;
+  supplierName: string;
+  inventoryPointName: string;
+  productNames: Record<number, string>;
+}) => {
+  const date = new Date(purchase.purchase_created_at || new Date());
+  
+  const safeCurrency = (amount: number) => {
+    try {
+      return formatCurrency(amount);
+    } catch {
+      return `$${amount.toFixed(2)}`;
+    }
+  };
+
+                        
 
   return (
     <Document
@@ -33,22 +45,22 @@ const PurchasePdfDoc = ({ company, purchase }: Props) => {
         <DocHeader />
         <View style={styles.mainContainer}>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>PURCHASE ORDER</Text>
+            <Text style={styles.title}>PURCHASE</Text>
             <Text style={styles.companyName}>{company.legal_name ?? company.business_name}</Text>
           </View>
           
           <View style={styles.detailsContainer}>
             <View style={styles.detailsLeft}>
-              <Text style={styles.detailLabel}>Purchase Order ID:</Text>
+              <Text style={styles.detailLabel}>Purchase ID:</Text>
               <Text style={styles.detailValue}>PO-{purchase.purchase_id}</Text>
               <Text style={styles.detailLabel}>Date:</Text>
               <Text style={styles.detailValue}>{date.toLocaleDateString()}</Text>
             </View>
             <View style={styles.detailsRight}>
               <Text style={styles.detailLabel}>Supplier:</Text>
-              <Text style={styles.detailValue}>{purchase.supplier_name}</Text>
+              <Text style={styles.detailValue}>{supplierName}</Text>
               <Text style={styles.detailLabel}>Inventory Point:</Text>
-              <Text style={styles.detailValue}>{purchase.inventory_point_name}</Text>
+              <Text style={styles.detailValue}>{inventoryPointName}</Text>
             </View>
           </View>
 
@@ -59,12 +71,12 @@ const PurchasePdfDoc = ({ company, purchase }: Props) => {
               <Text style={[styles.tableCell, styles.costCell]}>Unit Cost</Text>
               <Text style={[styles.tableCell, styles.totalCell]}>Total</Text>
             </View>
-            {purchase.purchase_items.map((item, index) => (
-              <View key={item.product_id} style={[styles.tableRow, index % 2 === 0 && styles.evenRow]}>
-                <Text style={[styles.tableCell, styles.productCell]}>{item.product_name}</Text>
-                <Text style={[styles.tableCell, styles.qtyCell]}>{item.quantity}</Text>
-                <Text style={[styles.tableCell, styles.costCell]}>${item.unit_cost.toFixed(2)}</Text>
-                <Text style={[styles.tableCell, styles.totalCell]}>${item.total_cost.toFixed(2)}</Text>
+            {(purchase.purchase_items || []).map((item) => (
+              <View key={item.product_id} style={[styles.tableRow, item.product_id % 2 === 0 ? styles.evenRow : {}]}>
+                <Text style={[styles.tableCell, styles.productCell]}>{productNames[item.product_id] || 'Unknown Product'}</Text>
+                <Text style={[styles.tableCell, styles.qtyCell]}>{item.quantity || 0}</Text>
+                <Text style={[styles.tableCell, styles.costCell]}>{safeCurrency(item.unit_cost || 0)}</Text>
+                <Text style={[styles.tableCell, styles.totalCell]}>{safeCurrency(item.total_cost || 0)}</Text>
               </View>
             ))}
           </View>
@@ -72,15 +84,15 @@ const PurchasePdfDoc = ({ company, purchase }: Props) => {
           <View style={styles.summaryContainer}>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Subtotal:</Text>
-              <Text style={styles.summaryValue}>${purchase.subtotal.toFixed(2)}</Text>
+              <Text style={styles.summaryValue}>{purchase.purchase_total_cost}</Text>
             </View>
             <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Tax (10%):</Text>
-              <Text style={styles.summaryValue}>${purchase.tax.toFixed(2)}</Text>
+              <Text style={styles.summaryLabel}>Tax (0):</Text>
+              <Text style={styles.summaryValue}>{ 0}</Text>
             </View>
             <View style={[styles.summaryRow, styles.totalRow]}>
               <Text style={styles.totalLabel}>Total:</Text>
-              <Text style={styles.totalValue}>${purchase.total.toFixed(2)}</Text>
+              <Text style={styles.totalValue}>{safeCurrency( purchase.purchase_total_cost ||0)}</Text>
             </View>
           </View>
         </View>
