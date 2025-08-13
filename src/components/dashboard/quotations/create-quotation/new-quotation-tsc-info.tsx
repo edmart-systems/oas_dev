@@ -19,6 +19,7 @@ type Props = {
 // Converts payment grace days into a human-readable string
 function humanizeGraceDays(days?: number | null): string {
   if (days == null || Number.isNaN(days)) return "N/A";
+  if (days <= -365) return "Advance payment required upon presentation of tax invoice.";
   if (days < 0) return `${Math.abs(days)} day${Math.abs(days) === 1 ? "" : "s"} before delivery`;
   if (days === 0) return "On delivery day";
   return `${days} day${days === 1 ? "" : "s"} after delivery`;
@@ -36,6 +37,11 @@ export const generatePaymentStr = ({
     const days = editTcs
       ? selectedTcs.edited_payment_grace_days
       : selectedTcs.payment_grace_days;
+
+    // For advance payment, return only the advance payment text
+    if (days != null && days <= -365) {
+      return "Advance payment required upon presentation of tax invoice.";
+    }
 
     // If template contains {payment_grace_days_phrase}, replace with humanized phrase
     if (paymentWords.includes("{payment_grace_days_phrase}")) {
@@ -135,65 +141,6 @@ const NewQuotationTscInfo = ({
     setSelectedTcs(newSelectedTc);
     setEditTcs(false);
   };
-
-  // const paymentStr2 =
-  //   selectedQuoteType.type_id == 1
-  //     ? editTcs && selectedTcs.edited_payment_grace_days
-  //       ? selectedTcs.payment_words?.replace(
-  //           "{payment_grace_days}",
-  //           String(selectedTcs.edited_payment_grace_days)
-  //         )
-  //       : selectedTcs.payment_words?.replace(
-  //           "{payment_grace_days}",
-  //           String(selectedTcs.payment_grace_days ?? "N/A")
-  //         )
-  //     : editTcs &&
-  //       selectedTcs.edited_initial_payment_percentage &&
-  //       selectedTcs.edited_last_payment_percentage
-  //     ? selectedTcs.payment_words
-  //         ?.replace(
-  //           "{initial_payment_percentage}",
-  //           String(selectedTcs.edited_initial_payment_percentage)
-  //         )
-  //         .replace(
-  //           "{last_payment_percentage}",
-  //           String(selectedTcs.edited_last_payment_percentage)
-  //         )
-  //     : selectedTcs.payment_words
-  //         ?.replace(
-  //           "{initial_payment_percentage}",
-  //           String(selectedTcs.initial_payment_percentage ?? "N/A")
-  //         )
-  //         .replace(
-  //           "{last_payment_percentage}",
-  //           String(selectedTcs.last_payment_percentage ?? "N/A")
-  //         );
-  // const paymentStr =
-  //   selectedQuoteType.type_id == 1
-  //     ? selectedTcs.payment_words?.replace(
-  //         "{payment_grace_days}",
-  //         String(selectedTcs.payment_grace_days ?? "N/A")
-  //       )
-  //     : selectedTcs.payment_words
-  //         ?.replace(
-  //           "{initial_payment_percentage}",
-  //           String(selectedTcs.initial_payment_percentage ?? "N/A")
-  //         )
-  //         .replace(
-  //           "{last_payment_percentage}",
-  //           String(selectedTcs.last_payment_percentage ?? "N/A")
-  //         );
-
-  // const validityStr =
-  //   editTcs && selectedTcs.edited_delivery_days
-  //     ? selectedTcs.validity_words?.replace(
-  //         "{validity_days}",
-  //         String(selectedTcs.edited_delivery_days ?? "N/A")
-  //       )
-  //     : selectedTcs.validity_words?.replace(
-  //         "{validity_days}",
-  //         String(selectedTcs.validity_days ?? "N/A")
-  //       );
 
   return (
     <Stack spacing={2}>
