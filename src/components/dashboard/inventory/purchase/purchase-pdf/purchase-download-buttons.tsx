@@ -6,7 +6,7 @@ import PurchasePdfDoc from "./purchase-pdf-doc";
 import PurchaseViewDialog from "./purchase-view-dialog";
 import { useCurrency } from "@/components/currency/currency-context";
 import Link from "next/link";
-import { PurchaseDownloadButtonsProps } from "@/modules/inventory/types";
+import { PurchaseDownloadButtonsProps } from "@/modules/inventory/types/purchase.types";
 import QRCode from "qrcode";
 
 

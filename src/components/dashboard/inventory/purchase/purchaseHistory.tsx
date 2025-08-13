@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { Eye } from "@phosphor-icons/react";
 import { useCurrency } from "@/components/currency/currency-context";
-import { PurchaseHistoryProps } from "@/modules/inventory/types";
+import { PurchaseHistoryProps } from "@/modules/inventory/types/purchase.types";
 import PurchaseDownloadButtons from "./purchase-pdf/purchase-download-buttons";
 import { CompanyDto } from "@/types/company.types";
 

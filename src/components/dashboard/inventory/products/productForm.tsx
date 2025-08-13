@@ -21,8 +21,8 @@ import { getUnits, getCurrencies } from '@/server-actions/user-actions/inventory
 import { toast } from 'react-toastify';
 import UnitForm from '../units/UnitForm';
 import SupplierForm from '../supplier/SupplierForm';
-import CategoryForm from '../tags/CategoryForm';
-import TagForm from '../tags/tagForm';
+import CategoryForm from '../category/CategoryForm';
+import TagForm from '../tag/tagForm';
 import { Currency } from 'lucide-react';
 import CurrencyForm from '../units/CurrencyForm';
 

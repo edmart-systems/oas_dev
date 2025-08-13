@@ -16,7 +16,7 @@ import {
 import Grid from '@mui/material/Grid2';
 import { Plus } from "@phosphor-icons/react";
 import ProductSearch from "./purchaseSearch";
-import { PurchaseMainProps } from "@/modules/inventory/types";
+import { PurchaseMainProps } from "@/modules/inventory/types/purchase.types";
 import PurchaseCart from "./purchaseCart";
 
 

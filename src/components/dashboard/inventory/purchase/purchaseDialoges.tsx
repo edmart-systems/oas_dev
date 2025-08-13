@@ -15,7 +15,7 @@ import SupplierForm from "@/components/dashboard/inventory/supplier/SupplierForm
 import ProductForm from "@/components/dashboard/inventory/products/productForm";
 import { saveOrUpdate } from "@/components/dashboard/inventory/form-handlers";
 import { useCurrency } from "@/components/currency/currency-context";
-import { PurchaseDialogsProps } from "@/modules/inventory/types";
+import { PurchaseDialogsProps } from "@/modules/inventory/types/purchase.types";
 
 export default function PurchaseDialogs({
   openDialog,

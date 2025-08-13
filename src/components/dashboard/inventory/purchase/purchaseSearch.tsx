@@ -11,7 +11,7 @@ import {
 import Grid from '@mui/material/Grid2';
 import { MagnifyingGlass, Plus } from "@phosphor-icons/react";
 import { useCurrency } from "@/components/currency/currency-context";
-import { ProductSearchProps } from "@/modules/inventory/types";
+import { ProductSearchProps } from "@/modules/inventory/types/purchase.types";
 
 
 

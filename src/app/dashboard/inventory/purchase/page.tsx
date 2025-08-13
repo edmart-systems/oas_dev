@@ -13,11 +13,11 @@ import {
 } from "@mui/material";
 import {ShoppingCart, List as ListIcon } from "@phosphor-icons/react";
 import PurchaseMain from "@/components/dashboard/inventory/purchase/purchaseMain";
-import { Product } from "@/modules/inventory/types";
-import { CartItem } from "@/modules/inventory/types";
-import { PurchaseOrder } from "@/modules/inventory/types";
-import { Supplier } from "@/modules/inventory/types";
-import { InventoryPoint } from "@/modules/inventory/types";
+import { Product } from "@/modules/inventory/types/purchase.types";
+import { CartItem } from "@/modules/inventory/types/purchase.types";
+import { PurchaseOrder } from "@/modules/inventory/types/purchase.types";
+import { Supplier } from "@/modules/inventory/types/purchase.types";
+import { InventoryPoint } from "@/modules/inventory/types/purchase.types";
 import PurchaseHistory from "@/components/dashboard/inventory/purchase/purchaseHistory";
 import PurchaseDialogs from "@/components/dashboard/inventory/purchase/purchaseDialoges";
 import { useCurrency } from "@/components/currency/currency-context";

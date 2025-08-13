@@ -2,7 +2,7 @@ import React from "react";
 import { Page, View, Document, StyleSheet, Font, Text, Image } from "@react-pdf/renderer";
 import DocHeader from "../../../quotations/quotation/quotation-pdf/doc-components/doc-header";
 import DocFooter from "../../../quotations/quotation/quotation-pdf/doc-components/doc-footer";
-import { PurchasePdfDocProps } from "@/modules/inventory/types";
+import { PurchasePdfDocProps } from "@/modules/inventory/types/purchase.types";
 import QRCode from "qrcode";
 
 

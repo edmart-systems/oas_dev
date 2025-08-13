@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { Trash, Receipt } from "@phosphor-icons/react";
 import { useCurrency } from "@/components/currency/currency-context";
-import { PurchaseCartProps } from "@/modules/inventory/types";
+import { PurchaseCartProps } from "@/modules/inventory/types/purchase.types";
 
 
 
