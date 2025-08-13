@@ -271,12 +271,18 @@ const SignatureDialog = ({
       TransitionComponent={Transition}
       PaperComponent={PaperComponent}
       keepMounted
-      // onClose={closeHandler}
+      scroll="body"
+      sx={{
+        "& .MuiDialog-paper": {
+          maxHeight: "90vh",
+          margin: "16px",
+        },
+      }}
       aria-describedby="filter-quotations-dialog-slide"
       aria-labelledby="draggable-dialog-title"
     >
-      <Card sx={{ height: "600px" }}>
-        <CardContent sx={{ height: "72px" }}>
+      <Card sx={{ maxHeight: "90vh", display: "flex", flexDirection: "column" }}>
+        <CardContent sx={{ flexShrink: 0, py: 2 }}>
           <Stack
             direction="row"
             alignItems="center"
@@ -293,7 +299,7 @@ const SignatureDialog = ({
           </Stack>
         </CardContent>
         <Divider />
-        <CardContent sx={{ height: "456px" }}>
+        <CardContent sx={{ flex: 1, minHeight: 0, overflow: "auto" }}>
           {createMode ? (
             <CreateSignature
               setSignTxt={setSignTxt}
@@ -318,7 +324,7 @@ const SignatureDialog = ({
           )}
         </CardContent>
         <Divider />
-        <CardContent sx={{ height: "72px" }}>
+        <CardContent sx={{ flexShrink: 0, py: 2 }}>
           <Stack
             direction="row"
             alignItems="center"

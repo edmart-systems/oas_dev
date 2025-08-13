@@ -1,10 +1,10 @@
-import { PrismaClient, Sale } from "@prisma/client";
+import { PrismaClient, sale } from "@prisma/client";
 import { CreateSaleInput } from "../dtos/sale.dto";
 
 export class SaleRepository {
   constructor(private prisma: PrismaClient | any) {}
 
-  async create(data: CreateSaleInput): Promise<Sale> {
+  async create(data: CreateSaleInput): Promise<sale> {
     const { sale_items, ...saleData } = data;
 
     const saleItems = sale_items.map(item => ({
@@ -37,13 +37,13 @@ export class SaleRepository {
     });
   }
 
-  async getAll(): Promise<Sale[]> {
+  async getAll(): Promise<sale[]> {
     return this.prisma.sale.findMany({
       include: { Sale_items: true },
     });
   }
 
-  async getById(id: number): Promise<Sale | null> {
+  async getById(id: number): Promise<sale | null> {
     return this.prisma.sale.findUnique({
       where: { sale_id: id },
       include: { Sale_items: true },

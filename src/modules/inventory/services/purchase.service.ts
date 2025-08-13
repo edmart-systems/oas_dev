@@ -1,7 +1,7 @@
 import { PurchaseRepository } from "../repositories/purchase.repository";
 import { CreatePurchaseInput } from "../dtos/purchase.dto";
 import { PurchaseItemRepository } from "../repositories/purchase_item.repository";
-import { Purchase } from "@prisma/client";
+import { purchase } from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
 import { calculateProductStatus, calculateMarkupPercentage, calculatePurchaseTotals } from "../methods/purchase.method";
 
@@ -91,11 +91,11 @@ export class PurchaseService {
         });
     }
 
-    async getAllPurchases(): Promise<Purchase[]> {
+    async getAllPurchases(): Promise<purchase[]> {
         return this.purchaseRepo.getAll();
     }
 
-    async getPurchaseById(id: number): Promise<Purchase> {
+    async getPurchaseById(id: number): Promise<purchase> {
         const purchase = await this.purchaseRepo.getById(id);
         if (!purchase) {
             throw new Error(`Purchase with ID '${id}' not found.`);
@@ -103,7 +103,7 @@ export class PurchaseService {
         return purchase;
     }
 
-    async updatePurchase(id: number, data: Partial<CreatePurchaseInput>): Promise<Purchase> {
+    async updatePurchase(id: number, data: Partial<CreatePurchaseInput>): Promise<purchase> {
         return this.purchaseRepo.update(id, data);
     }
 }

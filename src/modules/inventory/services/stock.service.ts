@@ -1,4 +1,4 @@
-import { PrismaClient, Stock } from "@prisma/client";
+import { PrismaClient, stock } from "@prisma/client";
 import { StockDtoInput } from "../dtos/stock.dto";
 import { StockRepository } from "../repositories/stock.repository";
 import { calculateProductStatus } from "../methods/purchase.method";
@@ -9,7 +9,7 @@ export class StockService {
     private stockRepo: StockRepository
   ) {}
 
-  async createAndApplyStock(data: Omit<StockDtoInput, "resulting_stock">): Promise<Stock> {
+  async createAndApplyStock(data: Omit<StockDtoInput, "resulting_stock">): Promise<stock> {
     const { product_id, quantity_change } = data;
 
     const product = await this.prisma.product.findUnique({

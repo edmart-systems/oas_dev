@@ -43,7 +43,7 @@ ALTER TABLE `user_signature` MODIFY `updated_at` DATETIME(3) NOT NULL DEFAULT CU
 -- CreateTable
 CREATE TABLE `password_reset` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `token` VARCHAR(244) NOT NULL,
+    `token` VARCHAR(191) NOT NULL,
     `userId` INTEGER NOT NULL,
     `expires_at` DATETIME(3) NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),

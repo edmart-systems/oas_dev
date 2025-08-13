@@ -1,12 +1,12 @@
 import { SupplierRepository } from "../repositories/supplier.repository";
 import { SupplierDtoInput } from "../dtos/supplier.dto";
-import { Supplier } from "@prisma/client";
+import { supplier } from "@prisma/client";
 
 
 export class SupplierService {
   constructor(private supplierRepo: SupplierRepository) {}
 
-  async createSupplier(data: SupplierDtoInput): Promise<Supplier> {
+  async createSupplier(data: SupplierDtoInput): Promise<supplier> {
     const existingEmail = await this.supplierRepo.findByEmail(data.supplier_email);
     if (existingEmail) {
       throw new Error("Supplier with this email already exists.");
@@ -20,15 +20,15 @@ export class SupplierService {
     return this.supplierRepo.create(data);
   }
 
-  async getAllSuppliers(): Promise<Supplier[]> {
+  async getAllSuppliers(): Promise<supplier[]> {
     return this.supplierRepo.getAll();
   }
 
-  async getSupplierById(id: number): Promise<Supplier | null> {
+  async getSupplierById(id: number): Promise<supplier | null> {
     return this.supplierRepo.getById(id);
   }
 
-  async updateSupplier(id: number, data: Partial<Supplier>): Promise<Supplier> {
+  async updateSupplier(id: number, data: Partial<supplier>): Promise<supplier> {
     const existing = await this.supplierRepo.getById(id);
     if (!existing) throw new Error("Supplier not found");
 
