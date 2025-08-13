@@ -18,7 +18,17 @@ export class Inventory_pointRepository{
 
     
     async getAll():Promise<Inventory_point[]>{
-        return this.prisma.inventory_point.findMany({});
+        return this.prisma.inventory_point.findMany({
+              include: {
+                creator: {
+                    select: {
+                        co_user_id: true,
+                        firstName: true,
+                        lastName: true
+                    }
+                }
+            }
+        });
     }
     async getById(id: number): Promise<Inventory_point | null> {
         return this.prisma.inventory_point.findUnique({

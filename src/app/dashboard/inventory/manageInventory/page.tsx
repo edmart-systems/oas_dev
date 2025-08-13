@@ -10,6 +10,7 @@ import CategoryMain from "@/components/dashboard/inventory/category/categoryMain
 import TagMain from "@/components/dashboard/inventory/tag/tagMain";
 import ProductsMain from "@/components/dashboard/inventory/products/productMain";
 import { Stack as PhosphorStack, Tag as TagIcon, StackSimple as CategoryIcon} from "@phosphor-icons/react";
+import InventoryPointMain from "@/components/dashboard/inventory/inventoryPoint/inventoryPointMain";
 
 
 
@@ -43,6 +44,14 @@ const CategoriesPage = () => {
                 >
                   Categories
                 </Button>
+                <Button
+                  variant={tabValue === 3 ? "contained" : "outlined"}
+                  startIcon={<CategoryIcon size={20} />}
+                  onClick={() => setTabValue(3)}
+                  color="primary"
+                >
+                  Inventory Point
+                </Button>
 
       </Stack>
       {/* Catergories */}
@@ -56,6 +65,9 @@ const CategoriesPage = () => {
       {/* Products */}
       {(tabValue == 0) && (
         <ProductsMain/>
+      )}
+      {(tabValue == 3) && (
+        <InventoryPointMain/>
       )}  
 
     </Stack>
