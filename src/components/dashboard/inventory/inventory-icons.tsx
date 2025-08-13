@@ -14,13 +14,16 @@ import{
     Tag,
     Warehouse,
     ShoppingCart,
-    House
+    House,
+    SquaresFour,
+    Table
+
 } from "@phosphor-icons/react";
 import type { Icon } from "@phosphor-icons/react/dist/lib/types";
 
 
 export const inventoryIcons = {
-    home: House,
+    dashboard: SquaresFour,
     products: Stack,
     purchase: Receipt,
     invoices: Invoice,
@@ -35,5 +38,6 @@ export const inventoryIcons = {
     transfers: ArrowsClockwise,
     categories: Tag,
     warehouse: Warehouse,
-    orders: ShoppingCart
+    orders: ShoppingCart,
+    manage: House, 
 } as Record<string, Icon>;

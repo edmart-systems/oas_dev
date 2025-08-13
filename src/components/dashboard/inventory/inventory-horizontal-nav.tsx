@@ -16,10 +16,10 @@ interface InventoryNavItem {
 
 const inventoryNavItems: InventoryNavItem[] = [
   {
-    key: "home",
-    title: "Home",
+    key: "dashboard",
+    title: "Dashboard",
     href: paths.dashboard.inventory.main,
-    icon: "home",
+    icon: "dashboard",
   },
   {
     key: "sales",
@@ -28,11 +28,17 @@ const inventoryNavItems: InventoryNavItem[] = [
     icon: "sales",
   },
   {
-    key: "products",
-    title: "Products",
-    href: `${paths.dashboard.inventory.main}/products`,
-    icon: "products",
+    key: "manage",
+    title: "Manage Inventory",
+    href: `${paths.dashboard.inventory.main}/manageInventory`,
+    icon: "manage",
   },
+  // {
+  //   key: "products",
+  //   title: "Products",
+  //   href: `${paths.dashboard.inventory.main}/products`,
+  //   icon: "products",
+  // },
   {
     key: "stock",
     title: "Stock",
@@ -75,12 +81,12 @@ const inventoryNavItems: InventoryNavItem[] = [
     href: `${paths.dashboard.inventory.main}/transfers`,
     icon: "transfers",
   },
-  {
-    key: "categories",
-    title: "Categories",
-    href: `${paths.dashboard.inventory.main}/categories`,
-    icon: "categories",
-  },
+  // {
+  //   key: "categories",
+  //   title: "Categories",
+  //   href: `${paths.dashboard.inventory.main}/categories`,
+  //   icon: "categories",
+  // },
   {
     key: "analytics",
     title: "Analytics",
@@ -99,6 +105,7 @@ const inventoryNavItems: InventoryNavItem[] = [
     href: `${paths.dashboard.inventory.main}/reports`,
     icon: "reports",
   },
+  
 ];
 
 const InventoryHorizontalNav = () => {

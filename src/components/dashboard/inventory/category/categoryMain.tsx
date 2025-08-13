@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Button,
   Card,
@@ -10,20 +10,46 @@ import {
 import { Plus, MagnifyingGlass } from "@phosphor-icons/react";
 import { Category } from '@/modules/inventory/types/category.types';
 import CatergoryTable from './catergoryTable';
+import { toast } from 'react-toastify';
+import CategoryForm from './CategoryForm';
 
 
+const CategoryMain = () => {
+  const [categories, setCategories] = useState<Category[]>([])
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [openDialog, setOpenDialog] = useState({
+      category: false,
+    });
+  const handleDialogOpen = (type: keyof typeof openDialog) =>
+    setOpenDialog({ ...openDialog, [type]: true });
+  
+  const handleDialogClose = (type: keyof typeof openDialog) =>
+    setOpenDialog({ ...openDialog, [type]: false }); 
+
+  useEffect(() => {
+      fetchData();
+    }, []);
+  
+    const fetchData = async ( )=>{
+      setLoading(true);
+      try{
+        const  res = await fetch("/api/inventory/category");
+        if(!res.ok) throw new Error("Failed to fetch categories");
+        const data: Category[] = await res.json();
+        setCategories(data);
+      }catch(error){
+      console.error("Failed to fetch categories:", error);
+      toast.error("Failed to fetch categories");
+    } finally {
+      setLoading(false);
+    }
+    } 
+  const filteredCategories = categories.filter(category =>
+    category.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
 
-interface Props {
-  categories: Category[];
-  searchTerm: string;
-  onSearchChange: (value: string) => void;
-  onAdd: () => void;
-  onEdit: () => void;
-}
-
-
-const CategoryMain = ({categories, searchTerm, onSearchChange, onAdd, onEdit}: Props) => {
   return (
                  <Card>
             <CardHeader
@@ -34,12 +60,12 @@ const CategoryMain = ({categories, searchTerm, onSearchChange, onAdd, onEdit}: P
                     size="small"
                     placeholder="Search categories..."
                     value={searchTerm}
-                    onChange={(e) => onSearchChange(e.target.value)}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                     InputProps={{
                       startAdornment: <MagnifyingGlass size={20} />,
                     }}
                   />
-                  <Button variant="contained" startIcon={<Plus />} onClick={onAdd}>
+                  <Button variant="contained" startIcon={<Plus />} onClick={() => handleDialogOpen('category')  }>
                     Add Category
                   </Button>
                 </Stack>
@@ -47,9 +73,17 @@ const CategoryMain = ({categories, searchTerm, onSearchChange, onAdd, onEdit}: P
             />
             <CardContent>
                 {/* Catergory table  */}
-              <CatergoryTable categories={categories} onEdit={onEdit} />
+              <CatergoryTable categories={filteredCategories} onEdit={() => handleDialogOpen('category')} />
               
             </CardContent>
+            <CategoryForm
+        open={openDialog.category}
+        onClose={() => handleDialogClose('category')}
+        onSuccess={(newCategory) => {
+          toast.success('Category added successfully');
+         
+        }}
+      />
           </Card>
     
   )

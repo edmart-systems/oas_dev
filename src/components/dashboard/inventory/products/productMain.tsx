@@ -30,13 +30,14 @@ import { Plus, PencilSimple, Trash, MagnifyingGlass } from "@phosphor-icons/reac
 import PageTitle from "@/components/dashboard/common/page-title";
 import InventoryHorizontalNav from "@/components/dashboard/inventory/inventory-horizontal-nav";
 import { toast } from "react-toastify";
-import { Product, CreateProductRequest } from "@/types/product.types";
+import { Product } from '@/modules/inventory/types/purchase.types'
 import ProductForm from "./productForm";
+import ProductTable from "./productTable";
+import { CreateProductInput } from "@/modules/inventory/dtos/product.dto";
 
 
 
-
-const ProductsPage = () => {
+const ProductsMain = () => {
     
     const [product, setproduct] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
@@ -46,7 +47,7 @@ const ProductsPage = () => {
     const [productToDelete, setProductToDelete] = useState<Product | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-    const [formData, setFormData] = useState<CreateProductRequest>({
+    const [formData, setFormData] = useState<CreateProductInput>({
     product_name: "",
     product_barcode: 0,
     product_description: "",
@@ -228,51 +229,16 @@ const handleDeleteConfirm = async () => {
           }
         />
         <CardContent>
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                   <TableCell>Name</TableCell>
-                    <TableCell>Barcode</TableCell>
-                    <TableCell>Description</TableCell>
-                    <TableCell>Buying Price</TableCell>
-                    <TableCell>Selling Price</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredproduct.map((product) => (
-                    <TableRow key={product.product_id}>
-                      <TableCell>{product.product_name}</TableCell>
-                      <TableCell>{product.product_barcode}</TableCell>
-                      <TableCell>{product.product_description}</TableCell>
-                      <TableCell>${product.buying_price}</TableCell>
-                      <TableCell>${product.selling_price}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={product.product_status === 1 ? "Active" : "Inactive"}
-                          color={product.product_status === 1 ? "success" : "error"}
-                          size="small"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <IconButton onClick={() => handleEdit(product)}>
-                          <PencilSimple />
-                        </IconButton>
-                        <IconButton onClick={() => handleDeleteClick(product)} color="error">
-                          <Trash />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <ProductTable
+            Products={filteredproduct}
+            onEdit={handleEdit}
+            onDelete={handleDeleteClick}
+          />
+        
         </CardContent>
       </Card>
 
-    
+          {/* {Add products} */}
           <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
             <DialogContent>
               <ProductForm 
@@ -283,6 +249,7 @@ const handleDeleteConfirm = async () => {
             </DialogContent>
           </Dialog>
 
+          {/* {Delete Product Confirmation} */}
           <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)}>
             <DialogTitle>Confirm Delete</DialogTitle>
             <DialogContent>
@@ -299,4 +266,4 @@ const handleDeleteConfirm = async () => {
   );
 };
 
-export default ProductsPage;
+export default ProductsMain;
