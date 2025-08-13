@@ -3,30 +3,12 @@
 import { useEffect, useState } from "react";
 import {
   Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Chip,
-  IconButton,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
+
 } from "@mui/material";
-import { Plus, PencilSimple, Trash, MagnifyingGlass } from "@phosphor-icons/react";
-import { ca, fi } from "date-fns/locale";
 import { toast } from "react-toastify";
-import { TagDtoInput } from "@/modules/inventory/dtos/tag.dto";
-import { CategoryDtoInput } from "@/modules/inventory/dtos/category.dto";
 import TagForm from "@/components/dashboard/inventory/tag/tagForm";
 import CategoryForm from "@/components/dashboard/inventory/category/CategoryForm";
-import { SimpleUserDtoType } from "@/types/user.types";
-import UserAvatar from "@/components/dashboard/nav-bar/user-avatar";
-import { Product } from "@/modules/inventory/types/purchase.types";
 import { Category } from "@/modules/inventory/types/category.types";
 import { Tag } from "@/modules/inventory/types/tag.types";
 import CategoryMain from "@/components/dashboard/inventory/category/categoryMain";
@@ -104,8 +86,6 @@ useEffect(() => {
                   Tags
                 </Button>
 
-        
-
       </Stack>
       {/* Catergories */}
                 {tabValue == 0 &&(
@@ -116,7 +96,6 @@ useEffect(() => {
                     searchTerm={searchTerm}
                     onSearchChange={setSearchTerm}
                   />
-        
                 )}
       {/* Tags */}
       {tabValue == 1 &&(
