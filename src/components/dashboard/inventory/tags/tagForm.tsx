@@ -19,8 +19,12 @@ useEffect(()=>{
     setFormData({
       tag: initialData.tag || ''
     });
+  }else{
+    setFormData({
+      tag: ''
+    });
   }
-}), [initialData];
+}, [initialData]);
 
 
 const handleSubmit = async (e: React.FormEvent) => {
@@ -31,24 +35,28 @@ const handleSubmit = async (e: React.FormEvent) => {
     };
     
     try {
-      const res = await fetch('/api/inventory/tag',{
-        method: 'POST',
+      const isUpdate = initialData?.tag_id;
+      const url = isUpdate ? `/api/inventory/tag/${initialData.tag_id}` : '/api/inventory/tag';
+      const method = isUpdate ? 'PATCH' : 'POST';
+
+      const res = await fetch(url,{
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(submitData)
       });
 
-      if (!res.ok) throw new Error('Failed to save tag');
+      if (!res.ok) throw new Error(`Failed to${isUpdate ? 'update' : 'add'}  tag`);
 
       const newTag = await res.json();
       onSuccess(newTag);
       onClose();
     } catch (error) {
-      console.error('Error saving tag:', error);
+      console.error(`Error ${initialData ? 'updating' : 'adding'}tag:`, error);
     }
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth key={initialData?.tag_id || 'new'}>
       <form onSubmit={handleSubmit}>
         <DialogTitle>
           { initialData?.tag ? 'Edit Tag' : 'Add Tag'}
@@ -70,7 +78,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
           <Button type="submit" variant="contained">
-            {initialData?.tag ? 'Update' : 'Add'} 
+            {initialData?.tag ? 'Update' : 'Add'} Tag 
           </Button>
         </DialogActions>
       </form>

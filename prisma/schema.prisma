@@ -59,6 +59,21 @@ model User {
   quotation_drafts Quotation_draft[]
   tasks            Task[]
   passwordResets   PasswordReset[]    // Relation to PasswordReset
+  
+  // Inventory relations
+  createdTags         Tag[] @relation("TagCreator")
+  updatedTags         Tag[] @relation("TagUpdater")
+  createdCategories   Category[] @relation("CategoryCreator")
+  updatedCategories   Category[] @relation("CategoryUpdater")
+  createdSuppliers    Supplier[] @relation("SupplierCreator")
+  updatedSuppliers    Supplier[] @relation("SupplierUpdater")
+  createdInventoryPoints Inventory_point[] @relation("InventoryPointCreator")
+  updatedInventoryPoints Inventory_point[] @relation("InventoryPointUpdater")
+  createdProducts     Product[] @relation("ProductCreator")
+  updatedProducts     Product[] @relation("ProductUpdater")
+  createdPurchases    Purchase[] @relation("PurchaseCreator")
+  updatedPurchases    Purchase[] @relation("PurchaseUpdater")
+  sales               Sale[] @relation("SaleSeller")
 
   @@map("user")
 }
@@ -509,6 +524,8 @@ model Tag{
   updated_at DateTime  @updatedAt
 
   Product Product[]
+  creator User? @relation("TagCreator", fields: [created_by], references: [co_user_id])
+  updater User? @relation("TagUpdater", fields: [updated_by], references: [co_user_id])
 }
 
 
@@ -521,6 +538,8 @@ model Category{
   updated_at DateTime  @updatedAt
 
   Product Product[]
+  creator User? @relation("CategoryCreator", fields: [created_by], references: [co_user_id])
+  updater User? @relation("CategoryUpdater", fields: [updated_by], references: [co_user_id])
 }
 
 model Supplier {
@@ -536,8 +555,9 @@ model Supplier {
   supplier_updated_at DateTime @updatedAt
 
   Product Product[]
-
   Purchase Purchase[]
+  creator User? @relation("SupplierCreator", fields: [created_by], references: [co_user_id])
+  updater User? @relation("SupplierUpdater", fields: [updated_by], references: [co_user_id])
 }
 
 model Inventory_point{
@@ -548,11 +568,10 @@ model Inventory_point{
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-
-
   Purchase Purchase[]
-
   Stock Stock[]
+  creator User? @relation("InventoryPointCreator", fields: [created_by], references: [co_user_id])
+  updater User? @relation("InventoryPointUpdater", fields: [updated_by], references: [co_user_id])
 }
 
 model Product {
@@ -585,10 +604,10 @@ model Product {
   currency            Currency  @relation(fields: [currency_id], references: [currency_id])
   supplier           Supplier? @relation(fields: [supplier_id], references: [supplier_id])
   Purchase_items Purchase_item[]
-
   Stock Stock[]
-
   Sale_item Sale_item[]
+  creator User? @relation("ProductCreator", fields: [created_by], references: [co_user_id])
+  updater User? @relation("ProductUpdater", fields: [updated_by], references: [co_user_id])
 }
 
 model Purchase {
@@ -605,9 +624,9 @@ model Purchase {
 
   supplier           Supplier @relation(fields: [supplier_id], references: [supplier_id])
   inventory_point     Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
-
-
   Purchase_items Purchase_item[]
+  creator User? @relation("PurchaseCreator", fields: [purchase_created_by], references: [co_user_id])
+  updater User? @relation("PurchaseUpdater", fields: [purchase_updated_by], references: [co_user_id])
 }
 
 model Purchase_item {
@@ -654,6 +673,7 @@ model Sale{
 
   currency            Currency  @relation(fields: [currency_id], references: [currency_id])
   Sale_items          Sale_item[]
+  seller User @relation("SaleSeller", fields: [seller_id], references: [userId])
 }
 
 model Sale_item {

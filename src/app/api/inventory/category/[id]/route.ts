@@ -26,7 +26,7 @@ export async function PATCH(
   
   const categoryData = {
     ...body,
-    updated_by: session.user?.email || session.user?.userId || "unknown",
+    updated_by: session.user?.co_user_id || "unknown",
   };
 
   const parsed = CategoryDto.safeParse(categoryData);

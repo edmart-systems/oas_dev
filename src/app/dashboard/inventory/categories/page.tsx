@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -24,75 +24,122 @@ import {
 import { Plus, PencilSimple, Trash, MagnifyingGlass } from "@phosphor-icons/react";
 import PageTitle from "@/components/dashboard/common/page-title";
 import InventoryHorizontalNav from "@/components/dashboard/inventory/inventory-horizontal-nav";
+import { ca, fi } from "date-fns/locale";
+import { toast } from "react-toastify";
+import { TagDtoInput } from "@/modules/inventory/dtos/tag.dto";
+import { CategoryDtoInput } from "@/modules/inventory/dtos/category.dto";
+import TagForm from "@/components/dashboard/inventory/tags/tagForm";
+import CategoryForm from "@/components/dashboard/inventory/tags/CategoryForm";
+import { SimpleUserDtoType } from "@/types/user.types";
+import UserAvatar from "@/components/dashboard/nav-bar/user-avatar";
+import { Product } from "@/modules/inventory/types";
 
-interface Category {
-  id: number;
-  name: string;
-  code: string;
-  description: string;
-  productCount: number;
-  parentCategory: string | null;
-  status: "Active" | "Inactive";
+
+export interface User extends SimpleUserDtoType {}
+
+export interface Category extends CategoryDtoInput {
+category_id: string;
+created_at: Date;
+updated_at?: Date;
+creator?: {
+  co_user_id: string;
+  firstName: string;
+  lastName: string; 
+};
+Product: Product[];
 }
 
+export interface Tag extends TagDtoInput {
+  tag_id: string;
+  created_at: Date;
+  updated_at?: Date;
+  creator?: {
+    co_user_id: string;
+    firstName: string;
+    lastName: string; 
+  };
+  Product: Product[];
+}
+
+
+
 const CategoriesPage = () => {
-  const [categories, setCategories] = useState<Category[]>([
-    { id: 1, name: "Electronics", code: "ELEC", description: "Electronic devices and components", productCount: 125, parentCategory: null, status: "Active" },
-    { id: 2, name: "Laptops", code: "LAPTOP", description: "Portable computers", productCount: 45, parentCategory: "Electronics", status: "Active" },
-    { id: 3, name: "Furniture", code: "FURN", description: "Office and home furniture", productCount: 78, parentCategory: null, status: "Active" },
-    { id: 4, name: "Stationery", code: "STAT", description: "Office supplies and stationery", productCount: 156, parentCategory: null, status: "Inactive" },
-  ]);
-
-  const [open, setOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [categories, setCategories] = useState<Category[]>([])
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [tabValue, setTabValue] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [formData, setFormData] = useState({
-    name: "",
-    code: "",
-    description: "",
-    productCount: 0,
-    parentCategory: "",
-    status: "Active" as "Active" | "Inactive",
-  });
+ 
+  const [openDialog, setOpenDialog] = useState({
+      category: false,
+      tag: false,
+    });
 
-  const handleAdd = () => {
-    setEditingCategory(null);
-    setFormData({ name: "", code: "", description: "", productCount: 0, parentCategory: "", status: "Active" });
-    setOpen(true);
-  };
+  const handleDialogOpen = (type: keyof typeof openDialog) =>
+    setOpenDialog({ ...openDialog, [type]: true });
 
-  const handleEdit = (category: Category) => {
-    setEditingCategory(category);
-    setFormData({ ...category, parentCategory: category.parentCategory || "" });
-    setOpen(true);
-  };
+  const handleDialogClose = (type: keyof typeof openDialog) =>
+    setOpenDialog({ ...openDialog, [type]: false });
 
-  const handleSave = () => {
-    const categoryData = {
-      ...formData,
-      parentCategory: formData.parentCategory || null,
-    };
-    
-    if (editingCategory) {
-      setCategories(categories.map(c => c.id === editingCategory.id ? { ...categoryData, id: editingCategory.id } : c));
-    } else {
-      setCategories([...categories, { ...categoryData, id: Date.now() }]);
-    }
-    setOpen(false);
-  };
+ 
+useEffect(() => {
+    fetchData();
+  }, []);
 
-  const handleDelete = (id: number) => {
-    setCategories(categories.filter(c => c.id !== id));
-  };
+  const fetchData = async ( )=>{
+    setLoading(true);
+    try{
+      const[tagRes, CategoryRes] = await Promise.all([
+        fetch("/api/inventory/tag"), 
+        fetch("/api/inventory/category")]);
+
+      const[tagData, categoryData] = await Promise.all([
+        tagRes.json(),
+        CategoryRes.json()]);
+      
+      setTags(tagData);
+      setCategories(categoryData);
+    }catch(error){
+    console.error("Failed to fetch categories:", error);
+    toast.error("Failed to fetch categories");
+  } finally {
+    setLoading(false);
+  }
+  } 
 
   const filteredCategories = categories.filter(category =>
-    category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    category.code.toLowerCase().includes(searchTerm.toLowerCase())
+    category.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredTags = tags.filter(tag =>
+    tag.tag.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <Stack spacing={3}>
-      <Card>
+      <Stack direction="row" spacing={2} alignItems="center">
+        <Button
+            variant={tabValue === 0 ? "contained" : "outlined"}
+            onClick={() => setTabValue(0)}
+            color="primary"
+          >
+                  Categories
+                </Button>
+                <Button
+                  variant={tabValue === 1 ? "contained" : "outlined"}
+                  onClick={() => setTabValue(1)}
+                  color="primary"
+                >
+                  Tags
+                </Button>
+
+        
+
+      </Stack>
+      {/* Catergories */}
+                {tabValue == 0 &&(
+                  <>
+                  <Card>
         <CardHeader
           title="Categories"
           action={
@@ -106,7 +153,7 @@ const CategoriesPage = () => {
                   startAdornment: <MagnifyingGlass size={20} />,
                 }}
               />
-              <Button variant="contained" startIcon={<Plus />} onClick={handleAdd}>
+              <Button variant="contained" startIcon={<Plus />} onClick={() => handleDialogOpen('category')}>
                 Add Category
               </Button>
             </Stack>
@@ -117,43 +164,45 @@ const CategoriesPage = () => {
             <Table>
               <TableHead>
                 <TableRow>
+                  <TableCell>Id</TableCell>
                   <TableCell>Name</TableCell>
-                  <TableCell>Code</TableCell>
-                  <TableCell>Description</TableCell>
-                  <TableCell>Parent Category</TableCell>
-                  <TableCell>Product Count</TableCell>
-                  <TableCell>Status</TableCell>
+                  <TableCell>Products with Category</TableCell>
+                  <TableCell>Updated At</TableCell>
+                  <TableCell>Created At</TableCell>
+                  <TableCell>Created By</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {filteredCategories.map((category) => (
-                  <TableRow key={category.id}>
-                    <TableCell>{category.name}</TableCell>
-                    <TableCell>{category.code}</TableCell>
-                    <TableCell>{category.description}</TableCell>
-                    <TableCell>{category.parentCategory || "-"}</TableCell>
+                  <TableRow key={category.category_id}>
+                    <TableCell>CA-{category.category_id}</TableCell>
+                    <TableCell>{category.category}</TableCell>
+                    <TableCell 
+                      title={category.Product?.length > 0 ? category.Product.map(p => p.product_name).join(", ") : "No products"}
+                      sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                    >
+                      {category.Product?.length > 0 
+                        ? category.Product.map(p => p.product_name).join(", ") 
+                        : "No products"}
+                    </TableCell>
+                    <TableCell>{category.updated_at? new Date(category.updated_at).toLocaleDateString()
+                        : "N/A"
+                      }</TableCell>
+                    <TableCell>{category.created_at? new Date(category.created_at).toLocaleDateString()
+                        : "N/A"
+                      }</TableCell>
                     <TableCell>
-                      <Chip
-                        label={category.productCount}
-                        color={category.productCount > 100 ? "success" : category.productCount > 50 ? "info" : "warning"}
-                        size="small"
-                      />
+                      {/* {category.creator ? `${category.creator.firstName} ${category.creator.lastName}` : category.created_by || "N/A"} */}
+                      <UserAvatar/>
                     </TableCell>
                     <TableCell>
-                      <Chip
-                        label={category.status}
-                        color={category.status === "Active" ? "success" : "error"}
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <IconButton onClick={() => handleEdit(category)}>
+                      <IconButton onClick={() => handleDialogOpen('category')}>
                         <PencilSimple />
                       </IconButton>
-                      <IconButton onClick={() => handleDelete(category.id)} color="error">
+                      {/* <IconButton onClick={() => handleDelete(category.id)} color="error">
                         <Trash />
-                      </IconButton>
+                      </IconButton> */}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -163,50 +212,102 @@ const CategoriesPage = () => {
         </CardContent>
       </Card>
 
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>{editingCategory ? "Edit Category" : "Add Category"}</DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} sx={{ mt: 1 }}>
-            <TextField
-              label="Category Name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              fullWidth
+                  </>
+                )}
+      {/* Tags */}
+      {tabValue == 1 &&(
+        <>
+        <Card>
+        <CardHeader
+          title="Tags"
+          action={
+            <Stack direction="row" spacing={2}>
+              <TextField
+                size="small"
+                placeholder="Search tags..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                InputProps={{
+                  startAdornment: <MagnifyingGlass size={20} />,
+                }}
+              />
+              <Button variant="contained" startIcon={<Plus />} onClick={() => handleDialogOpen('tag') }>
+                Add Tag
+              </Button>
+            </Stack>
+          }
+        />
+        <CardContent>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Id</TableCell>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Products with Tag</TableCell>
+                  <TableCell>Updated At</TableCell>
+                  <TableCell>Created At</TableCell>
+                  <TableCell>Created By</TableCell>
+                  <TableCell>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredTags.map((tag) => (
+                  <TableRow key={tag.tag_id}>
+                    <TableCell>TA-{tag.tag_id}</TableCell>
+                    <TableCell>{tag.tag}</TableCell>
+                    <TableCell 
+                      title={tag.Product?.length > 0 ? tag.Product.map(p => p.product_name).join(", ") : "No products"}
+                      sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                    >
+                      {tag.Product?.length > 0 
+                        ? tag.Product.map(p => p.product_name).join(", ") 
+                        : "No products"}
+                    </TableCell>
+                    <TableCell>{tag.updated_at? new Date(tag.updated_at).toLocaleDateString()
+                        : "N/A"
+                      }</TableCell>
+                    <TableCell>{tag.created_at? new Date(tag.created_at).toLocaleDateString()
+                        : "N/A"
+                      }</TableCell>
+                    <TableCell>
+                    {/* {tag.creator ? `${tag.creator.firstName} ${tag.creator.lastName}` : tag.created_by || "N/A"} */}
+                    <UserAvatar/>
+                  </TableCell>
+                    <TableCell>
+                      <IconButton onClick={() => handleDialogOpen('tag')}>
+                        <PencilSimple />
+                      </IconButton>
+                      {/* <IconButton onClick={() => handleDelete(category.id)} color="error">
+                        <Trash />
+                      </IconButton> */}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </CardContent>
+      </Card>
+
+        </>
+      )}
+      
+      <TagForm
+              open={openDialog.tag}
+              onClose={() => handleDialogClose('tag')}
+              onSuccess={(newTag) => {
+                toast.success('Tag added successfully');
+              }}
             />
-            <TextField
-              label="Code"
-              value={formData.code}
-              onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-              fullWidth
-            />
-            <TextField
-              label="Description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              fullWidth
-              multiline
-              rows={2}
-            />
-            <TextField
-              label="Parent Category (Optional)"
-              value={formData.parentCategory}
-              onChange={(e) => setFormData({ ...formData, parentCategory: e.target.value })}
-              fullWidth
-            />
-            <TextField
-              label="Product Count"
-              type="number"
-              value={formData.productCount}
-              onChange={(e) => setFormData({ ...formData, productCount: Number(e.target.value) })}
-              fullWidth
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={handleSave} variant="contained">Save</Button>
-        </DialogActions>
-      </Dialog>
+      <CategoryForm
+        open={openDialog.category}
+        onClose={() => handleDialogClose('category')}
+        onSuccess={(newCategory) => {
+          toast.success('Category added successfully');
+         
+        }}
+      />
     </Stack>
   );
 };

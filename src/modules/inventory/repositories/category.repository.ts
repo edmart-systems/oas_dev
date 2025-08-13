@@ -18,7 +18,23 @@ export class CategoryRepository{
 
     
     async getAll():Promise<Category[]>{
-        return this.prisma.category.findMany({});
+        return this.prisma.category.findMany({
+            include: {
+                creator: {
+                    select: {
+                        co_user_id: true,
+                        firstName: true,
+                        lastName: true
+                    }
+                },
+                Product: {
+                    take: 5,
+                    select: {
+                        product_name: true
+                    }
+                }
+            }
+        });
     }
     async getById(id: number): Promise<Category | null> {
         return this.prisma.category.findUnique({

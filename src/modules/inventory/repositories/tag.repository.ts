@@ -18,7 +18,23 @@ export class TagRepository{
 
     
     async getAll():Promise<Tag[]>{
-        return this.prisma.tag.findMany({});
+        return this.prisma.tag.findMany({
+            include: {
+                creator: {
+                    select: {
+                        co_user_id: true,
+                        firstName: true,
+                        lastName: true
+                    }
+                },
+                Product: {
+                    take: 5,
+                    select: {
+                        product_name: true
+                    }
+                }
+            }
+        });
     }
     async getById(id: number): Promise<Tag | null> {
         return this.prisma.tag.findUnique({

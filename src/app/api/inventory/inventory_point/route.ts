@@ -21,10 +21,10 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    // Inject logged-in user's email or id here
+    // Inject logged-in user's co_user_id here
     const inventory_pointData = {
       ...body,
-      created_by: session.user?.email || session.user?.userId || "unknown",
+      created_by: session.user?.co_user_id || "unknown",
     };
 
     const parsed = Inventory_pointDto.safeParse(inventory_pointData);
