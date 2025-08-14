@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
 
   const productData = {
       ...body,
-      created_by: session.user?.email || session.user?.userId || "unknown",
+      created_by: session.user?.co_user_id || "unknown",
   };
 
   const parsed = CreateProductDto.safeParse(productData);

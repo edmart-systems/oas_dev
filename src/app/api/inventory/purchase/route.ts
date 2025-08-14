@@ -25,10 +25,10 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    // Inject logged-in user's email or id here
+    // Inject logged-in user's co_user_id here
     const tagData = {
       ...body,
-      purchase_created_by: session.user?.email || session.user?.userId || "unknown",
+      purchase_created_by: session.user?.co_user_id || "unknown",
     };
 
     const parsed = PurchaseDto.safeParse(tagData);

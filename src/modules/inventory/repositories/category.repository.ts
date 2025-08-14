@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { category } from "@prisma/client";
+import { Category } from "@prisma/client";
 import { CategoryDtoInput } from "../dtos/category.dto";
 
 
@@ -12,21 +12,37 @@ export class CategoryRepository{
         })
     }
 
-    async create(data: CategoryDtoInput):Promise<category>{
+    async create(data: CategoryDtoInput):Promise<Category>{
         return this.prisma.category.create({data});
     }
 
     
-    async getAll():Promise<category[]>{
-        return this.prisma.category.findMany({});
+    async getAll():Promise<Category[]>{
+        return this.prisma.category.findMany({
+            include: {
+                creator: {
+                    select: {
+                        co_user_id: true,
+                        firstName: true,
+                        lastName: true
+                    }
+                },
+                Product: {
+                    take: 5,
+                    select: {
+                        product_name: true
+                    }
+                }
+            }
+        });
     }
-    async getById(id: number): Promise<category | null> {
+    async getById(id: number): Promise<Category | null> {
         return this.prisma.category.findUnique({
             where: { category_id: id },
         });
     }
 
-    async updateCategory(id: number, data: { category: string }): Promise<category> {
+    async updateCategory(id: number, data: { category: string }): Promise<Category> {
         return this.prisma.category.update({
             where: { category_id: id },
             data,

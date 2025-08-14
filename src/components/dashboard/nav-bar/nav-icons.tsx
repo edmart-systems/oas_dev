@@ -6,6 +6,7 @@ import {
   User,
   Users,
   Notebook,
+  Lockers
 } from "@phosphor-icons/react";
 import type { Icon } from "@phosphor-icons/react/dist/lib/types";
 
@@ -17,4 +18,5 @@ export const navIcons = {
   settings: Faders,
   user: User,
   users: Users,
+  inventory: Lockers
 } as Record<string, Icon>;

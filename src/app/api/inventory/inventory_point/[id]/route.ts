@@ -26,7 +26,7 @@ export async function PATCH(
   
   const inventory_pointData = {
     ...body,
-    updated_by: session.user?.email || session.user?.userId || "unknown",
+    updated_by: session.user?.co_user_id || "unknown",
   };
 
   const parsed = Inventory_pointDto.safeParse(inventory_pointData);

@@ -31,7 +31,8 @@ export async function PATCH(
 
   const supplierData = {
     ...body,  
-    updated_by: session.user?.email || session.user?.userId || "unknown",}
+    updated_by: session.user?.co_user_id || "unknown",
+  };
 
   const parsed = UpdateSupplierDto.safeParse(supplierData);
   if (!parsed.success) {

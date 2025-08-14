@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { inventory_point } from "@prisma/client";
+import { Inventory_point } from "@prisma/client";
 import { Inventory_pointDtoInput } from "../dtos/inventory_point.dto";
 
 
@@ -12,21 +12,31 @@ export class Inventory_pointRepository{
         })
     }
 
-    async create(data: Inventory_pointDtoInput):Promise<inventory_point>{
+    async create(data: Inventory_pointDtoInput):Promise<Inventory_point>{
         return this.prisma.inventory_point.create({data});
     }
 
     
-    async getAll():Promise<inventory_point[]>{
-        return this.prisma.inventory_point.findMany({});
+    async getAll():Promise<Inventory_point[]>{
+        return this.prisma.inventory_point.findMany({
+              include: {
+                creator: {
+                    select: {
+                        co_user_id: true,
+                        firstName: true,
+                        lastName: true
+                    }
+                }
+            }
+        });
     }
-    async getById(id: number): Promise<inventory_point | null> {
+    async getById(id: number): Promise<Inventory_point | null> {
         return this.prisma.inventory_point.findUnique({
             where: { inventory_point_id: id },
         });
     }
 
-    async updateInventory_point(id: number, data: { inventory_point: string }): Promise<inventory_point> {
+    async updateInventory_point(id: number, data: { inventory_point: string }): Promise<Inventory_point> {
         return this.prisma.inventory_point.update({
             where: { inventory_point_id: id },
             data,
