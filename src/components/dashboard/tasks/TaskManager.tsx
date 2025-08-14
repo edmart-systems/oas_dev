@@ -185,10 +185,10 @@ const now = new Date();
 const ugandaNow = new Date(now.getTime() + (3 * 60 * 60 * 1000));
 const nowISO = ugandaNow.getFullYear() + '-' + 
   String(ugandaNow.getMonth() + 1).padStart(2, '0') + '-' + 
-  String(ugandaNow.getDate()).padStart(2, '0') + 'T09:00';
+  String(ugandaNow.getDate()).padStart(2, '0') + 'T08:00';
 const endISO = ugandaNow.getFullYear() + '-' + 
   String(ugandaNow.getMonth() + 1).padStart(2, '0') + '-' + 
-  String(ugandaNow.getDate()).padStart(2, '0') + 'T18:00';
+  String(ugandaNow.getDate()).padStart(2, '0') + 'T23:59';
 const todayISO = new Date().toISOString().slice(0, 10);
 
 function isoToTimestamp(iso: string): number {
@@ -213,9 +213,8 @@ function getWeekOfMonth(date: Date): string {
   const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
   const dayOfMonth = date.getDate();
 
-  // Adjust for first day of week
-  const dayOffset = firstDayOfMonth.getDay();
-  const weekNumber = Math.ceil((dayOfMonth + dayOffset) / 7);
+  // Calculate week number: days from start of month divided by 7, rounded up
+  const weekNumber = Math.ceil(dayOfMonth / 7);
 
   const monthNames = [
     "January",
@@ -555,13 +554,15 @@ const TaskTableTabs = ({
   statusCounts,
   selectedTab,
   setSelectedTab,
+  onAddTask,
 }: {
   statusCounts: Record<TaskStatus, number>;
   selectedTab: string;
   setSelectedTab: (tab: string) => void;
+  onAddTask: () => void;
 }) => {
   return (
-    <Box sx={{ borderBottom: 1, borderColor: "divider", p: 1 }}>
+    <Box sx={{ borderBottom: 1, borderColor: "divider", p: 1, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
       <Tabs
         value={selectedTab}
         onChange={(_, newValue) => setSelectedTab(newValue)}
@@ -585,10 +586,18 @@ const TaskTableTabs = ({
         ))}
         <Tab
           key="Cancelled"
-          label={`Drafts (${statusCounts["Cancelled"] || 0})`}
+          label={`Deleted (${statusCounts["Cancelled"] || 0})`}
           value="Cancelled"
         />
       </Tabs>
+      <IconButton
+        color="primary"
+        onClick={onAddTask}
+        size="small"
+        sx={{ ml: 2 }}
+      >
+        <Add />
+      </IconButton>
     </Box>
   );
 };
@@ -666,7 +675,7 @@ const TaskStatusFilter = ({
         onChange={(e) => onChange(e.target.value)}
       >
         <MenuItem value="">All</MenuItem>
-        <MenuItem value="Drafts">Drafts</MenuItem>
+        <MenuItem value="Drafts">Deleted</MenuItem>
         {TASK_STATUSES.filter(status => status !== "Cancelled").map((status) => (
           <MenuItem key={status} value={status}>
             {status}
@@ -864,7 +873,6 @@ class TaskApiService {
     return response.data;
   }
 
-  // Update your updateTask method in TaskApiService:
   async updateTask(
     taskId: number,
     userId: number,
@@ -875,8 +883,7 @@ class TaskApiService {
       taskData: {
         userId,
         taskId,
-        statusStr: taskData.status,
-        priorityStr: taskData.priority,
+        ...taskData,
       },
     };
     
@@ -1115,19 +1122,26 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
       } else if (selectedStatusTab !== "All") {
         result = result.filter((task) => task.status === selectedStatusTab);
       } else {
-        // Filter out cancelled tasks and show only the latest version of pushed tasks
+        // Filter out cancelled tasks but include failed tasks
         result = result.filter((task) => task.status !== "Cancelled");
         
-        // Group by task name and keep only the latest (highest push_count) version
+        // Group by task name and keep only the latest (highest push_count) version for non-failed tasks
         const taskGroups = new Map<string, Task>();
+        const failedTasks: Task[] = [];
+        
         result.forEach(task => {
-          const existing = taskGroups.get(task.taskName);
-          if (!existing || task.push_count > existing.push_count || 
-              (task.push_count === existing.push_count && task.startTime > existing.startTime)) {
-            taskGroups.set(task.taskName, task);
+          if (task.status === "Failed") {
+            failedTasks.push(task);
+          } else {
+            const existing = taskGroups.get(task.taskName);
+            if (!existing || task.push_count > existing.push_count || 
+                (task.push_count === existing.push_count && task.startTime > existing.startTime)) {
+              taskGroups.set(task.taskName, task);
+            }
           }
         });
-        result = Array.from(taskGroups.values());
+        
+        result = [...Array.from(taskGroups.values()), ...failedTasks];
       }
     }
 
@@ -1420,6 +1434,11 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
       console.log('Archived tasks:', transformedTasks.filter(t => t.archived).length);
 
       setTasks(transformedTasks);
+      
+      // Set default filter to current user's tasks
+      if (currentUserName && !userFilter) {
+        setUserFilter(currentUserName);
+      }
     } catch (err) {
       console.error("Failed to fetch tasks:", err);
       toast(err instanceof Error ? err.message : "Failed to fetch tasks", { type: "error" });
@@ -1444,7 +1463,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         await confirmDeleteSelected();
       } else {
         await handleStatusUpdate(taskToDelete, "Cancelled");
-        toast("Task moved to drafts", { type: "success" });
+        toast("Task deleted", { type: "success" });
       }
     } catch (err) {
       toast(err instanceof Error ? err.message : "Failed to delete task", { type: "error" });
@@ -1476,7 +1495,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
       for (const id of selected) {
         await handleStatusUpdate(id, "Cancelled");
       }
-      toast(`${selected.length} tasks moved to drafts`, { type: "success" });
+      toast(`${selected.length} tasks deleted`, { type: "success" });
       setSelected([]);
     } catch (err) {
       toast(err instanceof Error ? err.message : "Failed to delete tasks", { type: "error" });
@@ -1600,8 +1619,8 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                 taskName: taskData.taskName.trim(),
                 taskDetails: taskData.taskDetails?.trim() || "",
                 comments: taskData.comments?.trim() || "",
-                status: taskData.status,
-                priority: taskData.priority,
+                statusStr: taskData.status,
+                priorityStr: taskData.priority,
                 startTime: isoToTimestamp(taskData.startTime),
                 endTime: isoToTimestamp(taskData.endTime),
               });
@@ -1640,6 +1659,13 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
           }
         }
       }
+      // Process any expired tasks after creation
+      try {
+        await fetch('/api/tasks/expire', { method: 'POST' });
+      } catch (err) {
+        console.log('Failed to process expired tasks:', err);
+      }
+      
       toast(`${successCount} tasks ${editTaskId ? 'updated' : 'created'} successfully`, { type: "success" });
       setEditTaskId(null);
       setOpenMultiAdd(false);
@@ -1762,6 +1788,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
             statusCounts={statusCounts}
             selectedTab={selectedStatusTab}
             setSelectedTab={setSelectedStatusTab}
+            onAddTask={handleOpenMultiAdd}
           />
         </Suspense>
         <Divider />
@@ -2157,7 +2184,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                               />
                             </TableCell>
                             <TableCell sx={{ minWidth: "140px", width: "140px" }}>
-                              {task.userId === userId && task.endTime >= Date.now() ? (
+                              {task.userId === userId && task.endTime >= Date.now() && task.status !== "Failed" ? (
                                 <InlineStatusSelect
                                   value={task.status}
                                   taskId={task.id}
@@ -2174,7 +2201,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                               {new Date(task.endTime).toLocaleDateString()}
                             </TableCell>
                             <TableCell sx={{ minWidth: "140px", width: "140px" }}>
-                              {task.userId === userId && task.endTime >= Date.now() ? (
+                              {task.userId === userId && task.endTime >= Date.now() && task.status !== "Failed" ? (
                                 <InlinePrioritySelect
                                   value={task.priority}
                                   taskId={task.id}
@@ -2216,7 +2243,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                                     </Tooltip>
                                   ) : task.status === "Failed" ? (
                                     <Typography variant="caption" color="text.secondary">
-                                      View Only
+                                      Expired - View Only
                                     </Typography>
                                   ) : (
                                     <>
@@ -2250,7 +2277,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                                             setOpenMultiAdd(true);
                                           }}
                                           size="small"
-                                          disabled={task.endTime < Date.now()}
+                                          disabled={task.endTime < Date.now() || (task.status as TaskStatus) === "Failed"}
                                         >
                                           <PencilSimple
                                             size={18}
@@ -2300,7 +2327,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         {Object.keys(groupedTasks).length === 0 && !loading && (
           <Box p={4} textAlign="center">
             <Typography variant="body1" color="text.secondary">
-              {(statusFilter === "Drafts" || selectedStatusTab === "Cancelled") ? "No tasks in drafts." : "No tasks found. Click \"Add Tasks\" to create one."}
+              {(statusFilter === "Drafts" || selectedStatusTab === "Cancelled") ? "No deleted tasks." : "No tasks found. Click \"Add Tasks\" to create one."}
             </Typography>
           </Box>
         )}
@@ -2386,13 +2413,20 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                     size="small"
                   />
                   <Box sx={{ display: "flex", gap: 1 }}>
-                    <TextField
-                      label="Status"
-                      value="Pending"
-                      fullWidth
-                      size="small"
-                      disabled={true}
-                    />
+                    <FormControl fullWidth disabled={loading || !editTaskId} size="small">
+                      <InputLabel>Status</InputLabel>
+                      <Select
+                        value={task.status}
+                        onChange={(e) => updateMultiTask(index, "status", e.target.value)}
+                        label="Status"
+                      >
+                        {TASK_STATUSES.map((status) => (
+                          <MenuItem key={status} value={status}>
+                            {status}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                     <FormControl fullWidth disabled={loading} size="small">
                       <InputLabel>Priority</InputLabel>
                       <Select
@@ -2431,15 +2465,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                     label="End Time"
                     type="datetime-local"
                     value={task.endTime}
-                    onChange={(e) => {
-                      const endDate = e.target.value.slice(0, 10);
-                      const today = new Date().toISOString().slice(0, 10);
-                      if (endDate < today) {
-                        toast("End date cannot be in the past", { type: "error" });
-                        return;
-                      }
-                      updateMultiTask(index, "endTime", e.target.value);
-                    }}
+                    onChange={(e) => updateMultiTask(index, "endTime", e.target.value)}
                     fullWidth
                     InputLabelProps={{ shrink: true }}
                     disabled={loading}
@@ -2516,7 +2542,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
             onClick={handleMultiAdd}
             variant="contained"
             startIcon={loading ? <CircularProgress size={20} /> : <Save />}
-            disabled={loading || multiTaskData.every(t => !t.taskName.trim())}
+            disabled={loading || !multiTaskData.some(t => t.taskName.trim())}
           >
             {editTaskId ? 'Update Task' : 'Create All Tasks'}
           </Button>
@@ -2598,8 +2624,8 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         <DialogContent>
           <Typography>
             {taskToDelete === 'multiple' 
-              ? `${selected.length} tasks will be moved to drafts.`
-              : 'Task will be moved to drafts.'}
+              ? `${selected.length} tasks will be deleted.`
+              : 'Task will be deleted.'}
           </Typography>
         </DialogContent>
         <DialogActions>

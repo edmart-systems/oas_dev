@@ -13,7 +13,12 @@ export class Inventory_pointRepository{
     }
 
     async create(data: Inventory_pointDtoInput):Promise<inventory_point>{
-        return this.prisma.inventory_point.create({data});
+        return this.prisma.inventory_point.create({
+            data: {
+                ...data,
+                updated_at: new Date()
+            }
+        });
     }
 
     

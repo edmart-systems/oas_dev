@@ -15,7 +15,7 @@ import {
   NewPasswordReset,
 } from "@/types/user.types";
 import { CheckUserExistenceType } from "@/types/verification.types";
-import { PrismaClient, Role, Status, User, PasswordReset } from "@prisma/client";
+import { PrismaClient, Role, Status, User, password_reset } from "@prisma/client";
 
 export class UserRepository {
   constructor(private readonly prisma: PrismaClient) { }
@@ -61,14 +61,14 @@ export class UserRepository {
 
   createPasswordResetToken = async (
     newReset: NewPasswordReset
-  ): Promise<PasswordReset | null> => {
+  ): Promise<password_reset | null> => {
     try {
       // Remove previous tokens for this user 
-      await this.prisma.passwordReset.deleteMany({
+      await this.prisma.password_reset.deleteMany({
         where: { userId: newReset.userId },
       });
 
-      const resetEntry: PasswordReset = await this.prisma.passwordReset.create({
+      const resetEntry: password_reset = await this.prisma.password_reset.create({
         data: {
           ...newReset,
         },
@@ -88,9 +88,9 @@ export class UserRepository {
   // Look up reset token + eager-load user
   getPasswordResetByToken = async (
     token: string
-  ): Promise<(PasswordReset & { user: User }) | null> => {
+  ): Promise<(password_reset & { user: User }) | null> => {
     try {
-      const resetEntry = await this.prisma.passwordReset.findUnique({
+      const resetEntry = await this.prisma.password_reset.findUnique({
         where: { token },
         include: { user: true },
       });
@@ -105,7 +105,7 @@ export class UserRepository {
   // Consume (delete) a reset token after use
   deletePasswordResetToken = async (id: number): Promise<boolean> => {
     try {
-      await this.prisma.passwordReset.delete({
+      await this.prisma.password_reset.delete({
         where: { id },
       });
       return Promise.resolve(true);

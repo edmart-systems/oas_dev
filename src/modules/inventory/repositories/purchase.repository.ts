@@ -23,6 +23,7 @@ export class PurchaseRepository {
                 supplier_id: data.supplier_id,
                 purchase_created_by: data.purchase_created_by,
                 purchase_updated_by: data.purchase_updated_by,
+                purchase_updated_at: new Date(),
                 purchase_item: purchaseItems.length
                     ? { create: purchaseItems }
                     : undefined,

@@ -23,7 +23,12 @@ export class ProductRepository {
       throw new Error("Product with this barcode already exists.");
     }
 
-    return this.prisma.product.create({ data });
+    return this.prisma.product.create({ 
+      data: {
+        ...data,
+        product_updated_at: new Date()
+      }
+    });
   }
 
   async getAll(): Promise<product[]> {

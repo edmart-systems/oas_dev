@@ -27,6 +27,7 @@ export class SaleRepository {
         sale_total_discount: saleData.sale_total_discount ?? 0,
         sale_total_tax: saleData.sale_total_tax ?? 0,
         sale_grand_total: saleData.sale_grand_total ?? 0,
+        sale_updated_at: new Date(),
         Sale_items: {
           create: saleItems,
         },

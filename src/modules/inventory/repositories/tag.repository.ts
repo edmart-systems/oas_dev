@@ -13,7 +13,12 @@ export class TagRepository{
     }
 
     async create(data: TagDtoInput):Promise<tag>{
-        return this.prisma.tag.create({data});
+        return this.prisma.tag.create({
+            data: {
+                ...data,
+                updated_at: new Date()
+            }
+        });
     }
 
     

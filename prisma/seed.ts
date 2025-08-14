@@ -59,7 +59,7 @@ const main = async () => {
         email_verified: 1,
         phone_number: "+256750781781",
         phone_verified: 1,
-        hash: "$2y$10$KwXIDB6GeuTqseydGGpO8.bkrwqpoodER8I3mOYSYh6IX0B/L1Eny",
+        hash: "",
         profile_picture:
           "https://avatars.githubusercontent.com/u/81554809?s=400&u=cec5338883a3e0431fbfadea3e3958124d412fee&v=4",
         status_id: 1,
@@ -363,8 +363,7 @@ const main = async () => {
           validity_words: "{validity_days} days.",
           payment_grace_days: 30,
           payment_words:
-          // changed from payment_grace_days to payment_grace_days_phrase
-          "{payment_grace_days_phrase} of the items and presentation of a tax invoice.", // <--- updated
+            "{payment_grace_days} days after delivery of the items and presentation of a tax invoice.",
           payment_method_words:
             "The payment shall be by Cheque, EFT or RTGS to our account with the following details:-",
           bank_id: 1,

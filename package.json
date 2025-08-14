@@ -2,20 +2,19 @@
   "name": "office-automation",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://1.hakateq.com/",
+  "type": "module",
+  "homepage": "http://localhost:3765",
   "scripts": {
     "dev": "nodemon server.js",
     "build": "next build",
-    "start": "node server.js",
-    "cpanel": "node app.js",
+    "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
     "prismaDev": "dotenv -e .env.local prisma migrate dev"
   },
-  "main": "app.js",
   "prisma": {
     "seed": "dotenv -e .env.local npx tsx prisma/seed.ts"
   },
-  "dependencies": {
+    "dependencies": {
     "@emotion/cache": "^11.13.1",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",

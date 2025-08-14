@@ -22,9 +22,9 @@ export const POST = async (req: NextRequest) => {
     const result = await tasksService.lockExpiredTasks();
 
     const resData: ActionResponse<string> = {
-      status: true,
-      message: result,
-      data: result,
+      status: result.status,
+      message: result.message,
+      data: result.message,
     };
 
     return NextResponse.json(resData, { status: 200 });

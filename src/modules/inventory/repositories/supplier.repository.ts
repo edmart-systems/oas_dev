@@ -25,7 +25,12 @@ export class SupplierRepository {
       throw new Error("Supplier with this email already exists.");
     }
 
-    return this.prisma.supplier.create({ data });
+    return this.prisma.supplier.create({ 
+      data: {
+        ...data,
+        supplier_updated_at: new Date()
+      }
+    });
   }
 
   async getAll(): Promise<supplier[]> {
