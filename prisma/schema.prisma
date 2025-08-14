@@ -521,7 +521,7 @@ model Tag{
   created_by String?
   updated_by String?
   created_at DateTime @default(now())
-  updated_at DateTime  @updatedAt
+  updated_at DateTime  @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
 
   Product Product[]
   creator User? @relation("TagCreator", fields: [created_by], references: [co_user_id])
@@ -537,7 +537,7 @@ model Category{
   created_by String?
   updated_by String?
   created_at DateTime @default(now())
-  updated_at DateTime  @updatedAt
+  updated_at DateTime  @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
 
   Product Product[]
   creator User? @relation("CategoryCreator", fields: [created_by], references: [co_user_id])
@@ -556,7 +556,7 @@ model Supplier {
   created_by         String?
   updated_by         String?
   supplier_created_at DateTime @default(now())
-  supplier_updated_at DateTime @updatedAt
+  supplier_updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
 
   Product Product[]
   Purchase Purchase[]
@@ -572,7 +572,7 @@ model Inventory_point{
   created_by String?
   updated_by String?
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
 
   Purchase Purchase[]
   Stock Stock[]
@@ -603,7 +603,7 @@ model Product {
   created_by               String?
   updated_by              String?
   product_created_at  DateTime @default(now())
-  product_updated_at  DateTime @updatedAt
+  product_updated_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
   
 
   unit                Unit      @relation(fields: [unit_id], references: [unit_id])
@@ -631,7 +631,7 @@ model Purchase {
   inventory_point_id  Int @default(1)
   supplier_id         Int
   purchase_created_at   DateTime @default(now())
-  purchase_updated_at   DateTime @updatedAt
+  purchase_updated_at   DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
 
   supplier           Supplier @relation(fields: [supplier_id], references: [supplier_id])
   inventory_point     Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
@@ -686,7 +686,7 @@ model Sale{
   inventory_point_id  Int @default(1)
   sale_status         Int @default(1)
   sale_created_at     DateTime @default(now())
-  sale_updated_at     DateTime @updatedAt
+  sale_updated_at     DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
 
   currency            Currency  @relation(fields: [currency_id], references: [currency_id])
   Sale_items          Sale_item[]
