@@ -526,6 +526,8 @@ model Tag{
   Product Product[]
   creator User? @relation("TagCreator", fields: [created_by], references: [co_user_id])
   updater User? @relation("TagUpdater", fields: [updated_by], references: [co_user_id])
+
+  @@map("tag")
 }
 
 
@@ -540,6 +542,8 @@ model Category{
   Product Product[]
   creator User? @relation("CategoryCreator", fields: [created_by], references: [co_user_id])
   updater User? @relation("CategoryUpdater", fields: [updated_by], references: [co_user_id])
+
+  @@map("category")
 }
 
 model Supplier {
@@ -558,6 +562,8 @@ model Supplier {
   Purchase Purchase[]
   creator User? @relation("SupplierCreator", fields: [created_by], references: [co_user_id])
   updater User? @relation("SupplierUpdater", fields: [updated_by], references: [co_user_id])
+
+  @@map("supplier")
 }
 
 model Inventory_point{
@@ -572,6 +578,8 @@ model Inventory_point{
   Stock Stock[]
   creator User? @relation("InventoryPointCreator", fields: [created_by], references: [co_user_id])
   updater User? @relation("InventoryPointUpdater", fields: [updated_by], references: [co_user_id])
+
+  @@map("inventory_point")
 }
 
 model Product {
@@ -608,6 +616,9 @@ model Product {
   Sale_item Sale_item[]
   creator User? @relation("ProductCreator", fields: [created_by], references: [co_user_id])
   updater User? @relation("ProductUpdater", fields: [updated_by], references: [co_user_id])
+
+  @@map("product")
+
 }
 
 model Purchase {
@@ -627,6 +638,8 @@ model Purchase {
   Purchase_items Purchase_item[]
   creator User? @relation("PurchaseCreator", fields: [purchase_created_by], references: [co_user_id])
   updater User? @relation("PurchaseUpdater", fields: [purchase_updated_by], references: [co_user_id])
+
+  @@map("purchase")
 }
 
 model Purchase_item {
@@ -639,6 +652,8 @@ model Purchase_item {
 
   purchase Purchase @relation(fields: [purchase_id], references: [purchase_id])
   product Product @relation(fields: [product_id], references: [product_id])
+  
+    @@map("purchase_item")
 }
 
 model Stock {
@@ -653,6 +668,8 @@ model Stock {
 
   product          Product    @relation(fields: [product_id], references: [product_id])
   inventory_point Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
+
+  @@map("stock")
   
 }
 
@@ -674,6 +691,8 @@ model Sale{
   currency            Currency  @relation(fields: [currency_id], references: [currency_id])
   Sale_items          Sale_item[]
   seller User @relation("SaleSeller", fields: [seller_id], references: [userId])
+
+  @@map("sale")
 }
 
 model Sale_item {
@@ -688,4 +707,6 @@ model Sale_item {
 
   sale           Sale    @relation(fields: [sale_id], references: [sale_id])
   product        Product @relation(fields: [product_id], references: [product_id])
+
+  @@map("sale_item")
 }
