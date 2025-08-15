@@ -1,0 +1,213 @@
+2025-08-12T21:00:00.040Z [INFO]: Daily Midnight Jobs Started
+2025-08-12T21:00:00.046Z [INFO]: Delete Old Notifications (> 90 Days) Job Started
+2025-08-12T21:00:00.060Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-08-12T21:00:00.060Z [INFO]: Quotations Followup Job Started
+2025-08-12T21:00:00.061Z [INFO]: Delete Old Notifications (> 90 Days) Job Completed, Successful: 0 Old Notification Deleted
+2025-08-12T21:00:00.062Z [INFO]: Lock Old Tasks Job Started
+2025-08-12T21:00:00.063Z [ERROR]: TypeError - Cannot read properties of undefined (reading 'updateMany') Stack: TypeError: Cannot read properties of undefined (reading 'updateMany')
+    at n.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:4655)
+    at c.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:11974)
+    at v (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:2920)
+    at p.job (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:4084)
+2025-08-12T21:00:00.082Z [ERROR]: TypeError - Cannot read properties of undefined (reading 'updateMany') Stack: TypeError: Cannot read properties of undefined (reading 'updateMany')
+    at n.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:4655)
+    at c.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:11974)
+    at v (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:2920)
+    at p.job (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:4084)
+2025-08-12T21:00:00.082Z [INFO]: Lock Old Tasks Job Failed
+2025-08-12T21:00:00.082Z [ERROR]: TypeError - Cannot read properties of undefined (reading 'updateMany') Stack: TypeError: Cannot read properties of undefined (reading 'updateMany')
+    at n.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:4655)
+    at c.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:11974)
+    at v (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:2920)
+    at p.job (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:4084)
+2025-08-12T21:00:00.082Z [INFO]: Daily Midnight Jobs CompletedDelete Old Notifications: true: Delete Old Notifications (> 90 Days) Job Completed, Successful: 0 Old Notification Deleted
+Lock Old Tasks: Something went wrong
+2025-08-12T21:00:00.089Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-08-12T21:00:00.090Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-08-13T03:00:00.014Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-08-13T03:00:00.014Z [INFO]: Quotations Followup Job Started
+2025-08-13T03:00:00.035Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-08-13T03:00:00.035Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-08-13T04:00:00.016Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-08-13T04:00:00.016Z [INFO]: Quotation Expiry Check Job Started
+2025-08-13T04:00:00.029Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 1, Updated: 1, Failed: 0
+2025-08-13T04:00:00.029Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 1, Updated: 1, Failed: 0
+2025-08-13T06:38:56.498Z [INFO]: Scheduler instantiated!
+2025-08-13T07:00:00.028Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-08-13T07:00:00.032Z [INFO]: Quotation Expiry Check Job Started
+2025-08-13T07:00:00.039Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-08-13T07:00:00.040Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-08-13T08:25:36.401Z [INFO]: Quotation Tag Email Sent successfully
+2025-08-13T08:41:07.709Z [INFO]: Quotation Tag Email Sent successfully
+2025-08-13T09:00:00.032Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-08-13T09:00:00.034Z [INFO]: Quotations Followup Job Started
+2025-08-13T09:00:00.052Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-08-13T09:00:00.053Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-08-13T09:05:59.590Z [INFO]: Quotation Tag Email Sent successfully
+2025-08-13T10:00:00.055Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-08-13T10:00:00.055Z [INFO]: Quotation Expiry Check Job Started
+2025-08-13T10:00:00.089Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 2, Updated: 2, Failed: 0
+2025-08-13T10:00:00.090Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 2, Updated: 2, Failed: 0
+2025-08-13T10:33:32.047Z [INFO]: Scheduler instantiated!
+2025-08-13T10:36:42.230Z [INFO]: Scheduler instantiated!
+2025-08-13T10:39:25.155Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29732)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2154)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-08-13T10:39:25.156Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29732)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2154)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-08-13T10:39:25.156Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29732)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2154)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-08-13T12:44:57.900Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at Object.eP [as staticGenerationBailout] (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\next-server\app-route.runtime.prod.js:6:29225)
+    at i (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\next-server\app-route.runtime.prod.js:6:34633)
+    at Object.get (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\next-server\app-route.runtime.prod.js:6:34729)
+    at O (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\app\api\services\scheduler\route.js:2:195)
+    at C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\next-server\app-route.runtime.prod.js:6:41966
+    at C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\server\lib\trace\tracer.js:133:36
+    at NoopContextManager.with (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\@opentelemetry\api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\@opentelemetry\api\index.js:1:518)
+    at NoopTracer.startActiveSpan (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\@opentelemetry\api\index.js:1:18093)
+    at ProxyTracer.startActiveSpan (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\@opentelemetry\api\index.js:1:18854)
+2025-08-13T12:44:59.446Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\chunks\8827.js:128:40013)
+    at u (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\chunks\1332.js:30:25950)
+    at a (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\chunks\1332.js:30:20515)
+    at h (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\app\api\inventory\inventory_point\route.js:1:7544)
+    at b (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\chunks\8997.js:1:4460)
+    at O (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\app\dashboard\quotations\page.js:1:49736)
+    at B (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\app\dashboard\quotations\page.js:1:49877)
+    at em (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:128334)
+    at C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:140034
+    at Array.toJSON (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:143612)
+2025-08-13T12:44:59.460Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\chunks\8827.js:128:40013)
+    at u (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\chunks\1332.js:30:25950)
+    at a (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\chunks\1332.js:30:20515)
+    at h (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\app\api\inventory\inventory_point\route.js:1:7544)
+    at b (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\chunks\8997.js:1:4460)
+    at O (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\app\dashboard\quotations\page.js:1:49736)
+    at B (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\app\dashboard\quotations\page.js:1:49877)
+    at em (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:128334)
+    at C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:140034
+    at Array.toJSON (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:143612)
+2025-08-13T12:44:59.577Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\chunks\8827.js:128:40013)
+    at u (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\chunks\1332.js:30:25950)
+    at a (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\chunks\1332.js:30:20515)
+    at x (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\app\api\inventory\category\route.js:1:7253)
+    at f (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\chunks\8997.js:1:3176)
+    at j (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\app\dashboard\quotations\create\page.js:1:22722)
+    at v (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\app\dashboard\quotations\create\page.js:1:22817)
+    at em (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:128334)
+    at C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:140034
+    at Array.toJSON (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:143612)
+2025-08-13T12:44:59.583Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\chunks\8827.js:128:40013)
+    at u (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\chunks\1332.js:30:25950)
+    at a (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\chunks\1332.js:30:20515)
+    at x (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\app\api\inventory\category\route.js:1:7253)
+    at f (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\chunks\8997.js:1:3176)
+    at j (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\app\dashboard\quotations\create\page.js:1:22722)
+    at v (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\.next\server\app\dashboard\quotations\create\page.js:1:22817)
+    at em (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:128334)
+    at C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:140034
+    at Array.toJSON (C:\Users\KUSEMERERWA EDSON\Downloads\oas_13_8_2025_2_55_pm\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:143612)
+2025-08-13T13:08:51.392Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at Object.eP [as staticGenerationBailout] (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29225)
+    at i (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:34633)
+    at Object.get (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:34729)
+    at O (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/api/services/scheduler/route.js:2:195)
+    at /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41966
+    at /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/lib/trace/tracer.js:133:36
+    at NoopContextManager.with (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NoopTracer.startActiveSpan (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18093)
+    at ProxyTracer.startActiveSpan (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18854)
+2025-08-13T13:08:51.932Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/8827.js:128:39878)
+    at u (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/1332.js:30:20515)
+    at x (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/api/inventory/category/route.js:1:7217)
+    at f (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/8997.js:1:4460)
+    at B (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/dashboard/quotations/page.js:1:49406)
+    at G (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/dashboard/quotations/page.js:1:49547)
+    at em (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-13T13:08:51.941Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/8827.js:128:39878)
+    at u (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/1332.js:30:20515)
+    at x (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/api/inventory/category/route.js:1:7217)
+    at f (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/8997.js:1:4460)
+    at B (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/dashboard/quotations/page.js:1:49406)
+    at G (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/dashboard/quotations/page.js:1:49547)
+    at em (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-13T13:08:52.248Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/8827.js:128:39878)
+    at u (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/1332.js:30:20515)
+    at g (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/api/auth/[...nextauth]/route.js:1:5279)
+    at h (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/8997.js:1:3176)
+    at j (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/dashboard/quotations/create/page.js:1:22589)
+    at v (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/dashboard/quotations/create/page.js:1:22684)
+    at em (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-13T13:08:52.254Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/8827.js:128:39878)
+    at u (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/1332.js:30:20515)
+    at g (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/api/auth/[...nextauth]/route.js:1:5279)
+    at h (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/8997.js:1:3176)
+    at j (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/dashboard/quotations/create/page.js:1:22589)
+    at v (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/dashboard/quotations/create/page.js:1:22684)
+    at em (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)

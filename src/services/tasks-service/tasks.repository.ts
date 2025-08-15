@@ -93,10 +93,7 @@ export class TasksRepository {
             },
           });
 
-          const subTasksArr: Omit<
-            Sub_task,
-            "subTaskId" | "updated_at" | "created_at"
-          >[] = [];
+          const subTasksArr: Prisma.Sub_taskCreateManyInput[] = [];
 
           if (subTasks.length > 0) {
             for (let i = 0; i < subTasks.length; i++) {
@@ -126,6 +123,9 @@ export class TasksRepository {
 
                 subTasksArr.push({
                   taskId: task.taskId,
+                  taskName: restNewSubTask.taskName,
+                  taskDetails: restNewSubTask.taskDetails,
+                  comments: restNewSubTask.comments,
                   startTime: BigInt(subTaskStartTime),
                   endTime: BigInt(subTaskEndTime),
                   time: task.time,
@@ -133,7 +133,6 @@ export class TasksRepository {
                   priorityId: subTaskPriority
                     ? subTaskPriority.id
                     : task.priorityId,
-                  ...restNewSubTask,
                 });
               } catch (err) {
                 logger.error(err);
@@ -186,10 +185,7 @@ export class TasksRepository {
       const statuses = await this.prisma.task_status.findMany();
       const priorities = await this.prisma.task_priority.findMany();
 
-      const subTasksArr: Omit<
-        Sub_task,
-        "subTaskId" | "updated_at" | "created_at"
-      >[] = [];
+      const subTasksArr: Prisma.Sub_taskCreateManyInput[] = [];
 
       for (let i = 0; i < newSubTasks.length; i++) {
         try {
@@ -223,6 +219,10 @@ export class TasksRepository {
           );
 
           subTasksArr.push({
+            taskId: taskId,
+            taskName: restNewSubTask.taskName,
+            taskDetails: restNewSubTask.taskDetails,
+            comments: restNewSubTask.comments,
             startTime: BigInt(subTaskStartTime),
             endTime: BigInt(subTaskEndTime),
             time: BigInt(timeNow),
@@ -230,7 +230,6 @@ export class TasksRepository {
             priorityId: subTaskPriority
               ? subTaskPriority.id
               : originalTask.priorityId,
-            ...restNewSubTask,
           });
         } catch (err) {
           logger.error(err);
@@ -404,18 +403,17 @@ export class TasksRepository {
   lockExpiredTasks = async (): Promise<string> => {
     try {
       const now = Date.now();
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(9, 0, 0, 0);
-      const tomorrowEnd = new Date(tomorrow);
-      tomorrowEnd.setHours(18, 0, 0, 0);
+      const today = new Date();
+      today.setHours(9, 0, 0, 0);
+      const todayEnd = new Date(today);
+      todayEnd.setHours(18, 0, 0, 0);
       
-      const [cancelledStatus, pendingStatus] = await Promise.all([
-        this.prisma.task_status.findFirst({ where: { status: "Cancelled" } }),
+      const [failedStatus, pendingStatus] = await Promise.all([
+        this.prisma.task_status.findFirst({ where: { status: "Failed" } }),
         this.prisma.task_status.findFirst({ where: { status: "Pending" } })
       ]);
       
-      if (!cancelledStatus || !pendingStatus) {
+      if (!failedStatus || !pendingStatus) {
         return Promise.resolve("Required statuses not found in database.");
       }
 
@@ -433,13 +431,16 @@ export class TasksRepository {
       
       for (const task of expiredTasks) {
         await this.prisma.$transaction(async (txn) => {
-          // Move original task to drafts (Cancelled)
+          // Mark original task as Failed and lock it
           await txn.task.update({
             where: { taskId: task.taskId },
-            data: { statusId: cancelledStatus.id }
+            data: { 
+              statusId: failedStatus.id,
+              taskLocked: 1
+            }
           });
 
-          // Create new task for next day with incremented push_count
+          // Create new task for today with incremented push_count
           const newTask = await txn.task.create({
             data: {
               userId: task.userId,
@@ -448,8 +449,8 @@ export class TasksRepository {
               comments: task.comments,
               statusId: pendingStatus.id,
               priorityId: task.priorityId,
-              startTime: BigInt(tomorrow.getTime()),
-              endTime: BigInt(tomorrowEnd.getTime()),
+              startTime: BigInt(today.getTime()),
+              endTime: BigInt(todayEnd.getTime()),
               time: BigInt(Date.now()),
               push_count: (task.push_count || 0) + 1
             }
@@ -463,8 +464,8 @@ export class TasksRepository {
               comments: st.comments,
               statusId: pendingStatus.id,
               priorityId: st.priorityId,
-              startTime: BigInt(tomorrow.getTime()),
-              endTime: BigInt(tomorrowEnd.getTime()),
+              startTime: BigInt(today.getTime()),
+              endTime: BigInt(todayEnd.getTime()),
               time: BigInt(Date.now())
             }));
             
@@ -477,7 +478,7 @@ export class TasksRepository {
         processedCount++;
       }
 
-      return Promise.resolve(`${processedCount} expired tasks moved to drafts and pushed to next day.`);
+      return Promise.resolve(`${processedCount} expired tasks marked as Failed and pushed to current tasks.`);
     } catch (err) {
       logger.error(err);
       return Promise.reject(err);
@@ -693,48 +694,6 @@ export class TasksRepository {
 
     return formattedSubTasks;
   };
-
-// Update the formatTasksOut method in TasksRepository:
-// private formatTasksOut = (tasks: FullRawTask | FullRawTask[]): TaskOut[] => {
-//   const formattedTasks: TaskOut[] = (
-//     Array.isArray(tasks) ? tasks : Array(tasks)
-//   ).map((task) => {
-//     const {
-//       updated_at,
-//       created_at,
-//       taskStatus,
-//       taskPriority,
-//       taskLocked,
-//       subTasks,
-//       startTime,
-//       endTime,
-//       time,
-//       user, 
-//       ...taskRest
-//     } = task;
-
-//     const formattedSubTasks: SubTaskOut[] = this.formatSubTasksOut(subTasks);
-
-//     return {
-//       ...taskRest,
-//       taskLocked: Boolean(taskLocked),
-//       status: taskStatus,
-//       startTime: Number(startTime),
-//       endTime: Number(endTime),
-//       time: Number(time),
-//       priority: taskPriority,
-//       subTasks: formattedSubTasks,
-//       user: user ? { // Add user data to output
-//         co_user_id: user.co_user_id,
-//         firstName: user.firstName,
-//         lastName: user.lastName,
-//         email: user.email,
-//       } : undefined,
-//     };
-//   });
-
-//   return formattedTasks;
-// };
 
 private formatTasksOut = (tasks: any): TaskOut[] => {
   const formattedTasks: TaskOut[] = (

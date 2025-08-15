@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { CreateSaleInput } from "../dtos/sale.dto";
 import { SaleRepository } from "../repositories/sale.repository";
 import { SaleItemRepository } from "../repositories/sale_item.repository";
-import { sale } from "@prisma/client";
+import { Sale } from "@prisma/client";
 import { calculateProductStatus } from "../methods/purchase.method";  
 
 export class SaleService {
@@ -98,11 +98,11 @@ export class SaleService {
     });
   }
 
-  async getAllSales(): Promise<sale[]> {
+  async getAllSales(): Promise<Sale[]> {
     return this.saleRepo.getAll();
   }
 
-  async getSaleById(id: number): Promise<sale> {
+  async getSaleById(id: number): Promise<Sale> {
     const sale = await this.saleRepo.getById(id);
     if (!sale) {
         throw new Error(`Sale with ID ${id} not found`);

@@ -1,0 +1,107 @@
+2025-07-27T21:00:00.037Z [INFO]: Daily Midnight Jobs Started
+2025-07-27T21:00:00.039Z [INFO]: Delete Old Notifications (> 90 Days) Job Started
+2025-07-27T21:00:00.052Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-07-27T21:00:00.052Z [INFO]: Quotations Followup Job Started
+2025-07-27T21:00:00.054Z [INFO]: Delete Old Notifications (> 90 Days) Job Completed, Successful: 0 Old Notification Deleted
+2025-07-27T21:00:00.054Z [INFO]: Lock Old Tasks Job Started
+2025-07-27T21:00:00.055Z [ERROR]: TypeError - Cannot read properties of undefined (reading 'updateMany') Stack: TypeError: Cannot read properties of undefined (reading 'updateMany')
+    at n.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:4655)
+    at c.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:11974)
+    at v (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:2920)
+    at p.job (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:4084)
+2025-07-27T21:00:00.056Z [ERROR]: TypeError - Cannot read properties of undefined (reading 'updateMany') Stack: TypeError: Cannot read properties of undefined (reading 'updateMany')
+    at n.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:4655)
+    at c.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:11974)
+    at v (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:2920)
+    at p.job (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:4084)
+2025-07-27T21:00:00.056Z [INFO]: Lock Old Tasks Job Failed
+2025-07-27T21:00:00.056Z [ERROR]: TypeError - Cannot read properties of undefined (reading 'updateMany') Stack: TypeError: Cannot read properties of undefined (reading 'updateMany')
+    at n.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:4655)
+    at c.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:11974)
+    at v (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:2920)
+    at p.job (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:4084)
+2025-07-27T21:00:00.056Z [INFO]: Daily Midnight Jobs CompletedDelete Old Notifications: true: Delete Old Notifications (> 90 Days) Job Completed, Successful: 0 Old Notification Deleted
+Lock Old Tasks: Something went wrong
+2025-07-27T21:00:00.084Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-07-27T21:00:00.085Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-07-28T03:00:00.019Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-07-28T03:00:00.019Z [INFO]: Quotations Followup Job Started
+2025-07-28T03:00:00.039Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-07-28T03:00:00.039Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-07-28T04:00:00.014Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-07-28T04:00:00.015Z [INFO]: Quotation Expiry Check Job Started
+2025-07-28T04:00:00.024Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-07-28T04:00:00.024Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-07-28T07:00:00.045Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-07-28T07:00:00.045Z [INFO]: Quotation Expiry Check Job Started
+2025-07-28T07:00:00.152Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-07-28T07:00:00.152Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-07-28T09:00:00.042Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-07-28T09:00:00.043Z [INFO]: Quotations Followup Job Started
+2025-07-28T09:00:00.072Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-07-28T09:00:00.072Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-07-28T10:00:00.044Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-07-28T10:00:00.045Z [INFO]: Quotation Expiry Check Job Started
+2025-07-28T10:00:00.135Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-07-28T10:00:00.135Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-07-28T13:00:00.023Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-07-28T13:00:00.023Z [INFO]: Quotation Expiry Check Job Started
+2025-07-28T13:00:00.035Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-07-28T13:00:00.036Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-07-28T13:02:31.073Z [INFO]: Quotation Tag Email Sent successfully
+2025-07-28T13:54:58.077Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29732)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2154)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-07-28T13:54:58.078Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29732)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2154)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-07-28T13:54:58.078Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29732)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2154)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-07-28T15:02:27.699Z [INFO]: Scheduler instantiated!
+2025-07-28T16:00:00.047Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-07-28T16:00:00.048Z [INFO]: Quotation Expiry Check Job Started
+2025-07-28T16:00:00.059Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-07-28T16:00:00.060Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0

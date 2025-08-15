@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-1.1.x"] // c-panel binary target
 }
 
 datasource db {
@@ -58,7 +57,7 @@ model User {
   Edited_quotation Edited_quotation[]
   quotation_drafts Quotation_draft[]
   tasks            Task[]
-  passwordResets   PasswordReset[]    // Relation to PasswordReset
+  passwordResets   PasswordReset[]
   
   // Inventory relations
   createdTags         Tag[] @relation("TagCreator")
@@ -89,7 +88,6 @@ model PasswordReset {
   @@map("password_reset")
 }
 
-
 model User_signature {
   id         Int      @id @default(autoincrement())
   co_user_id String   @unique
@@ -115,10 +113,9 @@ model Currency {
   quotations       Quotation[]
   Edited_quotation Edited_quotation[]
   Product Product[]
+  Sale Sale[]
 
   @@map("currency")
-  
-  Sale Sale[]
 }
 
 model Unit {
@@ -132,8 +129,6 @@ model Unit {
   Product Product[]
 
   @@map("unit")
-  
-  
 }
 
 model Company {
@@ -242,31 +237,6 @@ model Quotation_tcs {
 
   @@map("quotation_tcs")
 }
-
-// model QuotationX {
-//   quotation_id      Int      @id @default(autoincrement())
-//   quotation_number  String   @db.VarChar(12)
-//   quotation_type_id Int
-//   co_user_id        String   @db.VarChar(20)
-//   date              BigInt
-//   client_name       String   @db.VarChar(60)
-//   contact_email     String   @db.VarChar(60)
-//   contact_person    String   @db.VarChar(60)
-//   contact_phone     String   @db.VarChar(16)
-//   currency_id       Int      @default(1)
-//   sub_total         Float
-//   vat               Float
-//   grand_total       Float
-//   day_to_expire     Int
-//   created_at        DateTime @default(now())
-//   updated_at        DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
-
-//   quotationType Quotation_type @relation(fields: [quotation_type_id], references: [type_id])
-//   currency      Currency       @relation(fields: [currency_id], references: [currency_id])
-//   user          User           @relation(fields: [co_user_id], references: [co_user_id])
-
-//   @@map("quotation")
-// }
 
 model Quotation_status {
   status_id Int    @id @default(autoincrement())
@@ -480,6 +450,10 @@ model Task {
   startTime   BigInt
   endTime     BigInt?
   taskLocked  Int      @default(0)
+  deleted     Int      @default(0)
+  push_count  Int      @default(0)
+  archived    Int      @default(0)
+  archived_at DateTime?
   created_at  DateTime @default(now())
   updated_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
 
@@ -503,6 +477,8 @@ model Sub_task {
   time        BigInt
   startTime   BigInt?
   endTime     BigInt?
+  deleted     Int      @default(0)
+  push_count  Int      @default(0)
   created_at  DateTime @default(now())
   updated_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
 
@@ -512,8 +488,6 @@ model Sub_task {
 
   @@map("sub_task")
 }
-
-
 
 model Tag{
   tag_id Int @id @default(autoincrement()) 
@@ -529,7 +503,6 @@ model Tag{
 
   @@map("tag")
 }
-
 
 model Category{
   category_id Int @id @default(autoincrement()) 
@@ -605,7 +578,6 @@ model Product {
   product_created_at  DateTime @default(now())
   product_updated_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
   
-
   unit                Unit      @relation(fields: [unit_id], references: [unit_id])
   category            Category  @relation(fields: [category_id], references: [category_id])
   tag                 Tag       @relation(fields: [tag_id], references: [tag_id])
@@ -618,7 +590,6 @@ model Product {
   updater User? @relation("ProductUpdater", fields: [updated_by], references: [co_user_id])
 
   @@map("product")
-
 }
 
 model Purchase {
@@ -670,7 +641,6 @@ model Stock {
   inventory_point Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
 
   @@map("stock")
-  
 }
 
 model Sale{

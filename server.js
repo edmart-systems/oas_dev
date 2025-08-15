@@ -8,7 +8,7 @@ import { parse } from "url";
 
 const port = parseInt(process.env.PORT || "3765", 10);
 const dev = process.env.NODE_ENV !== "production";
-const hostname = dev ? "localhost" : "oas.edmartsystems.com";
+const hostname = dev ? "localhost" : "dev.oas.edmartsystems.com";
 const nextApp = next({ dev: dev, hostname: hostname, port: port });
 const nextReqHandler = nextApp.getRequestHandler();
 

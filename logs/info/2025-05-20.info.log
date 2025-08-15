@@ -1,0 +1,41 @@
+2025-05-19T21:00:00.008Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-05-19T21:00:00.011Z [INFO]: Quotations Followup Job Started
+2025-05-19T21:00:00.020Z [INFO]: Daily Midnight Jobs Started
+2025-05-19T21:00:00.020Z [INFO]: Delete Old Notifications (> 90 Days) Job Started
+2025-05-19T21:00:00.022Z [INFO]: Delete Old Notifications (> 90 Days) Job Completed, Successful: 0 Old Notification Deleted
+2025-05-19T21:00:00.022Z [INFO]: Daily Midnight Jobs CompletedDelete Old Notifications: true: Delete Old Notifications (> 90 Days) Job Completed, Successful: 0 Old Notification Deleted
+2025-05-19T21:00:00.025Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-05-19T21:00:00.025Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-05-20T03:00:00.014Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-05-20T03:00:00.014Z [INFO]: Quotations Followup Job Started
+2025-05-20T03:00:00.029Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-05-20T03:00:00.029Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-05-20T03:47:18.762Z [INFO]: Scheduler instantiated!
+2025-05-20T04:00:00.024Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-05-20T04:00:00.026Z [INFO]: Quotation Expiry Check Job Started
+2025-05-20T04:00:00.054Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-05-20T04:00:00.054Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-05-20T07:00:00.024Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-05-20T07:00:00.025Z [INFO]: Quotation Expiry Check Job Started
+2025-05-20T07:00:00.040Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-05-20T07:00:00.041Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-05-20T09:00:00.040Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-05-20T09:00:00.041Z [INFO]: Quotations Followup Job Started
+2025-05-20T09:00:00.055Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-05-20T09:00:00.055Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-05-20T10:00:00.039Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-05-20T10:00:00.039Z [INFO]: Quotation Expiry Check Job Started
+2025-05-20T10:00:00.052Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-05-20T10:00:00.052Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-05-20T13:00:00.027Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-05-20T13:00:00.028Z [INFO]: Quotation Expiry Check Job Started
+2025-05-20T13:00:00.039Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-05-20T13:00:00.039Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-05-20T15:00:00.019Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-05-20T15:00:00.020Z [INFO]: Quotations Followup Job Started
+2025-05-20T15:00:00.033Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-05-20T15:00:00.033Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-05-20T16:00:00.017Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-05-20T16:00:00.017Z [INFO]: Quotation Expiry Check Job Started
+2025-05-20T16:00:00.027Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-05-20T16:00:00.027Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0

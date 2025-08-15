@@ -1,0 +1,1003 @@
+2025-08-14T08:32:49.322Z [ERROR]: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T08:32:49.324Z [ERROR]: Error in authorization: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T08:35:17.066Z [ERROR]: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T08:35:17.067Z [ERROR]: Error in authorization: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T08:35:18.310Z [ERROR]: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T08:35:18.311Z [ERROR]: Error in authorization: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T08:35:41.610Z [ERROR]: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T08:35:41.610Z [ERROR]: Error in authorization: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T08:37:50.238Z [ERROR]: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T08:37:50.242Z [ERROR]: Error in authorization: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T14:05:24.542Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at Object.eP [as staticGenerationBailout] (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29225)
+    at i (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:34633)
+    at Object.get (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:34729)
+    at O (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/api/services/scheduler/route.js:2:195)
+    at /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41966
+    at /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/lib/trace/tracer.js:133:36
+    at NoopContextManager.with (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NoopTracer.startActiveSpan (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18093)
+    at ProxyTracer.startActiveSpan (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18854)
+2025-08-14T14:05:25.376Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/8827.js:128:39878)
+    at u (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/1332.js:30:20515)
+    at x (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/api/inventory/category/route.js:1:7572)
+    at y (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/6391.js:1:61154)
+    at B (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/dashboard/quotations/page.js:1:45205)
+    at G (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/dashboard/quotations/page.js:1:45346)
+    at em (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-14T14:05:25.388Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/8827.js:128:39878)
+    at u (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/1332.js:30:20515)
+    at x (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/api/inventory/category/route.js:1:7572)
+    at y (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/6391.js:1:61154)
+    at B (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/dashboard/quotations/page.js:1:45205)
+    at G (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/dashboard/quotations/page.js:1:45346)
+    at em (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-14T14:05:25.854Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/8827.js:128:39878)
+    at u (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/1332.js:30:20515)
+    at x (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/api/inventory/category/route.js:1:7572)
+    at m (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/6391.js:1:59870)
+    at j (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/dashboard/quotations/create/page.js:1:22176)
+    at v (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/dashboard/quotations/create/page.js:1:22271)
+    at em (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-14T14:05:25.857Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/8827.js:128:39878)
+    at u (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/1332.js:30:20515)
+    at x (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/api/inventory/category/route.js:1:7572)
+    at m (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/chunks/6391.js:1:59870)
+    at j (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/dashboard/quotations/create/page.js:1:22176)
+    at v (/home/edson/Desktop/0as_13_8_2025_3_53_pm/.next/server/app/dashboard/quotations/create/page.js:1:22271)
+    at em (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-14T14:50:12.062Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.notification.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.notification.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async NotificationRepository.fetchUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.repository.ts:43:39)
+    at async NotificationService.getUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.service.ts:18:39)
+    at async fetchUserNotifications (webpack-internal:///(action-browser)/./src/server-actions/notification-actions/notification.actions.ts:35:21)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-14T14:50:12.064Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.notification.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.notification.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async NotificationRepository.fetchUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.repository.ts:43:39)
+    at async NotificationService.getUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.service.ts:18:39)
+    at async fetchUserNotifications (webpack-internal:///(action-browser)/./src/server-actions/notification-actions/notification.actions.ts:35:21)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-14T14:50:12.064Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.notification.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.notification.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async NotificationRepository.fetchUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.repository.ts:43:39)
+    at async NotificationService.getUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.service.ts:18:39)
+    at async fetchUserNotifications (webpack-internal:///(action-browser)/./src/server-actions/notification-actions/notification.actions.ts:35:21)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-14T14:50:12.134Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.notification.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.notification.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async NotificationRepository.fetchUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.repository.ts:43:39)
+    at async NotificationService.getUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.service.ts:18:39)
+    at async fetchUserNotifications (webpack-internal:///(action-browser)/./src/server-actions/notification-actions/notification.actions.ts:35:21)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-14T14:50:12.135Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.notification.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.notification.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async NotificationRepository.fetchUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.repository.ts:43:39)
+    at async NotificationService.getUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.service.ts:18:39)
+    at async fetchUserNotifications (webpack-internal:///(action-browser)/./src/server-actions/notification-actions/notification.actions.ts:35:21)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-14T14:50:12.136Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.notification.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.notification.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async NotificationRepository.fetchUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.repository.ts:43:39)
+    at async NotificationService.getUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.service.ts:18:39)
+    at async fetchUserNotifications (webpack-internal:///(action-browser)/./src/server-actions/notification-actions/notification.actions.ts:35:21)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-14T14:53:18.213Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchQuotationStatusCount (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:435:36)
+    at async QuotationsService.getQuotationsSumSummary (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:358:30)
+    at async getQuotationsSums (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:126:21)
+    at async getSummaryData (webpack-internal:///(rsc)/./src/app/dashboard/quotations/page.tsx:49:17)
+    at async QuotationsPage (webpack-internal:///(rsc)/./src/app/dashboard/quotations/page.tsx:62:31)
+2025-08-14T14:53:18.214Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchQuotationStatusCount (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:435:36)
+    at async QuotationsService.getQuotationsSumSummary (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:358:30)
+    at async getQuotationsSums (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:126:21)
+    at async getSummaryData (webpack-internal:///(rsc)/./src/app/dashboard/quotations/page.tsx:49:17)
+    at async QuotationsPage (webpack-internal:///(rsc)/./src/app/dashboard/quotations/page.tsx:62:31)
+2025-08-14T14:53:18.215Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchQuotationStatusCount (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:435:36)
+    at async QuotationsService.getQuotationsSumSummary (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:358:30)
+    at async getQuotationsSums (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:126:21)
+    at async getSummaryData (webpack-internal:///(rsc)/./src/app/dashboard/quotations/page.tsx:49:17)
+    at async QuotationsPage (webpack-internal:///(rsc)/./src/app/dashboard/quotations/page.tsx:62:31)
+2025-08-14T14:53:19.901Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:483:39)
+    at async QuotationsService.getPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:371:45)
+    at async getPaginatedQuotation (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:148:21)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-14T14:53:19.903Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:483:39)
+    at async QuotationsService.getPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:371:45)
+    at async getPaginatedQuotation (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:148:21)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-14T14:53:19.903Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:483:39)
+    at async QuotationsService.getPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:371:45)
+    at async getPaginatedQuotation (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:148:21)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-14T14:53:19.987Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:483:39)
+    at async QuotationsService.getPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:371:45)
+    at async getPaginatedQuotation (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:148:21)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-14T14:53:19.988Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:483:39)
+    at async QuotationsService.getPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:371:45)
+    at async getPaginatedQuotation (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:148:21)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-14T14:53:19.988Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:483:39)
+    at async QuotationsService.getPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:371:45)
+    at async getPaginatedQuotation (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:148:21)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-14T14:53:36.270Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.quotation_type.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.quotation_type.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchQuotationTypes (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:20:40)
+    at async QuotationsService.getCreateQuotationPageData (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:40:40)
+    at async getCreateNewQuotationsPageData (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:48:29)
+    at async getData (webpack-internal:///(rsc)/./src/app/dashboard/quotations/create/page.tsx:41:17)
+    at async CreateQuotationPage (webpack-internal:///(rsc)/./src/app/dashboard/quotations/create/page.tsx:50:18)
+2025-08-14T14:53:36.270Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.quotation_type.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.quotation_type.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchQuotationTypes (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:20:40)
+    at async QuotationsService.getCreateQuotationPageData (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:40:40)
+    at async getCreateNewQuotationsPageData (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:48:29)
+    at async getData (webpack-internal:///(rsc)/./src/app/dashboard/quotations/create/page.tsx:41:17)
+    at async CreateQuotationPage (webpack-internal:///(rsc)/./src/app/dashboard/quotations/create/page.tsx:50:18)
+2025-08-14T14:53:36.270Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.quotation_type.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.quotation_type.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchQuotationTypes (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:20:40)
+    at async QuotationsService.getCreateQuotationPageData (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:40:40)
+    at async getCreateNewQuotationsPageData (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:48:29)
+    at async getData (webpack-internal:///(rsc)/./src/app/dashboard/quotations/create/page.tsx:41:17)
+    at async CreateQuotationPage (webpack-internal:///(rsc)/./src/app/dashboard/quotations/create/page.tsx:50:18)
+2025-08-14T14:53:36.827Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:483:39)
+    at async QuotationsService.getPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:371:45)
+    at async getPaginatedQuotation (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:148:21)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-14T14:53:36.828Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:483:39)
+    at async QuotationsService.getPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:371:45)
+    at async getPaginatedQuotation (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:148:21)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-14T14:53:36.828Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:483:39)
+    at async QuotationsService.getPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:371:45)
+    at async getPaginatedQuotation (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:148:21)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-14T14:53:36.873Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:483:39)
+    at async QuotationsService.getPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:371:45)
+    at async getPaginatedQuotation (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:148:21)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-14T14:53:36.874Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:483:39)
+    at async QuotationsService.getPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:371:45)
+    at async getPaginatedQuotation (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:148:21)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-14T14:53:36.874Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.quotation.findMany()` invocation:
+
+
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:483:39)
+    at async QuotationsService.getPaginatedQuotations (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:371:45)
+    at async getPaginatedQuotation (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:148:21)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-14T14:54:23.815Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchQuotationStatusCount (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:435:36)
+    at async QuotationsService.getQuotationsSumSummary (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:358:30)
+    at async getQuotationsSums (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:126:21)
+    at async getSummaryData (webpack-internal:///(rsc)/./src/app/dashboard/quotations/page.tsx:49:17)
+    at async QuotationsPage (webpack-internal:///(rsc)/./src/app/dashboard/quotations/page.tsx:62:31)
+2025-08-14T14:54:23.816Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchQuotationStatusCount (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:435:36)
+    at async QuotationsService.getQuotationsSumSummary (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:358:30)
+    at async getQuotationsSums (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:126:21)
+    at async getSummaryData (webpack-internal:///(rsc)/./src/app/dashboard/quotations/page.tsx:49:17)
+    at async QuotationsPage (webpack-internal:///(rsc)/./src/app/dashboard/quotations/page.tsx:62:31)
+2025-08-14T14:54:23.816Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`.
+    at $n.handleRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchQuotationStatusCount (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:435:36)
+    at async QuotationsService.getQuotationsSumSummary (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:358:30)
+    at async getQuotationsSums (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:126:21)
+    at async getSummaryData (webpack-internal:///(rsc)/./src/app/dashboard/quotations/page.tsx:49:17)
+    at async QuotationsPage (webpack-internal:///(rsc)/./src/app/dashboard/quotations/page.tsx:62:31)
+2025-08-14T14:58:02.560Z [ERROR]: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T14:58:02.561Z [ERROR]: Error in authorization: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T14:59:12.153Z [ERROR]: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T14:59:12.154Z [ERROR]: Error in authorization: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T14:59:29.436Z [ERROR]: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T14:59:29.437Z [ERROR]: Error in authorization: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T15:02:44.352Z [ERROR]: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T15:02:44.355Z [ERROR]: Error in authorization: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T15:03:55.792Z [ERROR]: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T15:03:55.793Z [ERROR]: Error in authorization: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T15:04:14.158Z [ERROR]: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T15:04:14.158Z [ERROR]: Error in authorization: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T15:04:53.471Z [ERROR]: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251
+2025-08-14T15:04:53.472Z [ERROR]: Error in authorization: Error - Wrong credentials: se.edson@edmartsystems.com Stack: Error: Wrong credentials: se.edson@edmartsystems.com
+    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
+    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
+    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
+    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
+    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
+    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
+    at async /home/edson/Desktop/0as_13_8_2025_3_53_pm/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63251

@@ -1,0 +1,73 @@
+2025-06-20T21:00:00.014Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-06-20T21:00:00.019Z [INFO]: Quotations Followup Job Started
+2025-06-20T21:00:00.031Z [INFO]: Daily Midnight Jobs Started
+2025-06-20T21:00:00.032Z [INFO]: Delete Old Notifications (> 90 Days) Job Started
+2025-06-20T21:00:00.034Z [INFO]: Delete Old Notifications (> 90 Days) Job Completed, Successful: 0 Old Notification Deleted
+2025-06-20T21:00:00.034Z [INFO]: Daily Midnight Jobs CompletedDelete Old Notifications: true: Delete Old Notifications (> 90 Days) Job Completed, Successful: 0 Old Notification Deleted
+2025-06-20T21:00:00.039Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-06-20T21:00:00.039Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-06-21T03:00:00.018Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-06-21T03:00:00.019Z [INFO]: Quotations Followup Job Started
+2025-06-21T03:00:00.034Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-06-21T03:00:00.035Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-06-21T04:00:00.033Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-06-21T04:00:00.033Z [INFO]: Quotation Expiry Check Job Started
+2025-06-21T04:00:00.051Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 3, Updated: 3, Failed: 0
+2025-06-21T04:00:00.051Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 3, Updated: 3, Failed: 0
+2025-06-21T06:32:35.379Z [INFO]: Scheduler instantiated!
+2025-06-21T07:00:00.043Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-06-21T07:00:00.047Z [INFO]: Quotation Expiry Check Job Started
+2025-06-21T07:00:00.074Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-06-21T07:00:00.075Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-06-21T08:44:54.865Z [ERROR]: Error - Wrong credentials: se.gaston@edmartsystems.com Stack: Error: Wrong credentials: se.gaston@edmartsystems.com
+    at p (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/auth/[...nextauth]/route.js:1:4228)
+    at async Object.authorize (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/auth/[...nextauth]/route.js:1:4677)
+    at async Object.l (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/1332.js:30:4502)
+    at async m (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/1332.js:6:128790)
+    at async a (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/1332.js:30:19772)
+    at async e.length.t (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/1332.js:30:21262)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-06-21T08:44:54.866Z [ERROR]: Error in authorization: Error - Wrong credentials: se.gaston@edmartsystems.com Stack: Error: Wrong credentials: se.gaston@edmartsystems.com
+    at p (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/auth/[...nextauth]/route.js:1:4228)
+    at async Object.authorize (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/auth/[...nextauth]/route.js:1:4677)
+    at async Object.l (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/1332.js:30:4502)
+    at async m (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/1332.js:6:128790)
+    at async a (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/1332.js:30:19772)
+    at async e.length.t (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/1332.js:30:21262)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-06-21T08:49:52.935Z [ERROR]: Error - Wrong credentials: ne.nelson@edmartsystems.com Stack: Error: Wrong credentials: ne.nelson@edmartsystems.com
+    at p (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/auth/[...nextauth]/route.js:1:4228)
+    at async Object.authorize (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/auth/[...nextauth]/route.js:1:4677)
+    at async Object.l (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/1332.js:30:4502)
+    at async m (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/1332.js:6:128790)
+    at async a (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/1332.js:30:19772)
+    at async e.length.t (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/1332.js:30:21262)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-06-21T08:49:52.935Z [ERROR]: Error in authorization: Error - Wrong credentials: ne.nelson@edmartsystems.com Stack: Error: Wrong credentials: ne.nelson@edmartsystems.com
+    at p (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/auth/[...nextauth]/route.js:1:4228)
+    at async Object.authorize (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/auth/[...nextauth]/route.js:1:4677)
+    at async Object.l (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/1332.js:30:4502)
+    at async m (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/1332.js:6:128790)
+    at async a (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/1332.js:30:19772)
+    at async e.length.t (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/1332.js:30:21262)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-06-21T09:00:00.032Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-06-21T09:00:00.033Z [INFO]: Quotations Followup Job Started
+2025-06-21T09:00:00.045Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-06-21T09:00:00.045Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-06-21T10:00:00.036Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-06-21T10:00:00.037Z [INFO]: Quotation Expiry Check Job Started
+2025-06-21T10:00:00.047Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-06-21T10:00:00.047Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-06-21T13:00:00.016Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-06-21T13:00:00.016Z [INFO]: Quotation Expiry Check Job Started
+2025-06-21T13:00:00.026Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 1, Updated: 1, Failed: 0
+2025-06-21T13:00:00.026Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 1, Updated: 1, Failed: 0
+2025-06-21T15:00:00.051Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-06-21T15:00:00.052Z [INFO]: Quotations Followup Job Started
+2025-06-21T15:00:00.067Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-06-21T15:00:00.067Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-06-21T16:00:00.042Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-06-21T16:00:00.042Z [INFO]: Quotation Expiry Check Job Started
+2025-06-21T16:00:00.051Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-06-21T16:00:00.051Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0

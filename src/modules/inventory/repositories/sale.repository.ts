@@ -1,10 +1,10 @@
-import { PrismaClient, sale } from "@prisma/client";
+import { PrismaClient, Sale } from "@prisma/client";
 import { CreateSaleInput } from "../dtos/sale.dto";
 
 export class SaleRepository {
   constructor(private prisma: PrismaClient | any) {}
 
-  async create(data: CreateSaleInput): Promise<sale> {
+  async create(data: CreateSaleInput): Promise<Sale> {
     const { sale_items, ...saleData } = data;
 
     const saleItems = sale_items.map(item => ({
@@ -27,26 +27,26 @@ export class SaleRepository {
         sale_total_discount: saleData.sale_total_discount ?? 0,
         sale_total_tax: saleData.sale_total_tax ?? 0,
         sale_grand_total: saleData.sale_grand_total ?? 0,
-        Sale_items: {
+        Sale_item: {
           create: saleItems,
         },
       },
       include: {
-        Sale_items: true,
+        Sale_item: true,
       },
     });
   }
 
-  async getAll(): Promise<sale[]> {
+  async getAll(): Promise<Sale[]> {
     return this.prisma.sale.findMany({
-      include: { Sale_items: true },
+      include: { Sale_item: true },
     });
   }
 
-  async getById(id: number): Promise<sale | null> {
+  async getById(id: number): Promise<Sale | null> {
     return this.prisma.sale.findUnique({
       where: { sale_id: id },
-      include: { Sale_items: true },
+      include: { Sale_item: true },
     });
   }
 }

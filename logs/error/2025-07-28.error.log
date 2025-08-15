@@ -1,0 +1,66 @@
+2025-07-27T21:00:00.055Z [ERROR]: TypeError - Cannot read properties of undefined (reading 'updateMany') Stack: TypeError: Cannot read properties of undefined (reading 'updateMany')
+    at n.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:4655)
+    at c.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:11974)
+    at v (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:2920)
+    at p.job (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:4084)
+2025-07-27T21:00:00.056Z [ERROR]: TypeError - Cannot read properties of undefined (reading 'updateMany') Stack: TypeError: Cannot read properties of undefined (reading 'updateMany')
+    at n.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:4655)
+    at c.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:11974)
+    at v (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:2920)
+    at p.job (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:4084)
+2025-07-27T21:00:00.056Z [ERROR]: TypeError - Cannot read properties of undefined (reading 'updateMany') Stack: TypeError: Cannot read properties of undefined (reading 'updateMany')
+    at n.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:4655)
+    at c.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:11974)
+    at v (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:2920)
+    at p.job (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:4084)
+2025-07-28T13:54:58.077Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29732)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2154)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-07-28T13:54:58.078Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29732)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2154)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-07-28T13:54:58.078Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29732)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2154)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960

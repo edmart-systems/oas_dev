@@ -1,13 +1,13 @@
 import { TagRepository } from "../repositories/tag.repository";
 import { TagDtoInput } from "../dtos/tag.dto";
-import { tag } from "@prisma/client";
+import { Tag } from "@prisma/client";
 
 
 
 export class TagService{
     constructor(private TagRepo: TagRepository){}
 
-    async createTag(data: TagDtoInput): Promise<tag> {
+    async createTag(data: TagDtoInput): Promise<Tag> {
         const existingTag = await this.TagRepo.findByName(data.tag);
         if(existingTag){
             throw new Error(`Tag '${data.tag}' already exists.`);
@@ -15,11 +15,11 @@ export class TagService{
         return this.TagRepo.create(data)
 
     }
-    async getAllTags(): Promise<tag[]> { 
+    async getAllTags(): Promise<Tag[]> { 
         return this.TagRepo.getAll();  
 
   }
-     async getTagsById(id: number): Promise<tag> {
+     async getTagsById(id: number): Promise<Tag> {
         const tag = await this.TagRepo.getById(id);
         if (!tag) {
             throw new Error(`Tag with id '${id}' not found.`);
@@ -27,7 +27,7 @@ export class TagService{
         return tag;
     }
 
-    async updateTag(id: number, data: { tag: string }): Promise<tag> {
+    async updateTag(id: number, data: { tag: string }): Promise<Tag> {
         const existing = await this.TagRepo.findByName(data.tag);
 
         if (existing && existing.tag_id !== id) {

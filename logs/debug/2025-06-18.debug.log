@@ -1,0 +1,245 @@
+2025-06-17T21:00:00.014Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-06-17T21:00:00.019Z [INFO]: Quotations Followup Job Started
+2025-06-17T21:00:00.036Z [INFO]: Daily Midnight Jobs Started
+2025-06-17T21:00:00.036Z [INFO]: Delete Old Notifications (> 90 Days) Job Started
+2025-06-17T21:00:00.038Z [INFO]: Delete Old Notifications (> 90 Days) Job Completed, Successful: 0 Old Notification Deleted
+2025-06-17T21:00:00.038Z [INFO]: Daily Midnight Jobs CompletedDelete Old Notifications: true: Delete Old Notifications (> 90 Days) Job Completed, Successful: 0 Old Notification Deleted
+2025-06-17T21:00:00.042Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-06-17T21:00:00.042Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-06-18T03:00:00.020Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-06-18T03:00:00.020Z [INFO]: Quotations Followup Job Started
+2025-06-18T03:00:00.036Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-06-18T03:00:00.036Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-06-18T04:00:00.023Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-06-18T04:00:00.024Z [INFO]: Quotation Expiry Check Job Started
+2025-06-18T04:00:00.032Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-06-18T04:00:00.032Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-06-18T07:00:00.022Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-06-18T07:00:00.023Z [INFO]: Quotation Expiry Check Job Started
+2025-06-18T07:00:00.040Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-06-18T07:00:00.040Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-06-18T08:36:59.510Z [INFO]: Scheduler instantiated!
+2025-06-18T09:00:00.016Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-06-18T09:00:00.017Z [INFO]: Quotations Followup Job Started
+2025-06-18T09:00:00.028Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-06-18T09:00:00.028Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-06-18T10:00:00.040Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-06-18T10:00:00.041Z [INFO]: Quotation Expiry Check Job Started
+2025-06-18T10:00:00.050Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-06-18T10:00:00.050Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-06-18T10:37:47.541Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29718)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2205)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-06-18T10:37:47.542Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29718)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2205)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-06-18T10:37:47.542Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29718)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2205)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-06-18T10:46:43.328Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29718)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2205)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-06-18T10:46:43.329Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29718)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2205)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-06-18T10:46:43.329Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29718)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2205)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-06-18T10:55:42.768Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29718)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2205)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-06-18T10:55:42.768Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29718)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2205)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-06-18T10:55:42.769Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29718)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2205)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-06-18T11:10:47.273Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29718)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2205)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-06-18T11:10:47.274Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29718)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2205)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-06-18T11:10:47.274Z [ERROR]: PrismaClientKnownRequestError - 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist. Stack: PrismaClientKnownRequestError: 
+Invalid `prisma.quotation_draft.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+    at $n.handleRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async d.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:10742)
+    at async Q.deleteQuotationDraft (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/6170.js:101:29718)
+    at async g (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/quotations/drafts/[draft_id]/route.js:1:2205)
+    at async /home/edmartsy/public_html/oas.edmartsystems.com.default/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41960
+2025-06-18T13:00:00.037Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-06-18T13:00:00.038Z [INFO]: Quotation Expiry Check Job Started
+2025-06-18T13:00:00.048Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-06-18T13:00:00.048Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-06-18T15:00:00.038Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-06-18T15:00:00.039Z [INFO]: Quotations Followup Job Started
+2025-06-18T15:00:00.053Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-06-18T15:00:00.053Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-06-18T16:00:00.024Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-06-18T16:00:00.025Z [INFO]: Quotation Expiry Check Job Started
+2025-06-18T16:00:00.034Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-06-18T16:00:00.034Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0

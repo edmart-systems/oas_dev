@@ -86,7 +86,7 @@ export default function PurchaseDialogs({
         </DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to remove <strong>"{itemToDelete?.product_name}"</strong> from your cart?
+            Are you sure you want to remove <strong>&quot;{itemToDelete?.product_name}&quot;</strong> from your cart?
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
             Quantity: {itemToDelete?.quantity} | Total: {itemToDelete && safeCurrency(itemToDelete.total_cost)}

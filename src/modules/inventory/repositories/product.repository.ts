@@ -1,23 +1,23 @@
 import { PrismaClient } from "@prisma/client";
 import { CreateProductInput } from "../dtos/product.dto";
-import { product } from "@prisma/client";
+import { Product } from "@prisma/client";
 
 export class ProductRepository {
   constructor(private prisma: PrismaClient) {}
 
-  async findByName(product_name: string): Promise<product | null> {
+  async findByName(product_name: string): Promise<Product | null> {
     return this.prisma.product.findUnique({
       where: { product_name },
     });
   }
 
-  async findByBarcode(product_barcode: number): Promise<product | null> {
+  async findByBarcode(product_barcode: number): Promise<Product | null> {
     return this.prisma.product.findUnique({
       where: { product_barcode },
     });
   }
 
-  async create(data: CreateProductInput): Promise<product> {
+  async create(data: CreateProductInput): Promise<Product> {
     const existing = await this.findByBarcode(data.product_barcode);
     if (existing) {
       throw new Error("Product with this barcode already exists.");
@@ -26,18 +26,18 @@ export class ProductRepository {
     return this.prisma.product.create({ data });
   }
 
-  async getAll(): Promise<product[]> {
+  async getAll(): Promise<Product[]> {
     return this.prisma.product.findMany({
       orderBy: { product_created_at: "desc" },
     });
   }
 
-  async getById(id: number): Promise<product | null> {
+  async getById(id: number): Promise<Product | null> {
     return this.prisma.product.findUnique({
       where: { product_id: id },
     });
   }
-  async update(id: number, data: Partial<product>): Promise<product> {
+  async update(id: number, data: Partial<Product>): Promise<Product> {
     if (data.product_barcode) {
     const existing = await this.findByBarcode(data.product_barcode);
 
@@ -62,7 +62,7 @@ export class ProductRepository {
     });
   }
 
-  async delete(id: number): Promise<product> {
+  async delete(id: number): Promise<Product> {
     return this.prisma.product.delete({
       where: { product_id: id },
     });

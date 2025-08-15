@@ -1,0 +1,59 @@
+2025-07-12T21:00:00.039Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-07-12T21:00:00.051Z [INFO]: Quotations Followup Job Started
+2025-07-12T21:00:00.087Z [INFO]: Daily Midnight Jobs Started
+2025-07-12T21:00:00.087Z [INFO]: Delete Old Notifications (> 90 Days) Job Started
+2025-07-12T21:00:00.089Z [INFO]: Delete Old Notifications (> 90 Days) Job Completed, Successful: 0 Old Notification Deleted
+2025-07-12T21:00:00.089Z [INFO]: Lock Old Tasks Job Started
+2025-07-12T21:00:00.090Z [ERROR]: TypeError - Cannot read properties of undefined (reading 'updateMany') Stack: TypeError: Cannot read properties of undefined (reading 'updateMany')
+    at n.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:4655)
+    at c.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:11974)
+    at v (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:2920)
+    at p.job (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:4084)
+2025-07-12T21:00:00.092Z [ERROR]: TypeError - Cannot read properties of undefined (reading 'updateMany') Stack: TypeError: Cannot read properties of undefined (reading 'updateMany')
+    at n.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:4655)
+    at c.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:11974)
+    at v (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:2920)
+    at p.job (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:4084)
+2025-07-12T21:00:00.092Z [INFO]: Lock Old Tasks Job Failed
+2025-07-12T21:00:00.092Z [ERROR]: TypeError - Cannot read properties of undefined (reading 'updateMany') Stack: TypeError: Cannot read properties of undefined (reading 'updateMany')
+    at n.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:4655)
+    at c.lockExpiredTasks (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/chunks/8467.js:1:11974)
+    at v (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:2920)
+    at p.job (/home/edmartsy/public_html/oas.edmartsystems.com.default/.next/server/app/api/services/scheduler/route.js:1:4084)
+2025-07-12T21:00:00.092Z [INFO]: Daily Midnight Jobs CompletedDelete Old Notifications: true: Delete Old Notifications (> 90 Days) Job Completed, Successful: 0 Old Notification Deleted
+Lock Old Tasks: Something went wrong
+2025-07-12T21:00:00.093Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-07-12T21:00:00.094Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-07-13T02:49:09.023Z [INFO]: Scheduler instantiated!
+2025-07-13T03:00:00.021Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-07-13T03:00:00.023Z [INFO]: Quotations Followup Job Started
+2025-07-13T03:00:00.052Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-07-13T03:00:00.052Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-07-13T04:00:00.030Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-07-13T04:00:00.030Z [INFO]: Quotation Expiry Check Job Started
+2025-07-13T04:00:00.041Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-07-13T04:00:00.041Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-07-13T07:00:00.021Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-07-13T07:00:00.021Z [INFO]: Quotation Expiry Check Job Started
+2025-07-13T07:00:00.038Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 1, Updated: 1, Failed: 0
+2025-07-13T07:00:00.039Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 1, Updated: 1, Failed: 0
+2025-07-13T09:00:00.019Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-07-13T09:00:00.020Z [INFO]: Quotations Followup Job Started
+2025-07-13T09:00:00.038Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-07-13T09:00:00.038Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-07-13T10:00:00.081Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-07-13T10:00:00.082Z [INFO]: Quotation Expiry Check Job Started
+2025-07-13T10:00:00.123Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-07-13T10:00:00.123Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-07-13T13:00:00.034Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-07-13T13:00:00.034Z [INFO]: Quotation Expiry Check Job Started
+2025-07-13T13:00:00.046Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 1, Updated: 1, Failed: 0
+2025-07-13T13:00:00.047Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 1, Updated: 1, Failed: 0
+2025-07-13T15:00:00.025Z [INFO]: Recurring_6_12_18_0_Jobs Started
+2025-07-13T15:00:00.025Z [INFO]: Quotations Followup Job Started
+2025-07-13T15:00:00.045Z [INFO]: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-07-13T15:00:00.045Z [INFO]: Recurring_6_12_18_0_Jobs CompletedQuotations Followup: true: Quotations Followup Job Completed, Create Quotations: First time => 0, Last time: 0 || Sent Quotations: First time => 0, Last time: 0 ||| 0 Successful
+2025-07-13T16:00:00.024Z [INFO]: Recurring_7_10_13_16_19_Jobs Started
+2025-07-13T16:00:00.025Z [INFO]: Quotation Expiry Check Job Started
+2025-07-13T16:00:00.034Z [INFO]: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
+2025-07-13T16:00:00.035Z [INFO]: Recurring_7_10_13_16_19_Jobs CompletedQuotation Expiry Check: true: Quotation Expiry Check Job Completed, Total Un-flagged Expired Quotations: 0, Updated: 0, Failed: 0
