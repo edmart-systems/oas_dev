@@ -43,3 +43,7 @@ export_office_automata_*
 /logs*
 /Logs
 /Logs*
+
+
+.env
+.env.local
