@@ -16,12 +16,11 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
 
     if (!session || !(await sessionService.checkIsUserSessionOk(session))) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json();
 
-    // Inject logged-in user's co_user_id here
     const tagData = {
       ...body,
       created_by: session.user?.co_user_id || "unknown",
@@ -30,20 +29,33 @@ export async function POST(req: NextRequest) {
     const parsed = TagDto.safeParse(tagData);
 
     if (!parsed.success) {
+      // Flatten Zod errors into a readable string
+      const fieldErrors = parsed.error.flatten().fieldErrors;
+      const errorMessages = Object.values(fieldErrors)
+        .flat()
+        .join(", ");
       return NextResponse.json(
-        { error: parsed.error.flatten().fieldErrors },
+        { message: errorMessages || "Invalid input" },
         { status: 400 }
       );
     }
 
-    const newTag = await service.createTag(parsed.data);
-    return NextResponse.json(
-      { message: "Tag created successfully", data: newTag },
-      { status: 201 }
-    );
+    try {
+      const newTag = await service.createTag(parsed.data);
+      return NextResponse.json(
+        { message: "Tag created successfully", data: newTag },
+        { status: 201 }
+      );
+    } catch (err: any) {
+      
+      return NextResponse.json(
+        { message: err.message || "Internal Server Error" },
+        { status: 400 }
+      );
+    }
   } catch (err: any) {
     return NextResponse.json(
-      { error: err.message || "Internal Server Error" },
+      { message: err.message || "Internal Server Error" },
       { status: 500 }
     );
   }

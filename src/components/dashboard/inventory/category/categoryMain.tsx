@@ -80,6 +80,7 @@ const CategoryMain = () => {
         open={openDialog.category}
         onClose={() => handleDialogClose('category')}
         onSuccess={(newCategory) => {
+          fetchData()
           toast.success('Category added successfully');
          
         }}

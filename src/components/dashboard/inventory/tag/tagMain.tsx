@@ -32,6 +32,7 @@ const TagMain = () => {
   useEffect(() => {
       fetchData();
     }, []);
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -48,8 +49,8 @@ const TagMain = () => {
     }
   };
   const filteredTags = tags.filter(tag =>
-    tag.tag.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  (tag.tag || "").toLowerCase().includes(searchTerm.toLowerCase())
+);
 
   return (
        <Card>
@@ -81,6 +82,7 @@ const TagMain = () => {
                       open={openDialog.tag}
                       onClose={() => handleDialogClose('tag')}
                       onSuccess={(newTag) => {
+                        fetchData();
                         toast.success('Tag added successfully');
                       }}
                     />

@@ -69,8 +69,9 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
   const handleDialogClose = (type: keyof typeof openDialog) =>
     setOpenDialog({ ...openDialog, [type]: false });
 
-  useEffect(() => {
-    const fetchOptions = async () => {
+ 
+
+  const fetchData = async () => {
       try {
         const [categoriesRes, tagsRes, suppliersRes] = await Promise.all([
           fetch('/api/inventory/category'),
@@ -100,8 +101,10 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
         console.error('Failed to fetch options:', error);
       }
     };
+
+     useEffect(() => {
     
-    fetchOptions();
+    fetchData();
   }, []);
 
   const handleSubmit = async () => {
@@ -333,8 +336,9 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
         onClose={() => handleDialogClose('category')}
         onSuccess={(newCategory) => {
           const categoryOption = { id: newCategory.category_id, name: newCategory.category };
-         setTags([...categories, categoryOption]);
+          setCategories(prev => [...prev, categoryOption]);
           toast.success('Category added successfully');
+          handleDialogClose('category');
          
         }}
       />
@@ -343,10 +347,12 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
         onClose={() => handleDialogClose('tag')}
         onSuccess={(newTag) => {
           const tagOption = { id: newTag.tag_id, name: newTag.tag };
-         setTags([...tags, tagOption]);
+          setTags(prev => [...prev, tagOption]); 
           toast.success('Tag added successfully');
+          handleDialogClose('tag');
         }}
       />
+      
       {/* <CurrencyForm
         open={openDialog.currency}
         onClose={() => handleDialogClose('currency')}
@@ -361,9 +367,10 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
         open={openDialog.supplier}
         onClose={() => handleDialogClose('supplier')}
         onSuccess={(newSupplier) => {
-          const supplierOption = { id: newSupplier.supplier_id, name: newSupplier.supplier_name };
-          setSuppliers([...suppliers, supplierOption]);
-          toast.success('Supplier added successfully');
+           const supplierOption = { id: newSupplier.supplier_id, name: newSupplier.supplier_name };
+            setSuppliers(prev => [...prev, supplierOption]); // add immediately
+            toast.success('Supplier added successfully');
+            handleDialogClose('supplier');
         }}
       />
 

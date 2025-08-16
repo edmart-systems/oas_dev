@@ -19,6 +19,9 @@ interface Props {
 }
 
 const TagTable = ({ tags, onEdit }: Props) => {
+  
+  
+
   // Pagination state
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);

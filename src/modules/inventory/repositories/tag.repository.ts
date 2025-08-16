@@ -1,6 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import { Tag } from "@prisma/client";
 import { TagDtoInput } from "../dtos/tag.dto";
+import { validateTag } from "../methods/tag.methods";
+
+
 
 
 export class TagRepository{
@@ -13,12 +16,19 @@ export class TagRepository{
     }
 
     async create(data: TagDtoInput):Promise<Tag>{
+        const validation = validateTag({tag: data.tag});
+        if (!validation.valid){
+            throw new Error(validation.errors?.join(", ") || "Invalid Tag Input");
+        }
         return this.prisma.tag.create({data});
     }
 
     
     async getAll():Promise<Tag[]>{
         return this.prisma.tag.findMany({
+            orderBy: {
+                created_at: "desc",
+            },
             include: {
                 creator: {
                     select: {
@@ -43,6 +53,10 @@ export class TagRepository{
     }
 
     async updateTag(id: number, data: { tag: string }): Promise<Tag> {
+        const validation = validateTag({tag: data.tag});
+        if (!validation.valid){
+            throw new Error(validation.errors?.join(", ") || "Invalid Tag Input");
+        }
         return this.prisma.tag.update({
             where: { tag_id: id },
             data,
