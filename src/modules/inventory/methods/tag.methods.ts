@@ -22,7 +22,6 @@ export const validateTag = (tag: NewRawTag): ObjectVerifyResponse => {
     };
   }
 
-  // ✅ Success case
   return {
     valid: true,
   };

@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
 
     if (!session || !(await sessionService.checkIsUserSessionOk(session))) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 400 });
     }
 
     const body = await req.json();
@@ -29,7 +29,6 @@ export async function POST(req: NextRequest) {
     const parsed = TagDto.safeParse(tagData);
 
     if (!parsed.success) {
-      // Flatten Zod errors into a readable string
       const fieldErrors = parsed.error.flatten().fieldErrors;
       const errorMessages = Object.values(fieldErrors)
         .flat()
@@ -44,7 +43,7 @@ export async function POST(req: NextRequest) {
       const newTag = await service.createTag(parsed.data);
       return NextResponse.json(
         { message: "Tag created successfully", data: newTag },
-        { status: 201 }
+        { status: 200 }
       );
     } catch (err: any) {
       

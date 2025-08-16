@@ -12,7 +12,7 @@ const TagForm: React.FC<Props> = ({ open, onClose, onSuccess, initialData }) => 
   const [formData, setFormData] = useState({
     tag: ''
   });
-  const [formError, setFormError] = useState<string | null>(null); // Add error state
+  const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
     if (initialData) {

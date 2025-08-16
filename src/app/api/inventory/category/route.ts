@@ -16,12 +16,12 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
 
     if (!session || !(await sessionService.checkIsUserSessionOk(session))) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 400 });
     }
 
     const body = await req.json();
 
-    // Inject logged-in user's co_user_id here
+    
     const categoryData = {
       ...body,
       created_by: session.user?.co_user_id || "unknown",
@@ -30,17 +30,30 @@ export async function POST(req: NextRequest) {
     const parsed = CategoryDto.safeParse(categoryData);
 
     if (!parsed.success) {
+      const fieldErrors = parsed.error.flatten().fieldErrors;
+      const errorMessages = Object.values(fieldErrors)
+        .flat()
+        .join(", ");
       return NextResponse.json(
-        { error: parsed.error.flatten().fieldErrors },
+        { message: errorMessages || "Invalid input" },
         { status: 400 }
       );
     }
 
-    const newCategory = await service.createCategory(parsed.data);
-    return NextResponse.json(
-      { message: "Category created successfully", data: newCategory },
-      { status: 201 }
-    );
+    try{
+      const newCategory = await service.createCategory(parsed.data);
+      return NextResponse.json(
+        { message: "Category created successfully", data: newCategory },
+        { status: 200 }
+      );
+    }catch(err:any){
+      return NextResponse.json(
+        {error: err.message || "Internal Server Error" },
+        { status: 400 }
+      );
+    }
+
+    
   } catch (err: any) {
     return NextResponse.json(
       { error: err.message || "Internal Server Error" },
