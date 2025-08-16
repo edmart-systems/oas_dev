@@ -15,6 +15,8 @@ const sessionService = new SessionService();
 
 
 export async function POST(req: NextRequest) {
+  try{
+
   const session = await getServerSession(authOptions);
   if(!session || !(await sessionService.checkIsUserSessionOk(session))){
     return NextResponse.json({error: "Unauthorized"},{status:401});
@@ -30,16 +32,29 @@ export async function POST(req: NextRequest) {
   const parsed = SupplierDto.safeParse(supplierData);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    const fieldErrors = parsed.error.flatten().fieldErrors;
+      const errorMessages = Object.values(fieldErrors)
+        .flat()
+        .join(", ");
+      return NextResponse.json(
+        { message: errorMessages || "Invalid input" },
+        { status: 400 }
+      );
   }
 
   try {
     const newSupplier = await service.createSupplier(parsed.data);
-    return NextResponse.json(newSupplier, { status: 201 });
+    return NextResponse.json({message: "Supplier created successfully", data: newSupplier },
+      {status: 200} 
+    );
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: err.message || "Internal Server Error" }, { status: 400 });
+  } }catch(err:any){
+    return NextResponse.json({error: err.message || "Internal Server Error"}, {status: 500});
   }
 }
+
+
 
 export async function GET() {
   try {

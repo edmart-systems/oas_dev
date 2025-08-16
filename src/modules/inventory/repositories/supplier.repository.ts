@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Supplier } from "@prisma/client";
 import { SupplierDtoInput } from "../dtos/supplier.dto";
+import { validateSupplier } from "../methods/supplier.methods";
 
 
 
@@ -20,6 +21,11 @@ export class SupplierRepository {
   }
 
   async create(data: SupplierDtoInput): Promise<Supplier> {
+    const validation = validateSupplier(data);
+            if(!validation.valid){
+                throw new Error(validation.errors?.join(", ") || "Invalid Inventory Point Input");  
+            }
+    
     const existing = await this.findByEmail(data.supplier_email);
     if (existing) {
       throw new Error("Supplier with this email already exists.");

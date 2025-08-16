@@ -67,7 +67,11 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
+    const session = await sessionService.checkIsUserSessionOk(await getServerSession(authOptions));
     const inventory_points = await service.getAllInventory_points();
+    if(!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 }); 
+    }
     return NextResponse.json(inventory_points);
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

@@ -1,4 +1,4 @@
-import { create } from "lodash";
+import { create, update } from "lodash";
 import { z } from "zod";
 
 export const SupplierDto = z.object({
@@ -9,6 +9,7 @@ export const SupplierDto = z.object({
     supplier_tinNumber: z.number().optional(),
     created_by: z.string().optional(),
     updated_by: z.string().optional(),
+    updated_at: z.date().optional(),
 });
 
 
