@@ -8,7 +8,7 @@ import {
   TableRow,
   TablePagination,
 } from "@mui/material";
-import { PencilSimple } from "@phosphor-icons/react";
+import { PencilSimpleIcon } from "@phosphor-icons/react";
 import UserAvatar from "@/components/dashboard/nav-bar/user-avatar";
 import React, { useState } from "react";
 import { InventoryPoint } from "@/modules/inventory/types/inventoryPoint.types";
@@ -16,7 +16,7 @@ import { InventoryPoint } from "@/modules/inventory/types/inventoryPoint.types";
 
 interface Props {
   inventoryPoints: InventoryPoint[];
-  onEdit: () => void;
+  onEdit: (inventoryPoint: InventoryPoint ) => void;
 }
 
 const InventoryPointTable = ({ inventoryPoints, onEdit }: Props) => {
@@ -59,8 +59,8 @@ const InventoryPointTable = ({ inventoryPoints, onEdit }: Props) => {
                 </div>
               </TableCell>
               <TableCell>
-                <IconButton onClick={onEdit}>
-                  <PencilSimple />
+                <IconButton onClick={() => onEdit(inventoryPoint)}>
+                  <PencilSimpleIcon />
                 </IconButton>
               </TableCell>
             </TableRow>

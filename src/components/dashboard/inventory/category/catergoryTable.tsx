@@ -15,7 +15,7 @@ import { Category } from '@/modules/inventory/types/category.types';
 
 type Props = {
   categories: Category[];
-  onEdit: () => void;
+  onEdit: (category: Category) => void;
 }
 
 const CatergoryTable = ({ categories, onEdit }: Props) => {
@@ -86,7 +86,7 @@ const CatergoryTable = ({ categories, onEdit }: Props) => {
                 </div>
               </TableCell>
               <TableCell>
-                <IconButton onClick={onEdit} color="primary">
+                <IconButton onClick={()=>onEdit(category)} color="primary">
                   <PencilSimple />
                 </IconButton>
               </TableCell>

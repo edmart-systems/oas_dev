@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {
+  Box,
   Button,
   Card,
   CardContent,
@@ -7,26 +8,22 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { Plus, MagnifyingGlass } from "@phosphor-icons/react";
+import { PlusIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { Category } from '@/modules/inventory/types/category.types';
 import CatergoryTable from './catergoryTable';
 import { toast } from 'react-toastify';
 import CategoryForm from './CategoryForm';
+import MyCircularProgress from '@/components/common/my-circular-progress';
 
 
 const CategoryMain = () => {
   const [categories, setCategories] = useState<Category[]>([])
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
-  const [openDialog, setOpenDialog] = useState({
-      category: false,
-    });
-  const handleDialogOpen = (type: keyof typeof openDialog) =>
-    setOpenDialog({ ...openDialog, [type]: true });
-  
-  const handleDialogClose = (type: keyof typeof openDialog) =>
-    setOpenDialog({ ...openDialog, [type]: false }); 
+  const [openForm, setOpenForm] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
 
+ 
   useEffect(() => {
       fetchData();
     }, []);
@@ -46,8 +43,18 @@ const CategoryMain = () => {
     }
     } 
   const filteredCategories = categories.filter(category =>
-    category.category.toLowerCase().includes(searchTerm.toLowerCase())
+    (category.category || "").toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleAdd = () => {
+    setSelectedCategory(null);
+    setOpenForm(true);
+  };
+
+  const handleEdit = (category: Category) => {
+    setSelectedCategory(category);
+    setOpenForm(true);
+  };
 
 
   return (
@@ -62,25 +69,35 @@ const CategoryMain = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     InputProps={{
-                      startAdornment: <MagnifyingGlass size={20} />,
+                      startAdornment: <MagnifyingGlassIcon size={20} />,
                     }}
                   />
-                  <Button variant="contained" startIcon={<Plus />} onClick={() => handleDialogOpen('category')  }>
+                  <Button variant="contained" disabled={loading} startIcon={<PlusIcon />} onClick={handleAdd}>
                     Add Category
                   </Button>
                 </Stack>
               }
             />
             <CardContent>
-                {/* Catergory table  */}
-              <CatergoryTable categories={filteredCategories} onEdit={() => handleDialogOpen('category')} />
+              { loading ? (
+                <Box display="flex" justifyContent="center" alignItems="center" height={200}>
+                  <MyCircularProgress />
+                </Box>
+
+              ):(
+                <CatergoryTable categories={filteredCategories} onEdit={handleEdit} />
+              )}
+                
+              
               
             </CardContent>
             <CategoryForm
-        open={openDialog.category}
-        onClose={() => handleDialogClose('category')}
-        onSuccess={(newCategory) => {
-          fetchData()
+          open={openForm}
+          initialData={selectedCategory}
+          onClose={() => setOpenForm(false)}
+          onSuccess={(newCategory) => {
+          fetchData();
+          setOpenForm(false)
           toast.success('Category added successfully');
          
         }}

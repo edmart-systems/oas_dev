@@ -39,7 +39,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     
     try {
       const isUpdate = initialData?.category_id;
-      const url = isUpdate ? `/api/inventory/category/${initialData.tag_id}` : '/api/inventory/category';
+      const url = isUpdate ? `/api/inventory/category/${initialData.category_id}` : '/api/inventory/category';
       const method = isUpdate ? 'PATCH' : 'POST';
 
       const res = await fetch(url, {

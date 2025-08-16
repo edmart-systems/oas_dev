@@ -46,7 +46,7 @@ const TagForm: React.FC<Props> = ({ open, onClose, onSuccess, initialData }) => 
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        setFormError(errorData?.message || `Failed to${isUpdate ? ' update' : ' add'} tag`);
+        setFormError(errorData?.message || errorData?.error || `Failed to${isUpdate ? ' update' : ' add'} tag`);
         return;
       }
 
@@ -54,7 +54,7 @@ const TagForm: React.FC<Props> = ({ open, onClose, onSuccess, initialData }) => 
       onSuccess(newTag);
       onClose();
     } catch (error: any) {
-      setFormError(error.message || "An unexpected error occurred.");
+      setFormError(error.message || error?.error || "An unexpected error occurred.");
       console.error(`Error ${initialData ? 'updating' : 'adding'}tag:`, error);
     }
   };
