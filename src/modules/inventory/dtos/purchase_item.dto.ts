@@ -7,6 +7,7 @@ export const PurchaseItemDto = z.object({
   quantity: z.number(),
   unit_cost: z.number(),
   total_cost: z.number().optional(),
+  update_at: z.date().optional()
 });
 export const CreatePurchaseItemDto = z.object({
   purchase_id: z.number().optional(),
@@ -14,6 +15,7 @@ export const CreatePurchaseItemDto = z.object({
   quantity: z.number(),
   unit_cost: z.number(),
   total_cost: z.number().optional(),
+  update_at: z.date().optional()
 });
 
 export const UpdatePurchaseItemDto = PurchaseItemDto.partial();

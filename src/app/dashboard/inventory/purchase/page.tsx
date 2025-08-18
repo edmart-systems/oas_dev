@@ -16,12 +16,12 @@ import PurchaseMain from "@/components/dashboard/inventory/purchase/purchaseMain
 import { Product } from "@/modules/inventory/types/purchase.types";
 import { CartItem } from "@/modules/inventory/types/purchase.types";
 import { PurchaseOrder } from "@/modules/inventory/types/purchase.types";
-import { Supplier } from "@/modules/inventory/types/purchase.types";
-import { InventoryPoint } from "@/modules/inventory/types/purchase.types";
 import PurchaseHistory from "@/components/dashboard/inventory/purchase/purchaseHistory";
 import PurchaseDialogs from "@/components/dashboard/inventory/purchase/purchaseDialoges";
 import { useCurrency } from "@/components/currency/currency-context";
 import { CompanyDto } from "@/types/company.types";
+import { Supplier } from "@/modules/inventory/types/supplier.types";
+import { InventoryPoint } from "@/modules/inventory/types/inventoryPoint.types";
 
 
 
@@ -92,7 +92,9 @@ const PurchasePage = () => {
         name: ip.inventory_point,
         inventory_point: ip.inventory_point
       })));
-      setPurchases(purchasesData);
+      if (!Array.isArray(suppliersData)) throw new Error('Suppliers data invalid');
+    if (!Array.isArray(inventoryPointsData)) throw new Error('Inventory Points data invalid');
+          setPurchases(purchasesData);
       // Set hardcoded company data for now
       setCompany({
         co_id: 1,

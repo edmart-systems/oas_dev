@@ -33,6 +33,7 @@ export const CreateSaleDto = z.object({
   sale_net_amount: z.number().optional(),
   sale_grand_total: z.number().optional(),
   inventory_point_id: z.number().default(1),
+  
 });
 
 export type SaleItemInput = z.infer<typeof SaleItemDto>;

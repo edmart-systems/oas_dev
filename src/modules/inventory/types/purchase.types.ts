@@ -5,6 +5,8 @@ import { SupplierDtoInput } from "../dtos/supplier.dto";
 import { Inventory_pointDtoInput } from "../dtos/inventory_point.dto";
 import { CompanyDto } from "@/types/company.types";
 import React, { Dispatch, forwardRef, Fragment, Ref, SetStateAction } from "react";
+import { Supplier } from "./supplier.types";
+import { InventoryPoint } from "./inventoryPoint.types";
 
 
 
@@ -20,15 +22,7 @@ export interface PurchaseOrder extends PurchaseDtoInput {
   Purchase_items?: PurchaseItemDtoInput[];
 }
 
-export interface Supplier extends SupplierDtoInput {
-    id: number;
-    name: string;
-}
 
-export interface InventoryPoint extends Inventory_pointDtoInput{
-    id: number;
-    name: string;
-}
 
 export interface PurchaseMainProps {
   products: Product[];

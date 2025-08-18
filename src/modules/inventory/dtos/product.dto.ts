@@ -17,6 +17,7 @@ export const ProductDto = z.object({
   product_status:      z.number(),
   supplier_id:         z.number().optional(),
   inventory_point_id:  z.number().default(1), 
+  update_at: z.date().optional()
 
 });
 
@@ -35,6 +36,7 @@ export const CreateProductDto = z.object({
   supplier_id:         z.number().optional(),
   product_max_quantity: z.number().optional(),
   product_min_quantity: z.number().optional(),
+  update_at: z.date().optional()
 });
 
 export const UpdateProductDto = ProductDto.partial();
