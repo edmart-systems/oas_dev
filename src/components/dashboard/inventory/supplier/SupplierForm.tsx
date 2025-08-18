@@ -89,8 +89,7 @@ const SupplierForm = ({ open, onClose, onSuccess, initialData }: SupplierFormPro
               value={formData.supplier_name}
               onChange={(e) => setFormData({ ...formData, supplier_name: e.target.value })}
               required
-              error={!!formError}
-              helperText={formError}
+               
             />
             <TextField
               label="Email"

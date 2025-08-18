@@ -1,3 +1,45 @@
+import { CreateProductInput } from "../dtos/product.dto";
+import { ObjectVerifyResponse } from "@/types/other.types";
+import z from "zod";
+
+
+
+const productSchema = z.object({
+    product_name: z.string().min(6, "Product name too short."),
+    product_barcode: z.number(),
+    product_description: z.string(),
+    unit_id: z.number(),
+    category_id: z.number(),
+    tag_id: z.number(),
+    buying_price: z.number(),
+    selling_price: z.number(),
+    currency_id: z.number(),
+    created_by: z.string().optional(),
+    updated_by: z.string().optional(),
+    supplier_id: z.number().optional(),
+    product_max_quantity: z.number().optional(),
+    product_min_quantity: z.number().optional(),
+    update_at: z.date().optional()
+})  
+
+
+
+export const validateProduct = (product: CreateProductInput): ObjectVerifyResponse => {
+    const result = productSchema.safeParse(product);
+
+    if (!result.success) {
+        return {
+            valid: false,
+            errors: result.error.errors.map(e => e.message),
+        }
+    }
+
+    return {
+        valid: true,
+    }
+}
+
+
 export const calculateProductStatus = (
   currentQuantity: number,
   minQuantity: number | null,
@@ -7,7 +49,7 @@ export const calculateProductStatus = (
   
   if (currentQuantity <= minQuantity) return 1; // Low
   if (currentQuantity >= maxQuantity) return 3; // High
-  return 2; // Moderate
+  return 2;
 };
 
 export const calculateMarkupPercentage = (

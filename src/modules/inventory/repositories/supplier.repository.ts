@@ -47,6 +47,7 @@ export class SupplierRepository {
   }
 
   async update(id: number, data: Partial<Supplier>): Promise<Supplier> {
+
     if (data.supplier_email) {
       const existing = await this.findByEmail(data.supplier_email);
       if (existing && existing.supplier_id !== id) {
