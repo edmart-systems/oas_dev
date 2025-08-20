@@ -31,11 +31,11 @@ import { Plus, PencilSimple, Trash, MagnifyingGlass } from "@phosphor-icons/reac
 import PageTitle from "@/components/dashboard/common/page-title";
 import InventoryHorizontalNav from "@/components/dashboard/inventory/inventory-horizontal-nav";
 import { toast } from "react-toastify";
-import { Product } from '@/modules/inventory/types/purchase.types'
 import ProductForm from "./productForm";
 import ProductTable from "./productTable";
 import { CreateProductInput } from "@/modules/inventory/dtos/product.dto";
 import MyCircularProgress from "@/components/common/my-circular-progress";
+import { Product } from "@/types/product.types";
 
 
 
@@ -161,9 +161,8 @@ const handleDeleteConfirm = async () => {
       </Card>
 
           {/* {Add products} */}
-          <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
-            <DialogContent>
-              <ProductForm 
+          
+          <ProductForm 
                 open={open}
                 onSubmit={()=>{
                   fetchData()
@@ -172,9 +171,7 @@ const handleDeleteConfirm = async () => {
                 }} 
                 onCancel={() => setOpen(false)} 
                 initialData={editingProduct}
-              />
-            </DialogContent>
-          </Dialog>
+          />
 
           {/* {Delete Product Confirmation} */}
           <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)}>

@@ -9,6 +9,10 @@ import {
   Typography,
   MenuItem,
   IconButton,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogActions,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import AddIcon from '@mui/icons-material/Add';
@@ -27,7 +31,7 @@ interface ProductFormProps {
   
 }
 
-export default function ProductForm({ onSubmit, onCancel, initialData }: ProductFormProps) {
+export default function ProductForm({ open, onSubmit, onCancel, initialData }: ProductFormProps) {
   const [formData, setFormData] = useState({
     product_name: '',
         product_barcode: '',
@@ -193,11 +197,14 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
 
 
   return (
-    <Card sx={{ width: '100%', mt: 2 }}>
+    <Dialog open={open} onClose={onCancel} maxWidth="md" fullWidth>
+      <form onSubmit={handleSubmit}>
+        <DialogTitle>
+          {initialData?.product_id ? 'Edit Product' : 'Add Product'}
+        </DialogTitle>
+        <DialogContent>
+        <Card sx={{ width: '100%', mt: 2 }}>
       <CardContent>
-        <Typography variant="h5" gutterBottom>
-          New Product
-        </Typography>
         {generalError && (
           <Typography color="error" variant="body2" sx={{ mb: 2 }}>
             {generalError}
@@ -399,22 +406,6 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
               helperText={fieldErrors.product_min_quantity}
             />
           </Grid>
-          
-          <Grid size={{ xs: 12, md: 12 }}>
-            <Stack direction="row" spacing={2}>
-              <Button onClick={onCancel} fullWidth>
-                Cancel
-              </Button>
-              <Button 
-                variant="contained" 
-                color="primary" 
-                fullWidth
-                onClick={handleSubmit}
-              >
-                Save
-              </Button>
-            </Stack>
-          </Grid>
         </Grid>
       </CardContent>
       <CategoryForm
@@ -474,5 +465,16 @@ export default function ProductForm({ onSubmit, onCancel, initialData }: Product
         }}
       /> */}
     </Card>
+                  
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={onCancel}>Cancel</Button>
+    <Button type="submit" variant="contained">
+    {initialData?.product_id ? 'Update' : 'Add'} Product
+    </Button>
+  </DialogActions>
+  </form>
+  </Dialog>
+    
   );
 }

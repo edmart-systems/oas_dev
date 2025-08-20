@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import { Button, Stack, Skeleton } from "@mui/material";
 import { usePDF } from "@react-pdf/renderer";
@@ -6,12 +8,25 @@ import PurchasePdfDoc from "./purchase-pdf-doc";
 import PurchaseViewDialog from "./purchase-view-dialog";
 import { useCurrency } from "@/components/currency/currency-context";
 import Link from "next/link";
-import { PurchaseDownloadButtonsProps } from "@/modules/inventory/types/purchase.types";
 import QRCode from "qrcode";
+import { Purchase } from "@/modules/inventory/types/purchase.types";
+import { CompanyDto } from "@/types/company.types";
 
+export interface PurchaseDownloadButtonsProps {
+  purchase: Purchase;
+  company: CompanyDto;
+  supplierName: string;
+  inventoryPointName: string;
+  productNames: Record<number, string>;
+}
 
-
-const PurchaseDownloadButtons = ({ purchase, company,supplierName,inventoryPointName,productNames }: PurchaseDownloadButtonsProps) => {
+const PurchaseDownloadButtons = ({
+  purchase,
+  company,
+  supplierName,
+  inventoryPointName,
+  productNames,
+}: PurchaseDownloadButtonsProps) => {
   const [viewOpen, setViewOpen] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string>("");
   const { formatCurrency } = useCurrency();
@@ -25,22 +40,24 @@ const PurchaseDownloadButtons = ({ purchase, company,supplierName,inventoryPoint
         const dataUrl = await QRCode.toDataURL(qrKey, { errorCorrectionLevel: "Q" });
         setQrDataUrl(dataUrl);
       } catch (error) {
-        console.error('QR generation failed:', error);
+        console.error("QR generation failed:", error);
       }
     };
     generateQR();
-  }, [purchase.purchase_id, company, supplierName]);
-  
+  }, [purchase.purchase_id, company.legal_name, company.business_name, supplierName]);
+
   const [instance] = usePDF({
-    document: <PurchasePdfDoc 
-      purchase={purchase} 
-      company={company} 
-      formatCurrency={formatCurrency}
-      supplierName={supplierName}
-      inventoryPointName={inventoryPointName}
-      productNames={productNames}
-      qrDataUrl={qrDataUrl}
-    />,
+    document: (
+      <PurchasePdfDoc
+        purchase={purchase}
+        company={company}
+        formatCurrency={formatCurrency}
+        supplierName={supplierName}
+        inventoryPointName={inventoryPointName}
+        productNames={productNames}
+        qrDataUrl={qrDataUrl}
+      />
+    ),
   });
 
   const fileName = `Purchase-Order-PO-${purchase.purchase_id}.pdf`;

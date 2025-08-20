@@ -16,7 +16,17 @@ import {
 } from "@mui/material";
 import { Trash, Receipt } from "@phosphor-icons/react";
 import { useCurrency } from "@/components/currency/currency-context";
-import { PurchaseCartProps } from "@/modules/inventory/types/purchase.types";
+import { CartItem } from "@/modules/inventory/types/purchase.types";
+
+interface Props{
+  cart: CartItem[];
+  onUpdateQuantity: (productId: number, quantity: number) => void;
+  onUpdateUnitCost: (productId: number, unitCost: number) => void;
+  onRemoveItem: (productId: number) => void;
+  onClearCart: () => void;
+  onProcessPurchase: () => void;
+  loading: boolean;
+}
 
 
 
@@ -27,7 +37,8 @@ export default function PurchaseCart({
   onRemoveItem,
   onClearCart,
   onProcessPurchase,
-}: PurchaseCartProps) {
+  loading
+}: Props) {
   const { formatCurrency } = useCurrency();
   
   const safeCurrency = (amount: number) => {
@@ -131,6 +142,7 @@ if (!cart || cart.length === 0) {
             size="large"
             startIcon={<Receipt />}
             onClick={onProcessPurchase}
+            disabled={loading}
           >
             Create Purchase
           </Button>
