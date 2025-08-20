@@ -7,7 +7,7 @@ export const TaskStatusDtoSchema = zod.enum([
   "Failed",
   "Done",
   "Completed",
-  "Cancelled",
+
 ]);
 
 export const TaskPriorityDtoSchema = zod.enum([
@@ -18,11 +18,9 @@ export const TaskPriorityDtoSchema = zod.enum([
 ]);
 
 export const NewSubTaskDtoSchema = zod.object({
-  taskId: zod.number(),
-  userId: zod.number(),
   taskName: zod.string(),
-  taskDetails: zod.string(),
-  comments: zod.string(),
+  taskDetails: zod.string().optional(),
+  comments: zod.string().optional(),
   status: TaskStatusDtoSchema,
   startTime: zod.number(),
   endTime: zod.number(),

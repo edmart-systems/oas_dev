@@ -1,3 +1,4 @@
+
 "use server";
 
 import { logger } from "@/logger/default-logger";
@@ -15,6 +16,29 @@ export const lockOldTasksJob = async (): Promise<ActionResponse> => {
 
     const completionMessage = jobName + " Completed, " + res.message;
 
+    logger.info(completionMessage);
+    return Promise.resolve({
+      status: res.status,
+      message: completionMessage,
+    });
+  } catch (err) {
+    logger.info(jobName + " Failed");
+    logger.error(err);
+    return Promise.resolve({
+      status: false,
+      message: "Something went wrong",
+    });
+  }
+};
+
+export const pushPendingTasksJob = async (): Promise<ActionResponse> => {
+  const jobName = `Push Pending Tasks Job`;
+  const tasksService = new TasksService();
+
+  try {
+    logger.info(jobName + " Started");
+    const res: ActionResponse = await tasksService.pushPendingTasks();
+    const completionMessage = jobName + " Completed, " + res.message;
     logger.info(completionMessage);
     return Promise.resolve({
       status: res.status,

@@ -1076,258 +1076,475 @@ Please make sure your database server is running at `localhost:3306`.
     at em (/home/edson/Downloads/15_08_2025_10_12/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
     at /home/edson/Downloads/15_08_2025_10_12/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
     at Array.toJSON (/home/edson/Downloads/15_08_2025_10_12/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
-2025-08-15T07:58:02.493Z [ERROR]: PrismaClientKnownRequestError - 
-Invalid `prisma.task.findMany()` invocation:
+2025-08-15T14:49:32.344Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at Object.eP [as staticGenerationBailout] (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29225)
+    at i (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:34633)
+    at Object.get (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:34729)
+    at O (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/services/scheduler/route.js:2:195)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41966
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/lib/trace/tracer.js:133:36
+    at NoopContextManager.with (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NoopTracer.startActiveSpan (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18093)
+    at ProxyTracer.startActiveSpan (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18854)
+2025-08-15T14:49:33.272Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/8827.js:128:39863)
+    at u (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:20515)
+    at v (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/auth/[...nextauth]/route.js:1:5533)
+    at b (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/7217.js:1:61073)
+    at B (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/page.js:1:45132)
+    at G (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/page.js:1:45273)
+    at em (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-15T14:49:33.292Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/8827.js:128:39863)
+    at u (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:20515)
+    at v (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/auth/[...nextauth]/route.js:1:5533)
+    at b (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/7217.js:1:61073)
+    at B (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/page.js:1:45132)
+    at G (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/page.js:1:45273)
+    at em (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-15T14:49:33.619Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/8827.js:128:39863)
+    at u (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:20515)
+    at x (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/inventory/category/[id]/route.js:1:7896)
+    at h (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/9578.js:1:4502)
+    at j (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/create/page.js:1:22134)
+    at v (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/create/page.js:1:22229)
+    at em (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-15T14:49:33.628Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/8827.js:128:39863)
+    at u (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:20515)
+    at x (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/inventory/category/[id]/route.js:1:7896)
+    at h (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/9578.js:1:4502)
+    at j (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/create/page.js:1:22134)
+    at v (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/create/page.js:1:22229)
+    at em (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-15T17:05:15.243Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at Object.eP [as staticGenerationBailout] (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29225)
+    at i (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:34633)
+    at Object.get (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:34729)
+    at O (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/services/scheduler/route.js:2:195)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41966
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/lib/trace/tracer.js:133:36
+    at NoopContextManager.with (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NoopTracer.startActiveSpan (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18093)
+    at ProxyTracer.startActiveSpan (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18854)
+2025-08-15T17:05:16.454Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/8827.js:128:39863)
+    at u (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:20515)
+    at x (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/inventory/category/[id]/route.js:1:7896)
+    at P (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/9578.js:1:5786)
+    at B (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/page.js:1:45132)
+    at G (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/page.js:1:45273)
+    at em (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-15T17:05:16.464Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/8827.js:128:39863)
+    at u (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:20515)
+    at x (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/inventory/category/[id]/route.js:1:7896)
+    at P (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/9578.js:1:5786)
+    at B (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/page.js:1:45132)
+    at G (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/page.js:1:45273)
+    at em (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-15T17:05:17.057Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/8827.js:128:39863)
+    at u (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:20515)
+    at x (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/inventory/category/[id]/route.js:1:7896)
+    at h (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/9578.js:1:4502)
+    at j (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/create/page.js:1:22134)
+    at v (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/create/page.js:1:22229)
+    at em (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-15T17:05:17.063Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/8827.js:128:39863)
+    at u (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:20515)
+    at x (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/inventory/category/[id]/route.js:1:7896)
+    at h (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/9578.js:1:4502)
+    at j (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/create/page.js:1:22134)
+    at v (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/create/page.js:1:22229)
+    at em (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-15T18:19:44.370Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at Object.eP [as staticGenerationBailout] (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29225)
+    at i (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:34633)
+    at Object.get (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:34729)
+    at O (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/services/scheduler/route.js:2:195)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41966
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/lib/trace/tracer.js:133:36
+    at NoopContextManager.with (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NoopTracer.startActiveSpan (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18093)
+    at ProxyTracer.startActiveSpan (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18854)
+2025-08-15T18:19:45.349Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/8827.js:128:39863)
+    at u (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:20515)
+    at x (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/inventory/category/[id]/route.js:1:7896)
+    at P (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/9578.js:1:5786)
+    at B (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/page.js:1:45132)
+    at G (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/page.js:1:45273)
+    at em (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-15T18:19:45.365Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/8827.js:128:39863)
+    at u (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:20515)
+    at x (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/inventory/category/[id]/route.js:1:7896)
+    at P (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/9578.js:1:5786)
+    at B (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/page.js:1:45132)
+    at G (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/page.js:1:45273)
+    at em (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-15T18:19:45.988Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/8827.js:128:39863)
+    at u (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:20515)
+    at x (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/inventory/category/route.js:1:7569)
+    at f (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/7217.js:1:59789)
+    at j (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/create/page.js:1:22134)
+    at v (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/create/page.js:1:22229)
+    at em (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-15T18:19:45.995Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/8827.js:128:39863)
+    at u (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:20515)
+    at x (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/inventory/category/route.js:1:7569)
+    at f (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/7217.js:1:59789)
+    at j (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/create/page.js:1:22134)
+    at v (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/create/page.js:1:22229)
+    at em (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-15T18:53:15.161Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.notification.findMany()` invocation:
 
 
-The column `oas.task.deleted` does not exist in the current database. Stack: PrismaClientKnownRequestError: 
-Invalid `prisma.task.findMany()` invocation:
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.notification.findMany()` invocation:
 
 
-The column `oas.task.deleted` does not exist in the current database.
-    at $n.handleRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:7315)
-    at $n.handleAndLogRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6623)
-    at $n.request (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6307)
-    at async l (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:130:9633)
-    at async TasksRepository.lockExpiredTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.repository.ts:341:38)
-    at async TasksService.lockExpiredTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.service.ts:427:41)
-    at async POST (webpack-internal:///(rsc)/./src/app/api/tasks/expire/route.ts:27:24)
-    at async D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63251
-2025-08-15T07:58:02.496Z [ERROR]: PrismaClientKnownRequestError - 
-Invalid `prisma.task.findMany()` invocation:
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`.
+    at $n.handleRequestError (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async NotificationRepository.fetchUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.repository.ts:43:39)
+    at async NotificationService.getUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.service.ts:18:39)
+    at async fetchUserNotifications (webpack-internal:///(action-browser)/./src/server-actions/notification-actions/notification.actions.ts:35:21)
+    at async /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-15T18:53:15.163Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.notification.findMany()` invocation:
 
 
-The column `oas.task.deleted` does not exist in the current database. Stack: PrismaClientKnownRequestError: 
-Invalid `prisma.task.findMany()` invocation:
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.notification.findMany()` invocation:
 
 
-The column `oas.task.deleted` does not exist in the current database.
-    at $n.handleRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:7315)
-    at $n.handleAndLogRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6623)
-    at $n.request (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6307)
-    at async l (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:130:9633)
-    at async TasksRepository.lockExpiredTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.repository.ts:341:38)
-    at async TasksService.lockExpiredTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.service.ts:427:41)
-    at async POST (webpack-internal:///(rsc)/./src/app/api/tasks/expire/route.ts:27:24)
-    at async D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63251
-2025-08-15T07:58:02.497Z [ERROR]: PrismaClientKnownRequestError - 
-Invalid `prisma.task.findMany()` invocation:
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`.
+    at $n.handleRequestError (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async NotificationRepository.fetchUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.repository.ts:43:39)
+    at async NotificationService.getUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.service.ts:18:39)
+    at async fetchUserNotifications (webpack-internal:///(action-browser)/./src/server-actions/notification-actions/notification.actions.ts:35:21)
+    at async /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-15T18:53:15.167Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.notification.findMany()` invocation:
 
 
-The column `oas.task.deleted` does not exist in the current database. Stack: PrismaClientKnownRequestError: 
-Invalid `prisma.task.findMany()` invocation:
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.notification.findMany()` invocation:
 
 
-The column `oas.task.deleted` does not exist in the current database.
-    at $n.handleRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:7315)
-    at $n.handleAndLogRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6623)
-    at $n.request (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6307)
-    at async l (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:130:9633)
-    at async TasksRepository.lockExpiredTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.repository.ts:341:38)
-    at async TasksService.lockExpiredTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.service.ts:427:41)
-    at async POST (webpack-internal:///(rsc)/./src/app/api/tasks/expire/route.ts:27:24)
-    at async D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63251
-2025-08-15T07:58:02.502Z [ERROR]: PrismaClientKnownRequestError - 
-Invalid `prisma.task.findMany()` invocation:
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`.
+    at $n.handleRequestError (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async NotificationRepository.fetchUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.repository.ts:43:39)
+    at async NotificationService.getUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.service.ts:18:39)
+    at async fetchUserNotifications (webpack-internal:///(action-browser)/./src/server-actions/notification-actions/notification.actions.ts:35:21)
+    at async /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-15T18:53:15.326Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.notification.findMany()` invocation:
 
 
-The column `oas.task.deleted` does not exist in the current database. Stack: PrismaClientKnownRequestError: 
-Invalid `prisma.task.findMany()` invocation:
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.notification.findMany()` invocation:
 
 
-The column `oas.task.deleted` does not exist in the current database.
-    at $n.handleRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:7315)
-    at $n.handleAndLogRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6623)
-    at $n.request (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6307)
-    at async l (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:130:9633)
-    at async TasksRepository.lockExpiredTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.repository.ts:341:38)
-    at async TasksService.lockExpiredTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.service.ts:427:41)
-    at async POST (webpack-internal:///(rsc)/./src/app/api/tasks/expire/route.ts:27:24)
-    at async D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63251
-2025-08-15T07:58:02.503Z [ERROR]: PrismaClientKnownRequestError - 
-Invalid `prisma.task.findMany()` invocation:
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`.
+    at $n.handleRequestError (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async NotificationRepository.fetchUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.repository.ts:43:39)
+    at async NotificationService.getUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.service.ts:18:39)
+    at async fetchUserNotifications (webpack-internal:///(action-browser)/./src/server-actions/notification-actions/notification.actions.ts:35:21)
+    at async /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-15T18:53:15.328Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.notification.findMany()` invocation:
 
 
-The column `oas.task.deleted` does not exist in the current database. Stack: PrismaClientKnownRequestError: 
-Invalid `prisma.task.findMany()` invocation:
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.notification.findMany()` invocation:
 
 
-The column `oas.task.deleted` does not exist in the current database.
-    at $n.handleRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:7315)
-    at $n.handleAndLogRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6623)
-    at $n.request (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6307)
-    at async l (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:130:9633)
-    at async TasksRepository.lockExpiredTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.repository.ts:341:38)
-    at async TasksService.lockExpiredTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.service.ts:427:41)
-    at async POST (webpack-internal:///(rsc)/./src/app/api/tasks/expire/route.ts:27:24)
-    at async D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63251
-2025-08-15T07:58:02.504Z [ERROR]: PrismaClientKnownRequestError - 
-Invalid `prisma.task.findMany()` invocation:
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`.
+    at $n.handleRequestError (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async NotificationRepository.fetchUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.repository.ts:43:39)
+    at async NotificationService.getUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.service.ts:18:39)
+    at async fetchUserNotifications (webpack-internal:///(action-browser)/./src/server-actions/notification-actions/notification.actions.ts:35:21)
+    at async /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-15T18:53:15.329Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.notification.findMany()` invocation:
 
 
-The column `oas.task.deleted` does not exist in the current database. Stack: PrismaClientKnownRequestError: 
-Invalid `prisma.task.findMany()` invocation:
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.notification.findMany()` invocation:
 
 
-The column `oas.task.deleted` does not exist in the current database.
-    at $n.handleRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:7315)
-    at $n.handleAndLogRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6623)
-    at $n.request (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6307)
-    at async l (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:130:9633)
-    at async TasksRepository.lockExpiredTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.repository.ts:341:38)
-    at async TasksService.lockExpiredTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.service.ts:427:41)
-    at async POST (webpack-internal:///(rsc)/./src/app/api/tasks/expire/route.ts:27:24)
-    at async D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63251
-2025-08-15T07:58:04.110Z [ERROR]: PrismaClientKnownRequestError - 
-Invalid `prisma.task.findMany()` invocation:
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`.
+    at $n.handleRequestError (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async NotificationRepository.fetchUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.repository.ts:43:39)
+    at async NotificationService.getUserNotifications (webpack-internal:///(action-browser)/./src/services/notification-service/notification.service.ts:18:39)
+    at async fetchUserNotifications (webpack-internal:///(action-browser)/./src/server-actions/notification-actions/notification.actions.ts:35:21)
+    at async /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:406
+    at async t0 (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:5773)
+    at async rh (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:23636)
+    at async doRender (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1391:30)
+    at async cacheEntry.responseCache.get.routeKind (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1552:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1460:28)
+    at async DevServer.renderPageComponent (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1843:24)
+    at async DevServer.renderToResponseImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/base-server.js:805:17)
+2025-08-15T18:53:46.549Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.$queryRaw()` invocation:
 
 
-The column `oas.task.deleted` does not exist in the current database. Stack: PrismaClientKnownRequestError: 
-Invalid `prisma.task.findMany()` invocation:
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.$queryRaw()` invocation:
 
 
-The column `oas.task.deleted` does not exist in the current database.
-    at $n.handleRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:7315)
-    at $n.handleAndLogRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6623)
-    at $n.request (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6307)
-    at async l (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:130:9633)
-    at async TasksRepository.fetchAllUsersTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.repository.ts:572:31)
-    at async TasksService.fetchSpecificPeriodTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.service.ts:205:35)
-    at async POST (webpack-internal:///(rsc)/./src/app/api/tasks/range/route.ts:64:25)
-    at async D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63251
-2025-08-15T07:58:04.111Z [ERROR]: PrismaClientKnownRequestError - 
-Invalid `prisma.task.findMany()` invocation:
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`.
+    at $n.handleRequestError (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchQuotationStatusCount (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:435:36)
+    at async QuotationsService.getQuotationsSumSummary (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:358:30)
+    at async getQuotationsSums (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:126:21)
+    at async getSummaryData (webpack-internal:///(rsc)/./src/app/dashboard/quotations/page.tsx:49:17)
+    at async QuotationsPage (webpack-internal:///(rsc)/./src/app/dashboard/quotations/page.tsx:62:31)
+2025-08-15T18:53:46.554Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.$queryRaw()` invocation:
 
 
-The column `oas.task.deleted` does not exist in the current database. Stack: PrismaClientKnownRequestError: 
-Invalid `prisma.task.findMany()` invocation:
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.$queryRaw()` invocation:
 
 
-The column `oas.task.deleted` does not exist in the current database.
-    at $n.handleRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:7315)
-    at $n.handleAndLogRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6623)
-    at $n.request (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6307)
-    at async l (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:130:9633)
-    at async TasksRepository.fetchAllUsersTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.repository.ts:572:31)
-    at async TasksService.fetchSpecificPeriodTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.service.ts:205:35)
-    at async POST (webpack-internal:///(rsc)/./src/app/api/tasks/range/route.ts:64:25)
-    at async D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63251
-2025-08-15T07:58:04.112Z [ERROR]: PrismaClientKnownRequestError - 
-Invalid `prisma.task.findMany()` invocation:
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`.
+    at $n.handleRequestError (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchQuotationStatusCount (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:435:36)
+    at async QuotationsService.getQuotationsSumSummary (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:358:30)
+    at async getQuotationsSums (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:126:21)
+    at async getSummaryData (webpack-internal:///(rsc)/./src/app/dashboard/quotations/page.tsx:49:17)
+    at async QuotationsPage (webpack-internal:///(rsc)/./src/app/dashboard/quotations/page.tsx:62:31)
+2025-08-15T18:53:46.556Z [ERROR]: PrismaClientInitializationError - 
+Invalid `prisma.$queryRaw()` invocation:
 
 
-The column `oas.task.deleted` does not exist in the current database. Stack: PrismaClientKnownRequestError: 
-Invalid `prisma.task.findMany()` invocation:
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
+
+Please make sure to provide valid database credentials for the database server at `localhost`. Stack: PrismaClientInitializationError: 
+Invalid `prisma.$queryRaw()` invocation:
 
 
-The column `oas.task.deleted` does not exist in the current database.
-    at $n.handleRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:7315)
-    at $n.handleAndLogRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6623)
-    at $n.request (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6307)
-    at async l (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:130:9633)
-    at async TasksRepository.fetchAllUsersTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.repository.ts:572:31)
-    at async TasksService.fetchSpecificPeriodTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.service.ts:205:35)
-    at async POST (webpack-internal:///(rsc)/./src/app/api/tasks/range/route.ts:64:25)
-    at async D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63251
-2025-08-15T07:58:04.117Z [ERROR]: PrismaClientKnownRequestError - 
-Invalid `prisma.task.findMany()` invocation:
+Authentication failed against database server at `localhost`, the provided database credentials for `edmartsy_edson` are not valid.
 
-
-The column `oas.task.deleted` does not exist in the current database. Stack: PrismaClientKnownRequestError: 
-Invalid `prisma.task.findMany()` invocation:
-
-
-The column `oas.task.deleted` does not exist in the current database.
-    at $n.handleRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:7315)
-    at $n.handleAndLogRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6623)
-    at $n.request (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6307)
-    at async l (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:130:9633)
-    at async TasksRepository.fetchAllUsersTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.repository.ts:572:31)
-    at async TasksService.fetchSpecificPeriodTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.service.ts:205:35)
-    at async POST (webpack-internal:///(rsc)/./src/app/api/tasks/range/route.ts:64:25)
-    at async D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63251
-2025-08-15T07:58:04.117Z [ERROR]: PrismaClientKnownRequestError - 
-Invalid `prisma.task.findMany()` invocation:
-
-
-The column `oas.task.deleted` does not exist in the current database. Stack: PrismaClientKnownRequestError: 
-Invalid `prisma.task.findMany()` invocation:
-
-
-The column `oas.task.deleted` does not exist in the current database.
-    at $n.handleRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:7315)
-    at $n.handleAndLogRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6623)
-    at $n.request (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6307)
-    at async l (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:130:9633)
-    at async TasksRepository.fetchAllUsersTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.repository.ts:572:31)
-    at async TasksService.fetchSpecificPeriodTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.service.ts:205:35)
-    at async POST (webpack-internal:///(rsc)/./src/app/api/tasks/range/route.ts:64:25)
-    at async D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63251
-2025-08-15T07:58:04.118Z [ERROR]: PrismaClientKnownRequestError - 
-Invalid `prisma.task.findMany()` invocation:
-
-
-The column `oas.task.deleted` does not exist in the current database. Stack: PrismaClientKnownRequestError: 
-Invalid `prisma.task.findMany()` invocation:
-
-
-The column `oas.task.deleted` does not exist in the current database.
-    at $n.handleRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:7315)
-    at $n.handleAndLogRequestError (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6623)
-    at $n.request (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:121:6307)
-    at async l (D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\@prisma\client\runtime\library.js:130:9633)
-    at async TasksRepository.fetchAllUsersTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.repository.ts:572:31)
-    at async TasksService.fetchSpecificPeriodTasks (webpack-internal:///(rsc)/./src/services/tasks-service/tasks.service.ts:205:35)
-    at async POST (webpack-internal:///(rsc)/./src/app/api/tasks/range/route.ts:64:25)
-    at async D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63251
-2025-08-15T08:16:23.085Z [INFO]: Verification Code email Sent successfully
-2025-08-15T08:17:25.128Z [INFO]: New Account Email Sent successfully
-2025-08-15T08:17:41.514Z [ERROR]: Error - Wrong credentials: se.usaama@edmartsystems.com Stack: Error: Wrong credentials: se.usaama@edmartsystems.com
-    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:32:35)
-    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
-    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
-    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
-    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
-    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
-    at async D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63251
-2025-08-15T08:17:41.516Z [ERROR]: Error in authorization: Error - Wrong credentials: se.usaama@edmartsystems.com Stack: Error: Wrong credentials: se.usaama@edmartsystems.com
-    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:32:35)
-    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
-    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
-    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
-    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
-    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
-    at async D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63251
-2025-08-15T08:21:28.831Z [INFO]: Account Approved Email Sent successfully
-2025-08-15T13:17:46.534Z [ERROR]: Error - Wrong credentials: se.victoria@edmartsystems.com Stack: Error: Wrong credentials: se.victoria@edmartsystems.com
-    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
-    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
-    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
-    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
-    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
-    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
-    at async D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63251
-2025-08-15T13:17:46.536Z [ERROR]: Error in authorization: Error - Wrong credentials: se.victoria@edmartsystems.com Stack: Error: Wrong credentials: se.victoria@edmartsystems.com
-    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
-    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
-    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
-    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
-    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
-    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
-    at async D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63251
-2025-08-15T13:17:55.322Z [ERROR]: Error - Wrong credentials: se.victoria@edmartsystem.com Stack: Error: Wrong credentials: se.victoria@edmartsystem.com
-    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
-    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
-    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
-    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
-    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
-    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
-    at async D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63251
-2025-08-15T13:17:55.323Z [ERROR]: Error in authorization: Error - Wrong credentials: se.victoria@edmartsystem.com Stack: Error: Wrong credentials: se.victoria@edmartsystem.com
-    at login (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:29:26)
-    at async Object.authorize (webpack-internal:///(rsc)/./src/server-actions/auth-actions/auth.actions.ts:68:34)
-    at async Object.callback (webpack-internal:///(rsc)/./node_modules/next-auth/core/routes/callback.js:291:20)
-    at async AuthHandler (webpack-internal:///(rsc)/./node_modules/next-auth/core/index.js:282:38)
-    at async NextAuthRouteHandler (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:50:30)
-    at async NextAuth._args$ (webpack-internal:///(rsc)/./node_modules/next-auth/next/index.js:85:24)
-    at async D:\Nextjs Projects\oas\15_08_2025_10_28\oas_dev\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63251
+Please make sure to provide valid database credentials for the database server at `localhost`.
+    at $n.handleRequestError (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:7615)
+    at $n.handleAndLogRequestError (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/home/edson/Downloads/15_08_2025_13_44/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async QuotationsRepository.fetchQuotationStatusCount (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.repository.ts:435:36)
+    at async QuotationsService.getQuotationsSumSummary (webpack-internal:///(rsc)/./src/services/quotations-service/quotations.service.ts:358:30)
+    at async getQuotationsSums (webpack-internal:///(rsc)/./src/server-actions/quotations-actions/quotations.actions.ts:126:21)
+    at async getSummaryData (webpack-internal:///(rsc)/./src/app/dashboard/quotations/page.tsx:49:17)
+    at async QuotationsPage (webpack-internal:///(rsc)/./src/app/dashboard/quotations/page.tsx:62:31)
+2025-08-15T18:55:52.580Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at Object.eP [as staticGenerationBailout] (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29225)
+    at i (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:34633)
+    at Object.get (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:34729)
+    at O (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/services/scheduler/route.js:2:195)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41966
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/server/lib/trace/tracer.js:133:36
+    at NoopContextManager.with (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NoopTracer.startActiveSpan (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18093)
+    at ProxyTracer.startActiveSpan (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18854)
+2025-08-15T18:55:53.523Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/8827.js:128:39863)
+    at u (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:20515)
+    at v (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/auth/[...nextauth]/route.js:1:5533)
+    at b (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/7217.js:1:61073)
+    at B (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/page.js:1:45132)
+    at G (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/page.js:1:45273)
+    at em (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-15T18:55:53.532Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/8827.js:128:39863)
+    at u (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:20515)
+    at v (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/auth/[...nextauth]/route.js:1:5533)
+    at b (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/7217.js:1:61073)
+    at B (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/page.js:1:45132)
+    at G (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/page.js:1:45273)
+    at em (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-15T18:55:53.793Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/8827.js:128:39863)
+    at u (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:20515)
+    at x (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/inventory/category/[id]/route.js:1:7896)
+    at h (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/9578.js:1:4502)
+    at j (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/create/page.js:1:22134)
+    at v (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/create/page.js:1:22229)
+    at em (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)
+2025-08-15T18:55:53.802Z [ERROR]: Error - Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error Stack: Error: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/8827.js:128:39863)
+    at u (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:25950)
+    at a (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/1332.js:30:20515)
+    at x (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/api/inventory/category/[id]/route.js:1:7896)
+    at h (/home/edson/Downloads/15_08_2025_13_44/.next/server/chunks/9578.js:1:4502)
+    at j (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/create/page.js:1:22134)
+    at v (/home/edson/Downloads/15_08_2025_13_44/.next/server/app/dashboard/quotations/create/page.js:1:22229)
+    at em (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:128334)
+    at /home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140034
+    at Array.toJSON (/home/edson/Downloads/15_08_2025_13_44/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:143612)

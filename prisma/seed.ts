@@ -292,6 +292,7 @@ const main = async () => {
         { id: 4, status: "Failed" },
         { id: 5, status: "Done" },
         { id: 6, status: "Completed" },
+        { id: 7, status: "Pushed" },
       ],
     });
 

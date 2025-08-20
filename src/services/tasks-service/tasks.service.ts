@@ -407,6 +407,22 @@ export class TasksService {
         return Promise.resolve(res);
       }
 
+      // // Check if task is being manually set to Failed
+      // if (taskUpdate.statusStr === "Failed") {
+      //   const originalTask = await this.tasksRepo.getTaskById(taskUpdate.taskId, userId);
+      //   if (originalTask && originalTask.status.status !== "Failed") {
+      //     // Handle manual failure - create pushed task and update original to failed
+      //     const updatedTask = await this.tasksRepo.handleManualTaskFailureWithUpdate(taskUpdate.taskId, userId);
+          
+      //     const res: ActionResponse = {
+      //       status: true,
+      //       message: "Task failed and pushed to next iteration",
+      //       data: updatedTask,
+      //     };
+      //     return Promise.resolve(res);
+      //   }
+      // }
+
       const updatedTask: TaskOut | null = await this.tasksRepo.updateUserTask(
         taskUpdate
       );
@@ -539,6 +555,58 @@ export class TasksService {
     }
   };
 
+  restoreUserTask = async (
+    userId: number,
+    taskId: number,
+    userSession: SessionUser
+  ): Promise<ActionResponse<TaskOut>> => {
+    try {
+      const user = await UserService.getUserById(userId);
+
+      if (!user) {
+        const res: ActionResponse = {
+          status: false,
+          message: NOT_FOUND_RESPONSE,
+        };
+
+        return Promise.resolve(res);
+      }
+
+      if (userSession.userId !== userId) {
+        const res: ActionResponse = {
+          status: false,
+          message: NOT_AUTHORIZED_RESPONSE,
+        };
+
+        return Promise.resolve(res);
+      }
+
+      const restoredTask: TaskOut | null = await this.tasksRepo.restoreUserTask(
+        userId,
+        taskId
+      );
+
+      if (!restoredTask) {
+        const res: ActionResponse = {
+          status: false,
+          message: NOT_FOUND_RESPONSE,
+        };
+        return Promise.resolve(res);
+      }
+
+      const res: ActionResponse<TaskOut> = {
+        status: true,
+        message: "Task restored successfully",
+        data: restoredTask,
+      };
+
+      return Promise.resolve(res);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
+    }
+  };
+
   deleteUserSubTask = async (
     userId: number,
     taskId: number,
@@ -593,6 +661,22 @@ export class TasksService {
   lockExpiredTasks = async (): Promise<ActionResponse> => {
     try {
       const responseMessage = await this.tasksRepo.lockExpiredTasks();
+
+      const res: ActionResponse = {
+        status: true,
+        message: responseMessage,
+      };
+
+      return Promise.resolve(res);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
+    }
+  };
+
+  pushPendingTasks = async (): Promise<ActionResponse> => {
+    try {
+      const responseMessage = await this.tasksRepo.pushPendingTasks();
 
       const res: ActionResponse = {
         status: true,

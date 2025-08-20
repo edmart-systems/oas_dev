@@ -1,7 +1,4 @@
-// src/app/api/tasks/subtasks/route.ts
-
 import { logger } from "@/logger/default-logger";
-import { NewSubTasksDtoSchema } from "@/schema-dtos/tasks.dto ";
 import { getAuthSession } from "@/server-actions/auth-actions/auth.actions";
 import { SessionService } from "@/services/auth-service/session.service";
 import { TasksService } from "@/services/tasks-service/tasks.service";
@@ -18,14 +15,15 @@ import { z as zod } from "zod";
 const tasksService = new TasksService();
 const sessionService = new SessionService();
 
-const CreateSubTasksSchema = zod.object({
+const RestoreTaskSchema = zod.object({
   userId: zod.number(),
   taskId: zod.number(),
-  newSubTasks: NewSubTasksDtoSchema,
 });
 
-//Record new client's sub tasks
-export const POST = async (req: NextRequest) => {
+export const POST = async (
+  req: NextRequest,
+  { params }: { params: Promise<{ id: number }> }
+) => {
   try {
     const session = await getAuthSession();
 
@@ -33,41 +31,38 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json(NOT_AUTHORIZED_RESPONSE, { status: 401 });
     }
 
+    const { id: _taskId } = await params;
+
+    if (isNaN(parseInt(String(_taskId), 10))) {
+      return NextResponse.json(BAD_REQUEST_RESPONSE, { status: 400 });
+    }
+
+    const taskId = Number(_taskId);
+
     const body = await safeBodyParse(req);
 
     if (!body) {
-      return NextResponse.json(BAD_REQUEST_RESPONSE, {
-        status: 400,
-      });
+      return NextResponse.json(BAD_REQUEST_RESPONSE, { status: 400 });
     }
 
-    const parsedData = await CreateSubTasksSchema.safeParseAsync(body);
+    const parsedData = await RestoreTaskSchema.safeParseAsync(body);
 
     if (!parsedData.success) {
-      console.log("Validation errors:", parsedData.error.format());
-      return NextResponse.json({
-        status: false,
-        message: "Bad request: Validation failed",
-        errors: parsedData.error.format()
-      }, {
-        status: 400,
-      });
+      return NextResponse.json(BAD_REQUEST_RESPONSE, { status: 400 });
     }
 
-    // Convert undefined to appropriate defaults for compatibility with NewRawSubTask type
-    const formattedSubTasks = parsedData.data.newSubTasks.map(subTask => ({
-      ...subTask,
-      taskDetails: subTask.taskDetails ?? null,
-      comments: subTask.comments ?? ""
-    }));
+    if (
+      parsedData.data.userId !== session.user.userId ||
+      taskId !== parsedData.data.taskId
+    ) {
+      return NextResponse.json(NOT_AUTHORIZED_RESPONSE, { status: 401 });
+    }
 
-    const resData: ActionResponse<TaskOut> =
-      await tasksService.recordNewUserSubTask(
-        formattedSubTasks,
-        parsedData.data.userId,
-        parsedData.data.taskId,
-        session.user
-      );
+    const resData: ActionResponse<TaskOut> = await tasksService.restoreUserTask(
+      parsedData.data.userId,
+      taskId,
+      session.user
+    );
 
     return NextResponse.json(resData, { status: 200 });
   } catch (err) {
@@ -76,6 +71,6 @@ export const POST = async (req: NextRequest) => {
       status: false,
       message: "Something went wrong",
     };
-    return new NextResponse(JSON.stringify(res), { status: 500 });
+    return NextResponse.json(res, { status: 500 });
   }
 };
