@@ -8,7 +8,7 @@ import {
 } from "./jobs/quotation.jobs";
 import { deleteOldNotificationsJob } from "./jobs/notifications.jobs";
 import { LOCAL_TIMEZONE } from "@/utils/constants.utils";
-import { lockOldTasksJob } from "./jobs/tasks.jobs";
+import { lockOldTasksJob, pushPendingTasksJob } from "./jobs/tasks.jobs";
 
 const startScheduler = () => {
   logger.info("Scheduler instantiated!");
@@ -98,6 +98,30 @@ const startScheduler = () => {
           `Delete Old Notifications: ${String(quotationExpiryRes.status)}: ${
             quotationExpiryRes.message
           }\nLock Old Tasks: ${expiredTasksRes.message}`;
+        logger.info(completionMessage);
+      } catch (err) {
+        logger.info(jobsName + " Failed");
+        logger.error(err);
+      }
+    }
+  );
+
+  const daily1159PMRule = new schedule.RecurrenceRule();
+  daily1159PMRule.hour = 11;
+  daily1159PMRule.minute = 59;
+  daily1159PMRule.second = 0;
+  daily1159PMRule.tz = LOCAL_TIMEZONE;
+
+  const daily1159PMJobs = schedule.scheduleJob(
+    daily1159PMRule,
+    async () => {
+      const jobsName = "Daily 11:59 PM Jobs";
+      try {
+        logger.info(jobsName + " Started");
+
+        const pushTasksRes: ActionResponse = await pushPendingTasksJob();
+
+        const completionMessage = jobsName + " Completed: " + pushTasksRes.message;
         logger.info(completionMessage);
       } catch (err) {
         logger.info(jobsName + " Failed");

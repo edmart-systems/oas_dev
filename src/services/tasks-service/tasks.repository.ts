@@ -24,7 +24,7 @@ export class TasksRepository {
     timeRange: ItemRange
   ): Promise<TaskOut[]> => {
     try {
-      const tasks: FullRawTask[] = await this.prisma.task.findMany({
+      const tasks = await this.prisma.task.findMany({
         where: {
           userId: userId,
           startTime: {
@@ -35,7 +35,9 @@ export class TasksRepository {
         include: {
           taskStatus: true,
           taskPriority: true,
-          subTasks: { include: { taskStatus: true, taskPriority: true } },
+          subTasks: { 
+            include: { taskStatus: true, taskPriority: true } 
+          },
         },
         orderBy: {
           startTime: "desc",
@@ -104,8 +106,6 @@ export class TasksRepository {
                   time: subTaskTime,
                   priority: subTaskPriorityStr,
                   status: subTaskStatusStr,
-                  userId,
-                  taskId,
                   ...restNewSubTask
                 } = subTasks[i];
 
@@ -189,20 +189,12 @@ export class TasksRepository {
 
       for (let i = 0; i < newSubTasks.length; i++) {
         try {
-          if (
-            newSubTasks[i].userId !== userId ||
-            newSubTasks[i].taskId !== taskId
-          ) {
-            continue;
-          }
-
           const {
             startTime: subTaskStartTime,
             endTime: subTaskEndTime,
             time: subTaskTime,
             priority: subTaskPriorityStr,
             status: subTaskStatusStr,
-            userId: subtaskUserId,
             ...restNewSubTask
           } = newSubTasks[i];
 
@@ -267,8 +259,9 @@ export class TasksRepository {
     taskId: number
   ): Promise<TaskOut | null> => {
     try {
-      const deletedTask = await this.prisma.task.delete({
-        where: { taskId: taskId, userId: userId, taskLocked: 0 },
+      const deletedTask = await this.prisma.task.update({
+        where: { taskId, userId, taskLocked: 0, deleted: 0 },
+        data: { deleted: 1 },
         include: {
           taskStatus: true,
           taskPriority: true,
@@ -276,17 +269,13 @@ export class TasksRepository {
         },
       });
 
-      const formattedDeletedTask = this.formatTasksOut(deletedTask);
+      await this.prisma.sub_task.updateMany({
+        where: { taskId },
+        data: { deleted: 1 }
+      });
 
-      return Promise.resolve(formattedDeletedTask[0]);
+      return this.formatTasksOut(deletedTask)[0];
     } catch (err) {
-      if (
-        err instanceof Prisma.PrismaClientKnownRequestError &&
-        err.code === "P2025"
-      ) {
-        return Promise.resolve(null);
-      }
-
       logger.error(err);
       return Promise.reject(err);
     }
@@ -298,12 +287,13 @@ export class TasksRepository {
     subTaskId: number
   ): Promise<SubTaskOut | null> => {
     try {
-      const deletedSubTask = await this.prisma.sub_task.delete({
+      const deletedSubTask = await this.prisma.sub_task.update({
         where: {
-          taskId: taskId,
           subTaskId: subTaskId,
+          taskId: taskId,
           parentTask: { userId: userId, taskLocked: 0 },
         },
+        data: { deleted: 1 },
         include: { taskStatus: true, taskPriority: true },
       });
 
@@ -400,77 +390,224 @@ export class TasksRepository {
     }
   };
 
+  // lockExpiredTasks = async (): Promise<string> => {
+  //   try {
+  //     const now = Date.now();
+  //     const today = new Date();
+  //     today.setHours(9, 0, 0, 0);
+  //     const todayEnd = new Date(today);
+  //     todayEnd.setHours(18, 0, 0, 0);
+      
+  //     const [failedStatus, pendingStatus] = await Promise.all([
+  //       this.prisma.task_status.findFirst({ where: { status: "Failed" } }),
+  //       this.prisma.task_status.findFirst({ where: { status: "Pending" } })
+  //     ]);
+      
+  //     if (!failedStatus || !pendingStatus) {
+  //       return Promise.resolve("Required statuses not found in database.");
+  //     }
+
+  //     const expiredTasks = await this.prisma.task.findMany({
+  //       where: {
+  //         endTime: { lt: BigInt(now) },
+  //         taskStatus: {
+  //           status: { in: ["Pending", "In-Progress"] }
+  //         }
+  //       },
+  //       include: { subTasks: true }
+  //     });
+
+  //     let processedCount = 0;
+      
+  //     for (const task of expiredTasks) {
+  //       await this.prisma.$transaction(async (txn) => {
+  //         // Mark original task as Failed and lock it
+  //         await txn.task.update({
+  //           where: { taskId: task.taskId },
+  //           data: { 
+  //             statusId: failedStatus.id,
+  //             taskLocked: 1
+  //           }
+  //         });
+
+  //         // Extract base task name (remove (x1), (x2), etc.)
+  //         const baseTaskName = task.taskName.replace(/\s*\(x\d+\)\s*$/, '').trim();
+          
+  //         // Find the highest push_count for this base task name and user
+  //         const maxPushCountTask = await txn.task.findFirst({
+  //           where: {
+  //             userId: task.userId,
+  //             taskName: {
+  //               startsWith: baseTaskName
+  //             }
+  //           },
+  //           orderBy: {
+  //             push_count: 'desc'
+  //           }
+  //         });
+
+  //         const nextPushCount = (maxPushCountTask?.push_count || 0) + 1;
+
+  //         // Create new task for today with incremented push_count
+  //         const newTask = await txn.task.create({
+  //           data: {
+  //             userId: task.userId,
+  //             taskName: baseTaskName,
+  //             taskDetails: task.taskDetails,
+  //             comments: task.comments,
+  //             statusId: pendingStatus.id,
+  //             priorityId: task.priorityId,
+  //             startTime: BigInt(today.getTime()),
+  //             endTime: BigInt(todayEnd.getTime()),
+  //             time: BigInt(Date.now()),
+  //             push_count: nextPushCount
+  //           }
+  //         });
+
+  //         if (task.subTasks.length > 0) {
+  //           const newSubTasks = task.subTasks.map(st => ({
+  //             taskId: newTask.taskId,
+  //             taskName: st.taskName,
+  //             taskDetails: st.taskDetails,
+  //             comments: st.comments,
+  //             statusId: pendingStatus.id,
+  //             priorityId: st.priorityId,
+  //             startTime: BigInt(today.getTime()),
+  //             endTime: BigInt(todayEnd.getTime()),
+  //             time: BigInt(Date.now())
+  //           }));
+            
+  //           await txn.sub_task.createMany({
+  //             data: newSubTasks
+  //           });
+  //         }
+  //       });
+        
+  //       processedCount++;
+  //     }
+
+  //     return Promise.resolve(`${processedCount} expired tasks marked as Failed and pushed to current tasks.`);
+  //   } catch (err) {
+  //     logger.error(err);
+  //     return Promise.reject(err);
+  //   }
+  // };
+
   lockExpiredTasks = async (): Promise<string> => {
+  try {
+    const now = Date.now();
+
+    const failedStatus = await this.prisma.task_status.findFirst({
+      where: { status: "Failed" }
+    });
+
+    if (!failedStatus) {
+      return Promise.resolve("Failed status not found in database.");
+    }
+
+    const expiredTasks = await this.prisma.task.findMany({
+      where: {
+        endTime: { lt: BigInt(now) },
+        taskStatus: {
+          status: { in: ["Pending", "In-Progress"] }
+        }
+      }
+    });
+
+    let processedCount = 0;
+
+    for (const task of expiredTasks) {
+      await this.prisma.$transaction(async (txn) => {
+        // ✅ Just mark original task as Failed and lock it
+        await txn.task.update({
+          where: { taskId: task.taskId },
+          data: { 
+            statusId: failedStatus.id,
+            taskLocked: 1
+          }
+        });
+      });
+
+      processedCount++;
+    }
+
+    return Promise.resolve(`${processedCount} expired tasks marked as Failed.`);
+  } catch (err) {
+    logger.error(err);
+    return Promise.reject(err);
+  }
+};
+
+
+  pushPendingTasks = async (): Promise<string> => {
     try {
       const now = Date.now();
-      const today = new Date();
-      today.setHours(9, 0, 0, 0);
-      const todayEnd = new Date(today);
-      todayEnd.setHours(18, 0, 0, 0);
+      const utcTime = now + (new Date().getTimezoneOffset() * 60 * 1000);
+      const ugandaTime = utcTime + (3 * 60 * 60 * 1000);
+      const ugandaToday = new Date(ugandaTime);
       
-      const [failedStatus, pendingStatus] = await Promise.all([
-        this.prisma.task_status.findFirst({ where: { status: "Failed" } }),
-        this.prisma.task_status.findFirst({ where: { status: "Pending" } })
-      ]);
+      const today = new Date(ugandaToday);
+      today.setHours(8, 0, 0, 0); // Set to 8:00 AM Uganda time
+      const todayEnd = new Date(ugandaToday);
+      todayEnd.setHours(23, 59, 59, 999); // Set to 11:59 PM Uganda time
       
-      if (!failedStatus || !pendingStatus) {
-        return Promise.resolve("Required statuses not found in database.");
-      }
+      logger.info(`Push pending tasks - Now: ${now}, Today 8AM: ${today.getTime()}`);
+      
+      const pushedStatus = await this.prisma.task_status.findFirst({
+        where: { status: "Pushed" }
+      });
 
-      const expiredTasks = await this.prisma.task.findMany({
+      if (!pushedStatus) {
+        return Promise.resolve("Pushed status not found in database.");
+      }
+      
+      // Find pending/in-progress tasks from previous days (before today's start)
+      const todayStart = new Date(ugandaToday);
+      todayStart.setHours(0, 0, 0, 0); // Start of today in Uganda time
+      
+      const tasksToPush = await this.prisma.task.findMany({
         where: {
-          endTime: { lt: BigInt(now) },
           taskStatus: {
             status: { in: ["Pending", "In-Progress"] }
-          }
+          },
+          startTime: { lt: BigInt(todayStart.getTime()) }, // Tasks from before today
+          deleted: 0,
+          taskLocked: 0
         },
-        include: { subTasks: true }
+        include: { subTasks: true, taskStatus: true }
+      });
+      
+      logger.info(`Found ${tasksToPush.length} tasks to push`);
+      tasksToPush.forEach(task => {
+        logger.info(`Task: ${task.taskName}, Status: ${task.taskStatus.status}, Start: ${Number(task.startTime)}, End: ${Number(task.endTime)}`);
       });
 
       let processedCount = 0;
       
-      for (const task of expiredTasks) {
+      for (const task of tasksToPush) {
         await this.prisma.$transaction(async (txn) => {
-          // Mark original task as Failed and lock it
+          // Just update the existing task: increment push_count and move to today
+          const nextPushCount = (task.push_count || 0) + 1;
+          
           await txn.task.update({
             where: { taskId: task.taskId },
-            data: { 
-              statusId: failedStatus.id,
-              taskLocked: 1
-            }
-          });
-
-          // Create new task for today with incremented push_count
-          const newTask = await txn.task.create({
             data: {
-              userId: task.userId,
-              taskName: task.taskName,
-              taskDetails: task.taskDetails,
-              comments: task.comments,
-              statusId: pendingStatus.id,
-              priorityId: task.priorityId,
-              startTime: BigInt(today.getTime()),
-              endTime: BigInt(todayEnd.getTime()),
-              time: BigInt(Date.now()),
-              push_count: (task.push_count || 0) + 1
-            }
-          });
-
-          if (task.subTasks.length > 0) {
-            const newSubTasks = task.subTasks.map(st => ({
-              taskId: newTask.taskId,
-              taskName: st.taskName,
-              taskDetails: st.taskDetails,
-              comments: st.comments,
-              statusId: pendingStatus.id,
-              priorityId: st.priorityId,
+              push_count: nextPushCount,
               startTime: BigInt(today.getTime()),
               endTime: BigInt(todayEnd.getTime()),
               time: BigInt(Date.now())
-            }));
-            
-            await txn.sub_task.createMany({
-              data: newSubTasks
+            }
+          });
+
+          // Update subtasks start/end times
+          if (task.subTasks.length > 0) {
+            await txn.sub_task.updateMany({
+              where: { taskId: task.taskId },
+              data: {
+                startTime: BigInt(today.getTime()),
+                endTime: BigInt(todayEnd.getTime()),
+                time: BigInt(Date.now())
+              }
             });
           }
         });
@@ -478,7 +615,7 @@ export class TasksRepository {
         processedCount++;
       }
 
-      return Promise.resolve(`${processedCount} expired tasks marked as Failed and pushed to current tasks.`);
+      return Promise.resolve(`${processedCount} pending/in-progress tasks pushed to current day.`);
     } catch (err) {
       logger.error(err);
       return Promise.reject(err);
@@ -519,6 +656,10 @@ export class TasksRepository {
 
       if (taskData.comments && originalTask.comments !== taskData.comments) {
         finalTaskUpdateData.comments = taskData.comments;
+      }
+
+      if (taskData.deleted !== undefined && Number(originalTask.deleted) !== taskData.deleted) {
+        finalTaskUpdateData.deleted = taskData.deleted;
       }
 
       if (
@@ -724,7 +865,7 @@ private formatTasksOut = (tasks: any): TaskOut[] => {
       priority: taskPriority,
       subTasks: formattedSubTasks,
       user: task.user ? {
-        co_user_id: task.user.co_user_id,
+        co_user_id: typeof task.user.co_user_id === 'string' ? parseInt(task.user.co_user_id) : task.user.co_user_id,
         firstName: task.user.firstName,
         lastName: task.user.lastName,
         email: task.user.email,
@@ -740,7 +881,7 @@ private formatTasksOut = (tasks: any): TaskOut[] => {
   
 fetchAllUsersTasks = async (timeRange: ItemRange): Promise<TaskOut[]> => {
   try {
-    const tasks: FullRawTask[] = await this.prisma.task.findMany({
+    const tasks = await this.prisma.task.findMany({
       where: {
         startTime: {
           gte: BigInt(timeRange.min),
@@ -751,7 +892,9 @@ fetchAllUsersTasks = async (timeRange: ItemRange): Promise<TaskOut[]> => {
         taskStatus: true,
         taskPriority: true,
         user: true, // Include user data
-        subTasks: { include: { taskStatus: true, taskPriority: true } },
+        subTasks: { 
+          include: { taskStatus: true, taskPriority: true } 
+        },
       },
       orderBy: {
         startTime: "desc",
@@ -765,5 +908,141 @@ fetchAllUsersTasks = async (timeRange: ItemRange): Promise<TaskOut[]> => {
     return Promise.reject(err);
   }
 };
+
+getTaskById = async (taskId: number, userId: number): Promise<TaskOut | null> => {
+  try {
+    const task = await this.prisma.task.findFirst({
+      where: { taskId, userId },
+      include: {
+        taskStatus: true,
+        taskPriority: true,
+        subTasks: { 
+          where: { deleted: 0 },
+          include: { taskStatus: true, taskPriority: true } 
+        },
+      },
+    });
+
+    if (!task) return null;
+
+    const formattedTask = this.formatTasksOut(task);
+    return formattedTask[0];
+  } catch (err) {
+    logger.error(err);
+    return Promise.reject(err);
+  }
+};
+
+handleManualTaskFailure = async (taskId: number, userId: number): Promise<void> => {
+  try {
+    const task = await this.prisma.task.findFirst({
+      where: { taskId, userId },
+      include: { subTasks: true }
+    });
+
+    if (!task) return;
+
+    const [failedStatus, pendingStatus] = await Promise.all([
+      this.prisma.task_status.findFirst({ where: { status: "Failed" } }),
+      this.prisma.task_status.findFirst({ where: { status: "Pending" } })
+    ]);
+    
+    if (!failedStatus || !pendingStatus) return;
+
+    await this.prisma.$transaction(async (txn) => {
+      // Extract base task name (remove (x1), (x2), etc.)
+      const baseTaskName = task.taskName.replace(/\s*\(x\d+\)\s*$/, '').trim();
+      
+      // Find the highest push_count for this base task name and user
+      const maxPushCountTask = await txn.task.findFirst({
+        where: {
+          userId: task.userId,
+          taskName: {
+            startsWith: baseTaskName
+          }
+        },
+        orderBy: {
+          push_count: 'desc'
+        }
+      });
+
+      const nextPushCount = (maxPushCountTask?.push_count || 0) + 1;
+
+      // Create new task for today with incremented push_count
+      const now = Date.now();
+      const utcTime = now + (new Date().getTimezoneOffset() * 60 * 1000);
+      const ugandaTime = utcTime + (3 * 60 * 60 * 1000);
+      const ugandaToday = new Date(ugandaTime);
+      
+      const today = new Date(ugandaToday);
+      today.setHours(9, 0, 0, 0);
+      const todayEnd = new Date(ugandaToday);
+      todayEnd.setHours(18, 0, 0, 0);
+
+      const newTask = await txn.task.create({
+        data: {
+          userId: task.userId,
+          taskName: baseTaskName,
+          taskDetails: task.taskDetails,
+          comments: task.comments,
+          statusId: pendingStatus.id,
+          priorityId: task.priorityId,
+          startTime: BigInt(today.getTime()),
+          endTime: BigInt(todayEnd.getTime()),
+          time: BigInt(Date.now()),
+          push_count: nextPushCount
+        }
+      });
+
+      if (task.subTasks.length > 0) {
+        const newSubTasks = task.subTasks.map(st => ({
+          taskId: newTask.taskId,
+          taskName: st.taskName,
+          taskDetails: st.taskDetails,
+          comments: st.comments,
+          statusId: pendingStatus.id,
+          priorityId: st.priorityId,
+          startTime: BigInt(today.getTime()),
+          endTime: BigInt(todayEnd.getTime()),
+          time: BigInt(Date.now())
+        }));
+        
+        await txn.sub_task.createMany({
+          data: newSubTasks
+        });
+      }
+    });
+  } catch (err) {
+    logger.error(err);
+    return Promise.reject(err);
+  }
+};
+
+restoreUserTask = async (
+    userId: number,
+    taskId: number
+  ): Promise<TaskOut | null> => {
+    try {
+      const restoredTask = await this.prisma.task.update({
+        where: { taskId, userId, deleted: 1 },
+        data: { deleted: 0 },
+        include: {
+          taskStatus: true,
+          taskPriority: true,
+          subTasks: { include: { taskStatus: true, taskPriority: true } },
+        },
+      });
+
+      await this.prisma.sub_task.updateMany({
+        where: { taskId },
+        data: { deleted: 0 }
+      });
+
+      return this.formatTasksOut(restoredTask)[0];
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
+    }
+  };
 
 }

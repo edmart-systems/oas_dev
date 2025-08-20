@@ -300,7 +300,6 @@ const EditQuotation = ({ baseData }: Props) => {
 
     resetQuotation();
     setIsCreated(true);
-    nProgress.start();
     router.push(paths.dashboard.quotations.edited(res.data));
   };
 

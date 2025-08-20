@@ -103,9 +103,21 @@ export const POST = async (req: NextRequest) => {
       const results = [];
       for (const task of parsedData.data.newTasks) {
         try {
+          // Convert undefined to appropriate defaults for compatibility with NewRawTask type
+          const formattedTask = {
+            ...task,
+            taskDetails: task.taskDetails ?? null,
+            comments: task.comments ?? "",
+            subTasks: task.subTasks.map(subTask => ({
+              ...subTask,
+              taskDetails: subTask.taskDetails ?? null,
+              comments: subTask.comments ?? ""
+            }))
+          };
+          
           const result = await tasksService.recordNewUserTask(
             parsedData.data.userId,
-            task,
+            formattedTask,
             session.user
           );
           results.push(result.data);
@@ -134,10 +146,22 @@ export const POST = async (req: NextRequest) => {
         });
       }
 
+      // Convert undefined to appropriate defaults for compatibility with NewRawTask type
+      const formattedTask = {
+        ...parsedData.data.newTask,
+        taskDetails: parsedData.data.newTask.taskDetails ?? null,
+        comments: parsedData.data.newTask.comments ?? "",
+        subTasks: parsedData.data.newTask.subTasks.map(subTask => ({
+          ...subTask,
+          taskDetails: subTask.taskDetails ?? null,
+          comments: subTask.comments ?? ""
+        }))
+      };
+
       const resData: ActionResponse<TaskOut> =
         await tasksService.recordNewUserTask(
           parsedData.data.userId,
-          parsedData.data.newTask,
+          formattedTask,
           session.user
         );
 
