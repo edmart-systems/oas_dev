@@ -12,131 +12,280 @@ import {
   MenuItem,
   Select,
   Stack,
+  Box
 } from "@mui/material";
 import Grid from '@mui/material/Grid2';
-import { Plus } from "@phosphor-icons/react";
+import { Plus, PlusIcon } from "@phosphor-icons/react";
 import ProductSearch from "./purchaseSearch";
-import { PurchaseMainProps } from "@/modules/inventory/types/purchase.types";
 import PurchaseCart from "./purchaseCart";
+import { CartItem } from "@/modules/inventory/types/purchase.types";
+import { Product } from "@/types/product.types";
+import { Supplier } from "@/modules/inventory/types/supplier.types";
+import { InventoryPoint } from "@/modules/inventory/types/inventoryPoint.types";
+import { toast } from "react-toastify";
+import SupplierForm from "../supplier/SupplierForm";
+import Inventory_pointForm from "../inventoryPoint/inventoryPointForm";
+import ProductForm from "../products/productForm";
+import { useEffect, useState } from "react";
+import MyCircularProgress from "@/components/common/my-circular-progress";
 
 
-export default function PurchaseMain({
-  products,
-  cart,
-  suppliers,
-  inventoryPoints,
-  supplierId,
-  inventoryPointId,
-  searchTerm,
-  recentSearches,
-  showDropdown,
-  selectedProductIndex,
-  loading,
-  onSupplierChange,
-  onInventoryPointChange,
-  onSearchChange,
-  onKeyDown,
-  onSearchFocus,
-  onSearchBlur,
-  onAddToCart,
-  onCloseDropdown,
-  onUpdateQuantity,
-  onUpdateUnitCost,
-  onRemoveItem,
-  onClearCart,
-  onProcessPurchase,
-  onOpenDialog,
-}: PurchaseMainProps) {
+export default function PurchaseMain() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [inventoryPoints, setInventoryPoints] = useState<InventoryPoint[]>([]);
+  const [loading, setLoading] = useState(true);
+  const[processing, setProcessing]= useState(false);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [supplierId, setSupplierId] = useState<number>(1);
+  const [inventoryPointId, setInventoryPointId] = useState<number>(1);
+  const [openForm, setOpenForm] = useState<null | 'product' | 'inventoryPoint' | 'supplier'>(null);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const [productsRes, suppliersRes, inventoryPointsRes] = await Promise.all([
+        fetch('/api/inventory/product'),
+        fetch('/api/inventory/supplier'),
+        fetch('/api/inventory/inventory_point')
+      ]);
+      
+      const [productsData, suppliersData, inventoryPointsData] = await Promise.all([
+        productsRes.json(),
+        suppliersRes.json(),
+        inventoryPointsRes.json()
+      ]);
+
+      setProducts(productsData);
+      setSuppliers(suppliersData.map((sup: any) => ({ 
+        id: sup.supplier_id, 
+        name: sup.supplier_name,
+        supplier_name: sup.supplier_name,
+        supplier_email: sup.supplier_email || ''
+      })));
+      setInventoryPoints(inventoryPointsData.map((ip: any) => ({ 
+        id: ip.inventory_point_id, 
+        name: ip.inventory_point,
+        inventory_point: ip.inventory_point
+      })));
+    } catch (error) {
+      console.error('Failed to fetch data:', error);
+      toast.error('Failed to load data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addToCart = (product: Product) => {
+    const existingItem = cart.find(item => item.product_id === product.product_id);
+    if (existingItem) {
+      const newQuantity = existingItem.quantity + 1;
+      setCart(cart.map(item => 
+        item.product_id === product.product_id 
+          ? { ...item, quantity: newQuantity, total_cost: item.unit_cost * newQuantity }
+          : item
+      ));
+    } else {
+      const cartItem: CartItem = {
+        product_id: product.product_id,
+        product_name: product.product_name,
+        quantity: 1,
+        unit_cost: product.buying_price,
+        total_cost: product.buying_price
+      };
+      setCart([cartItem, ...cart]);
+    }
+  };
+
+  const updateQuantity = (product_id: number, quantity: number) => {
+    setCart(cart.map(item => 
+      item.product_id === product_id 
+        ? { ...item, quantity, total_cost: item.unit_cost * quantity }
+        : item
+    ));
+  };
+
+  const updateUnitCost = (product_id: number, unit_cost: number) => {
+    setCart(cart.map(item => 
+      item.product_id === product_id 
+        ? { ...item, unit_cost, total_cost: unit_cost * item.quantity }
+        : item
+    ));
+  };
+
+  const removeFromCart = (product_id: number) => {
+    setCart(cart.filter(item => item.product_id !== product_id));
+  };
+
+  const clearCart = () => setCart([]);
+
+  const processPurchase = async () => {
+    setProcessing(true);
+    if (cart.length === 0) return;
+    const purchaseData = {
+      inventory_point_id: inventoryPointId,
+      supplier_id: supplierId,
+      purchase_items: cart.map(item => ({
+        product_id: item.product_id,
+        quantity: item.quantity,
+        unit_cost: item.unit_cost
+      }))
+    };
+
+    try {
+      const res = await fetch('/api/inventory/purchase', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(purchaseData)
+      });
+
+      if (!res.ok) throw new Error('Failed to create purchase');
+
+      toast.success(`Purchase created successfully!`);
+      clearCart();
+      fetchData();
+    } catch (error) {
+      console.error('Failed to create purchase:', error);
+      toast.error('Failed to create purchase');
+    }finally{
+      setProcessing(false)
+    }
+  };
+
+  const handleAddForm = (type: 'product' | 'inventoryPoint' | 'supplier') => {
+    setOpenForm(type);
+  };
 
   return (
+  
+
+    <Stack spacing={3}>
+        {/* {loading ? (
+    
+    ) : ()} */}
     <Card>
-      <CardHeader
-        title="Purchase Order"
-        action={
-          <Button
-            size="small"
-            variant="outlined"
-            startIcon={<Plus size={16} />}
-            onClick={() => onOpenDialog('product')}
-          >
-            Add New Product
-          </Button>
-        }
+        <CardHeader
+          title="Purchase Order"
+          action={
+            <Button
+              size="small"
+              variant="outlined"
+              startIcon={<PlusIcon size={16} />}
+              onClick={() => handleAddForm('product')}
+              disabled={loading}
+            >
+              Add New Product
+            </Button>
+          }
+        />
+        <CardContent>
+          {/* Inventory Point and Supplier Inputs */}
+          <Grid container spacing={3} sx={{ mb: 3 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Stack direction="row" spacing={2}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>Supplier</InputLabel>
+                  <Select
+                    value={supplierId}
+                    onChange={(e) => setSupplierId(Number(e.target.value))}
+                    label="Supplier"
+                    disabled={loading}
+                  >
+                    {suppliers.map((s) => (
+                      <MenuItem key={s.id} value={s.id}>{s.name}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <IconButton onClick={() => handleAddForm('supplier')}>
+                  <Plus size={20} />
+                </IconButton>
+              </Stack>
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Stack direction="row" spacing={2}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>Inventory Point</InputLabel>
+                  <Select
+                    value={inventoryPointId}
+                    onChange={(e) => setInventoryPointId(Number(e.target.value))}
+                    label="Inventory Point"
+                    disabled={loading}
+                  >
+                    {inventoryPoints.map((ip) => (
+                      <MenuItem key={ip.id} value={ip.id}>{ip.name}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <IconButton onClick={() => handleAddForm('inventoryPoint')}>
+                  <Plus size={20} />
+                </IconButton>
+              </Stack>
+            </Grid>
+          </Grid>
+
+          {/* Product Search */}
+          <ProductSearch
+            products={products}
+            onAddToCart={addToCart}
+          />
+
+          <Divider sx={{ my: 3 }} />
+
+          {/* Purchase Cart */}
+          <PurchaseCart
+            cart={cart}
+            onUpdateQuantity={updateQuantity}
+            onUpdateUnitCost={updateUnitCost}
+            onRemoveItem={removeFromCart}
+            onClearCart={clearCart}
+            onProcessPurchase={processPurchase}
+            loading={processing}
+          />
+          {loading && <MyCircularProgress/>}
+        </CardContent>
+      </Card>
+      
+
+      {/* Supplier Form */}
+      <SupplierForm
+        open={openForm === 'supplier'}
+        onClose={() => setOpenForm(null)}
+        onSuccess={(newSupplier) => {
+          setSuppliers(prev => [...prev, newSupplier]);
+          setOpenForm(null);
+          toast.success("Supplier Added Successfully");
+        }}
       />
-      <CardContent>
-        <Grid container spacing={3} sx={{ mb: 3 }}>
-          <Grid size={{xs:12, md:6}}>
-            <Stack direction="row" spacing={2}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Supplier</InputLabel>
-                <Select
-                  value={supplierId}
-                  onChange={(e) => onSupplierChange(Number(e.target.value))}
-                  label="Supplier"
-                >
-                 {suppliers?.map((supplier) => (
-                <MenuItem key={supplier.id} value={supplier.id}>
-                    {supplier.name}
-                </MenuItem>
-                )) || []}
 
-                </Select>
-              </FormControl>
-              <IconButton onClick={() => onOpenDialog('supplier')}>
-                <Plus size={20} />
-              </IconButton>
-            </Stack>
-          </Grid>
-          <Grid size={{xs:12, md:6}}>
-            <Stack direction="row" spacing={2}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Inventory Point</InputLabel>
-                <Select
-                  value={inventoryPointId}
-                  onChange={(e) => onInventoryPointChange(Number(e.target.value))}
-                  label="Inventory Point"
-                >
-                 {inventoryPoints?.map((point) => (
-                    <MenuItem key={point.id} value={point.id}>
-                        {point.name}
-                    </MenuItem>
-                    )) || []}
+      {/* Inventory Point Form */}
+      <Inventory_pointForm
+        open={openForm === 'inventoryPoint'}
+        onClose={() => setOpenForm(null)}
+        onSuccess={(newPoint) => {
+          setInventoryPoints(prev => [...prev, newPoint]);
+          setOpenForm(null);
+          toast.success("Inventory Point Added Successfully");
+        }}
+      />
 
-                </Select>
-              </FormControl>
-              <IconButton onClick={() => onOpenDialog('inventoryPoint')}>
-                <Plus size={20} />
-              </IconButton>
-            </Stack>
-          </Grid>
-        </Grid>
-        
-        <ProductSearch
-          searchTerm={searchTerm}
-          products={products}
-          recentSearches={recentSearches}
-          showDropdown={showDropdown}
-          selectedProductIndex={selectedProductIndex}
-          loading={loading}
-          onSearchChange={onSearchChange}
-          onKeyDown={onKeyDown}
-          onFocus={onSearchFocus}
-          onBlur={onSearchBlur}
-          onAddToCart={onAddToCart}
-          onCloseDropdown={onCloseDropdown}
-        />
-        
-        <Divider sx={{ my: 3 }} />
-        
-        <PurchaseCart
-          cart={cart}
-          onUpdateQuantity={onUpdateQuantity}
-          onUpdateUnitCost={onUpdateUnitCost}
-          onRemoveItem={onRemoveItem}
-          onClearCart={onClearCart}
-          onProcessPurchase={onProcessPurchase}
-        />
-      </CardContent>
-    </Card>
+      {/* Product Form */}
+      <ProductForm
+        open={openForm === 'product'}
+        onCancel={() => setOpenForm(null)}
+        onSubmit={(newProduct) => {
+          setProducts(prev => [...prev, newProduct]);
+          setOpenForm(null);
+          toast.success("Product added successfully");
+        }}
+        initialData={null}
+       
+      />
+    </Stack>
   );
 }

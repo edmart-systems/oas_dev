@@ -13,36 +13,52 @@ const CategoryForm: React.FC<UnitFormProps> = ({ open, onClose, onSuccess, initi
   const [formData, setFormData] = useState({
     category: ''
   });
+  const [formError, setFormError] = useState<string | null>(null);
 
 useEffect(()=>{
   if(initialData){
     setFormData({
       category: initialData.category || ''
     });
+  }else {
+      setFormData({
+        category: ''
+      });
   }
-}), [initialData];
+  setFormError(null);
+}, [initialData, open]);
 
 
 const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
 
     const submitData = {
       ...formData,
     };
     
     try {
-      const res = await fetch('/api/inventory/category',{
-        method: 'POST',
+      const isUpdate = initialData?.category_id;
+      const url = isUpdate ? `/api/inventory/category/${initialData.category_id}` : '/api/inventory/category';
+      const method = isUpdate ? 'PATCH' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(submitData)
       });
 
-      if (!res.ok) throw new Error('Failed to save category');
+      if (!res.ok){
+        const errorData = await res.json().catch(() => ({}));
+        setFormError(errorData?.message || errorData?.error || `Failed to${isUpdate ? ' update' : ' add'} category`);
+        return;
+      };
 
       const newCategory = await res.json();
       onSuccess(newCategory);
       onClose();
-    } catch (error) {
+    } catch (error: any) {
+      setFormError(error.message || error.error || "An unexpected error occurred.");
       console.error('Error saving category:', error);
     }
   };
@@ -63,6 +79,8 @@ const handleSubmit = async (e: React.FormEvent) => {
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 required
+                error={!!formError}
+                helperText={formError}
               />
             </Grid2>
           </Grid2>

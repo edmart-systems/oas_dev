@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { CreateProductInput } from "../dtos/product.dto";
 import { Product } from "@prisma/client";
+import { validateProduct } from "../methods/product.method";
 
 export class ProductRepository {
   constructor(private prisma: PrismaClient) {}
@@ -18,6 +19,11 @@ export class ProductRepository {
   }
 
   async create(data: CreateProductInput): Promise<Product> {
+    const validation = validateProduct(data);
+    if(!validation.valid){
+        throw new Error(validation.errors?.join(", ") || "Invalid Product Input");  
+    }
+
     const existing = await this.findByBarcode(data.product_barcode);
     if (existing) {
       throw new Error("Product with this barcode already exists.");
@@ -44,8 +50,6 @@ export class ProductRepository {
     if (existing && existing.product_id !== id) {
       throw new Error("Product with this barcode already exists.");
     }
-
-    
   }
   if(data.product_name) {
     const existing = await this.findByName(data.product_name);
@@ -55,12 +59,13 @@ export class ProductRepository {
     }
 
   }
-
+  
     return this.prisma.product.update({
       where: { product_id: id },
       data,
     });
   }
+  
 
   async delete(id: number): Promise<Product> {
     return this.prisma.product.delete({

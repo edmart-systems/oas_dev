@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {
+  Box,
   Button,
   Card,
   CardContent,
@@ -12,6 +13,7 @@ import InventoryPointTable from './inventoryPointTable';
 import { toast } from 'react-toastify';
 import InventoryPointForm from './inventoryPointForm';
 import { InventoryPoint } from '@/modules/inventory/types/inventoryPoint.types';
+import MyCircularProgress from '@/components/common/my-circular-progress';
 
 
 
@@ -19,24 +21,20 @@ const InventoryPointMain = () => {
   const [inventoryPoints, setInventoryPoints] = useState<InventoryPoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [openDialog, setOpenDialog] = useState({
-      inventoryPoint: false,
-    });
-  const handleDialogOpen = (type: keyof typeof openDialog) =>
-  setOpenDialog({ ...openDialog, [type]: true });
-
-  const handleDialogClose = (type: keyof typeof openDialog) =>
-  setOpenDialog({ ...openDialog, [type]: false });
-
+  const [openForm, setOpenForm] = useState(false);
+  const [selectedInventoryPoint, setSelectedInventoryPoint] = useState<InventoryPoint | null>(null);
+  
    
   useEffect(() => {
       fetchData();
     }, []);
+
+
   const fetchData = async () => {
     setLoading(true);
     try {
       const res = await fetch("/api/inventory/inventory_point");
-      if (!res.ok) throw new Error("Failed to fetch inventory Points");
+      if (!res.ok) throw new Error("Failed to fetch Inventory Points");
 
       const data: InventoryPoint[] = await res.json();
       setInventoryPoints(data);
@@ -48,8 +46,18 @@ const InventoryPointMain = () => {
     }
   };
   const filteredInventoryPoints = inventoryPoints.filter(inventoryPoint =>
-    inventoryPoint.inventory_point.toLowerCase().includes(searchTerm.toLowerCase())
+    (inventoryPoint.inventory_point || "").toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleAdd = () => {
+      setSelectedInventoryPoint(null); 
+      setOpenForm(true);
+    };
+  
+    const handleEdit = (inventory_point: InventoryPoint) => {
+      setSelectedInventoryPoint(inventory_point); 
+      setOpenForm(true);
+    };
 
   return (
        <Card>
@@ -66,24 +74,34 @@ const InventoryPointMain = () => {
                   startAdornment: <MagnifyingGlass size={20} />,
                 }}
               />
-              <Button variant="contained" startIcon={<Plus />} onClick={()=> handleDialogOpen('inventoryPoint')}>
+              <Button variant="contained" disabled={loading} startIcon={<Plus />} onClick={handleAdd}>
                 Add InventoryPoint
               </Button>
             </Stack>
           }
         />
         <CardContent>
-            {/* InventoryPoint table  */}
-            <InventoryPointTable inventoryPoints={filteredInventoryPoints} onEdit={() => handleDialogOpen('inventoryPoint'  )} />
         
+          {loading ? (
+           <Box display="flex" justifyContent="center" alignItems="center" height={200}>
+            <MyCircularProgress />
+            </Box>
+        ) : (
+          
+            <InventoryPointTable inventoryPoints={filteredInventoryPoints} onEdit={handleEdit} />        
+
+        )}
         </CardContent>
-        <InventoryPointForm
-                      open={openDialog.inventoryPoint}
-                      onClose={() => handleDialogClose('inventoryPoint')}
-                      onSuccess={(newInventoryPoint) => {
+                      <InventoryPointForm
+                      open={openForm}
+                      initialData={selectedInventoryPoint}
+                      onClose={() => setOpenForm(false)}
+                      onSuccess={() => {
+                        fetchData();
+                        setOpenForm(false);
                         toast.success('InventoryPoint added successfully');
                       }}
-                    />
+                      />
       </Card>
 
     

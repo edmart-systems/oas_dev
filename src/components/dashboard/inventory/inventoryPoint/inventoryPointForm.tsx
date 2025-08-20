@@ -13,6 +13,7 @@ const Inventory_pointForm: React.FC<Props> = ({ open, onClose, onSuccess, initia
   const [formData, setFormData] = useState({
     inventory_point: ''
   });
+  const [formError, setFormError] = useState<string | null>(null);
 
 useEffect(()=>{
   if(initialData){
@@ -24,11 +25,13 @@ useEffect(()=>{
       inventory_point: ''
     });
   }
-}, [initialData]);
+  setFormError(null);
+}, [initialData, open]);
 
 
 const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
 
     const submitData = {
       ...formData,
@@ -45,12 +48,17 @@ const handleSubmit = async (e: React.FormEvent) => {
         body: JSON.stringify(submitData)
       });
 
-      if (!res.ok) throw new Error(`Failed to${isUpdate ? 'update' : 'add'}  Inventory_point`);
+      if (!res.ok){
+        const errorData = await res.json().catch(() => ({}));
+        setFormError(errorData?.message || errorData?.error || `Failed to${isUpdate ? ' update' : ' add'} category`);
+        return;
+      };
 
       const newInventory_point = await res.json();
       onSuccess(newInventory_point);
       onClose();
-    } catch (error) {
+    } catch (error:any) {
+      setFormError(error.message || error.error || "An unexpected error occurred.");
       console.error(`Error ${initialData ? 'updating' : 'adding'}Inventory_point:`, error);
     }
   };
@@ -59,7 +67,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth key={initialData?.Inventory_point_id || 'new'}>
       <form onSubmit={handleSubmit}>
         <DialogTitle>
-          { initialData?.Inventory_point ? 'Edit Inventory point' : 'Add Inventory point'}
+          { initialData?.inventory_point ? 'Edit Inventory point' : 'Add Inventory point'}
 
         </DialogTitle>
         <DialogContent>
@@ -71,6 +79,8 @@ const handleSubmit = async (e: React.FormEvent) => {
                 value={formData.inventory_point}
                 onChange={(e) => setFormData({ ...formData, inventory_point: e.target.value })}
                 required
+                error={!!formError}
+                helperText={formError}
               />
             </Grid2>
           </Grid2>
@@ -78,7 +88,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
           <Button type="submit" variant="contained">
-            {initialData?.Inventory_point ? 'Update' : 'Add'} Inventory point 
+            {initialData?.inventory_point ? 'Update' : 'Add'} Inventory point 
           </Button>
         </DialogActions>
       </form>

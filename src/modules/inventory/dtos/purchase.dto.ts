@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { PurchaseItemDto } from "./purchase_item.dto";
+import { update } from "lodash";
 
 export const PurchaseDto = z.object({
   purchase_quantity: z.number().optional(),
@@ -12,6 +13,7 @@ export const PurchaseDto = z.object({
   purchase_created_at: z.date().optional(),
   purchase_updated_at: z.date().optional(),
   purchase_items: z.array(PurchaseItemDto),
+  update_at: z.date().optional()
 });
 
 export const CreatePurchaseDto = z.object({
@@ -25,6 +27,7 @@ export const CreatePurchaseDto = z.object({
   purchase_created_at: z.date().optional(),
   purchase_updated_at: z.date().optional(),
   purchase_items: z.array(PurchaseItemDto),
+  update_at: z.date().optional()
 });
 
 export const UpdatePurchaseDto = PurchaseDto.partial();

@@ -7,6 +7,7 @@ export const StockDto = z.object({
   quantity_change: z.number(),
   resulting_stock: z.number(),
   reference_id: z.number().optional(),
+  
 });
 
 

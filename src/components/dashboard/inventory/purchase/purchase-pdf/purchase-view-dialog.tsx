@@ -15,8 +15,6 @@ import { TransitionProps } from "@mui/material/transitions";
 import { PDFViewer } from "@react-pdf/renderer";
 import PurchasePdfDoc from "./purchase-pdf-doc";
 import { Close } from "@mui/icons-material";
-import { CompanyDto } from "@/types/company.types";
-import { PurchaseOrder } from "@/modules/inventory/types/purchase.types";
 import {PurchaseViewDialogProps } from "@/modules/inventory/types/purchase.types";
 
 const Transition = forwardRef(function Transition(

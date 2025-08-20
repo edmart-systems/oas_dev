@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Category } from "@prisma/client";
 import { CategoryDtoInput } from "../dtos/category.dto";
+import { validateCategory } from "../methods/category.methods";
 
 
 export class CategoryRepository{
@@ -13,12 +14,21 @@ export class CategoryRepository{
     }
 
     async create(data: CategoryDtoInput):Promise<Category>{
+        const validation = validateCategory({category: data.category});
+
+        if(!validation.valid){
+            throw new Error(validation.errors?.join(", ") || "Invalid Category Input");
+        }
+
         return this.prisma.category.create({data});
     }
 
     
     async getAll():Promise<Category[]>{
         return this.prisma.category.findMany({
+            orderBy:{
+                created_at: "desc"
+            },
             include: {
                 creator: {
                     select: {
@@ -43,6 +53,13 @@ export class CategoryRepository{
     }
 
     async updateCategory(id: number, data: { category: string }): Promise<Category> {
+        
+        const validation = validateCategory({category: data.category});
+
+        if(!validation.valid){
+            throw new Error(validation.errors?.join(", ") || "Invalid Category Input");
+        }
+
         return this.prisma.category.update({
             where: { category_id: id },
             data,

@@ -32,10 +32,14 @@ export async function PATCH(
   const parsed = CategoryDto.safeParse(categoryData);
 
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: parsed.error.flatten().fieldErrors },
-      { status: 400 }
-    );
+    const fieldErrors = parsed.error.flatten().fieldErrors;
+      const errorMessages = Object.values(fieldErrors)
+        .flat()
+        .join(", ");
+      return NextResponse.json(
+        { message: errorMessages || "Invalid input" },
+        { status: 400 }
+      );
   }
 
   try {

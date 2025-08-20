@@ -2,8 +2,9 @@ import React from "react";
 import { Page, View, Document, StyleSheet, Font, Text, Image } from "@react-pdf/renderer";
 import DocHeader from "../../../quotations/quotation/quotation-pdf/doc-components/doc-header";
 import DocFooter from "../../../quotations/quotation/quotation-pdf/doc-components/doc-footer";
-import { PurchasePdfDocProps } from "@/modules/inventory/types/purchase.types";
+import { Purchase,} from "@/modules/inventory/types/purchase.types";
 import QRCode from "qrcode";
+import { CompanyDto } from "@/types/company.types";
 
 
 
@@ -16,7 +17,13 @@ Font.register({
 });
 
 
-const PurchasePdfDoc = ({ company, purchase, formatCurrency, supplierName, inventoryPointName, productNames, qrDataUrl }: PurchasePdfDocProps & { 
+interface Props{
+  purchase: Purchase;
+  company: CompanyDto;
+}
+
+
+const PurchasePdfDoc = ({ company, purchase, formatCurrency, supplierName, inventoryPointName, productNames, qrDataUrl }: Props & { 
   formatCurrency: (amount: number) => string;
   supplierName: string;
   inventoryPointName: string;
@@ -66,7 +73,10 @@ const PurchasePdfDoc = ({ company, purchase, formatCurrency, supplierName, inven
               <Text style={styles.detailLabel}>Inventory Point:</Text>
               <Text style={styles.detailValue}>{inventoryPointName}</Text>
               <Text style={styles.detailLabel}>By:</Text>
-              <Text style={styles.detailValue}>{purchase.purchase_created_by}</Text>
+              <Text style={styles.detailValue}>{purchase.creator
+    ? `${purchase.creator.firstName} ${purchase.creator.lastName}`
+    : purchase.created_by || "Unknown"}</Text>
+  
             </View>
           </View>
           

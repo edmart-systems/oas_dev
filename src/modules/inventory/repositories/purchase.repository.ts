@@ -15,6 +15,9 @@ export class PurchaseRepository {
         }));
 
         return this.prisma.purchase.create({
+            orderBy: {
+                created_at: "desc",
+            },
             data: {
                 purchase_quantity: data.purchase_quantity,
                 purchase_unit_cost: data.purchase_unit_cost,
@@ -29,13 +32,28 @@ export class PurchaseRepository {
             },
             include: {
                 Purchase_items: true,
+                creator: {
+                    select: {
+                        co_user_id: true,
+                        firstName: true,
+                        lastName: true
+                    }
+                },
             },
         });
     }
 
     async getAll(): Promise<Purchase[]> {
         return this.prisma.purchase.findMany({
-            include: { Purchase_items: true },
+            include: { Purchase_items: true,
+                creator: {
+                    select: {
+                        co_user_id: true,
+                        firstName: true,
+                        lastName: true
+                    }
+                },
+             },
         });
     }
 

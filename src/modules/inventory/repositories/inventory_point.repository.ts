@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Inventory_point } from "@prisma/client";
 import { Inventory_pointDtoInput } from "../dtos/inventory_point.dto";
-
+import { validateInventoryPoint } from "../methods/inventoryPoint.methods";
 
 export class Inventory_pointRepository{
     constructor(private prisma: PrismaClient){}
@@ -13,12 +13,20 @@ export class Inventory_pointRepository{
     }
 
     async create(data: Inventory_pointDtoInput):Promise<Inventory_point>{
+        const validation = validateInventoryPoint({inventory_point: data.inventory_point});
+        if(!validation.valid){
+            throw new Error(validation.errors?.join(", ") || "Invalid Inventory Point Input");  
+        }
+
         return this.prisma.inventory_point.create({data});
     }
 
     
     async getAll():Promise<Inventory_point[]>{
         return this.prisma.inventory_point.findMany({
+            orderBy: {
+                inventory_point: 'asc'
+            },
               include: {
                 creator: {
                     select: {
@@ -37,6 +45,10 @@ export class Inventory_pointRepository{
     }
 
     async updateInventory_point(id: number, data: { inventory_point: string }): Promise<Inventory_point> {
+        const validation = validateInventoryPoint({inventory_point: data.inventory_point});
+        if(!validation.valid){
+            throw new Error(validation.errors?.join(", ") || "Invalid Inventory Point Input");  
+        }
         return this.prisma.inventory_point.update({
             where: { inventory_point_id: id },
             data,

@@ -9,16 +9,19 @@ import {
   TableRow,
   TablePagination,
 } from "@mui/material";
-import { PencilSimple } from "@phosphor-icons/react";
+import { PencilSimpleIcon } from "@phosphor-icons/react";
 import UserAvatar from "@/components/dashboard/nav-bar/user-avatar";
 import React, { useState } from "react";
 
 interface Props {
   tags: Tag[];
-  onEdit: () => void;
+  onEdit: (tag: Tag) => void;
 }
 
 const TagTable = ({ tags, onEdit }: Props) => {
+  
+  
+
   // Pagination state
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -66,8 +69,8 @@ const TagTable = ({ tags, onEdit }: Props) => {
                 </div>
               </TableCell>
               <TableCell>
-                <IconButton onClick={onEdit}>
-                  <PencilSimple />
+                <IconButton onClick={() => onEdit(tag)}>
+                  <PencilSimpleIcon />
                 </IconButton>
               </TableCell>
             </TableRow>

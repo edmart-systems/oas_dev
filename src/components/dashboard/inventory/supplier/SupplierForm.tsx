@@ -16,6 +16,8 @@ const SupplierForm = ({ open, onClose, onSuccess, initialData }: SupplierFormPro
     supplier_address: '',
     supplier_tinNumber: ''
   });
+  const [formError, setFormError] = useState<string | null>(null);
+  
 
   useEffect(() => {
     if (initialData) {
@@ -35,10 +37,12 @@ const SupplierForm = ({ open, onClose, onSuccess, initialData }: SupplierFormPro
         supplier_tinNumber: ''
       });
     }
-  }, [initialData]);
+    setFormError(null);
+  }, [initialData, open]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
     
     const submitData = {
       ...formData,
@@ -56,19 +60,24 @@ const SupplierForm = ({ open, onClose, onSuccess, initialData }: SupplierFormPro
         body: JSON.stringify(submitData)
       });
       
-      if (!res.ok) throw new Error(`Failed to ${isUpdate ? 'update' : 'add'} supplier`);
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        setFormError(errorData?.message || errorData?.error || `Failed to${isUpdate ? ' update' : ' add'} category`);
+        return;
+      };
       
-      const supplier = await res.json();
-      onSuccess(supplier);
+      const newSupplier = await res.json();
+      onSuccess(newSupplier);
       onClose();
-    } catch (error) {
+    } catch (error:any) {
+      setFormError(error.message || error.error || "An unexpected error occurred.");
       console.error(`Error ${initialData ? 'updating' : 'adding'} supplier:`, error);
     }
   };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" key={initialData?.supplier_id || 'new'}>
-      <form onSubmit={handleSubmit} method=''>
+      <form onSubmit={handleSubmit}>
         <DialogTitle>
           {initialData?.supplier_id  ? 'Edit Supplier' : 'Add Supplier'}
         </DialogTitle>
@@ -80,6 +89,7 @@ const SupplierForm = ({ open, onClose, onSuccess, initialData }: SupplierFormPro
               value={formData.supplier_name}
               onChange={(e) => setFormData({ ...formData, supplier_name: e.target.value })}
               required
+               
             />
             <TextField
               label="Email"
@@ -87,12 +97,17 @@ const SupplierForm = ({ open, onClose, onSuccess, initialData }: SupplierFormPro
               fullWidth
               value={formData.supplier_email}
               onChange={(e) => setFormData({ ...formData, supplier_email: e.target.value })}
+              required
+              error={!!formError}
+              helperText={formError}
             />
             <TextField
               label="Phone"
               fullWidth
               value={formData.supplier_phone}
               onChange={(e) => setFormData({ ...formData, supplier_phone: e.target.value })}
+              error={!!formError}
+              helperText={formError}
             />
             <TextField
               label="TIN Number"
@@ -100,6 +115,8 @@ const SupplierForm = ({ open, onClose, onSuccess, initialData }: SupplierFormPro
               fullWidth
               value={formData.supplier_tinNumber}
               onChange={(e) => setFormData({ ...formData, supplier_tinNumber: e.target.value })}
+              error={!!formError}
+              helperText={formError}
             />
             <TextField
               label="Address"
@@ -108,6 +125,8 @@ const SupplierForm = ({ open, onClose, onSuccess, initialData }: SupplierFormPro
               fullWidth
               value={formData.supplier_address}
               onChange={(e) => setFormData({ ...formData, supplier_address: e.target.value })}
+              error={!!formError}
+              helperText={formError}
             />
           </Stack>
         </DialogContent>
