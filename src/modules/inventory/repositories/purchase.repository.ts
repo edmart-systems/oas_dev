@@ -15,9 +15,6 @@ export class PurchaseRepository {
         }));
 
         return this.prisma.purchase.create({
-            orderBy: {
-                created_at: "desc",
-            },
             data: {
                 purchase_quantity: data.purchase_quantity,
                 purchase_unit_cost: data.purchase_unit_cost,

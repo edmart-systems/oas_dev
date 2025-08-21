@@ -1,6 +1,5 @@
 import { CategoryDtoInput } from "../dtos/category.dto";
-import { Product } from "./purchase.types";
-
+import { Product } from "@/types/product.types";
 
 
 export interface Category extends CategoryDtoInput {
