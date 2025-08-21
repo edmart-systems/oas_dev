@@ -1,5 +1,5 @@
 import { TagDtoInput } from "../dtos/tag.dto";
-import { Product } from "./purchase.types";
+import { Product } from "@/types/product.types";
 
 export interface Tag extends TagDtoInput {
   tag_id: string;

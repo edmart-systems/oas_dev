@@ -1,5 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-import { CreatePurchaseInput } from "../dtos/purchase.dto";
+ import { CreatePurchaseInput } from "../dtos/purchase.dto";
 import { Purchase } from "@prisma/client";
 
 export class PurchaseRepository {
@@ -15,9 +14,6 @@ export class PurchaseRepository {
         }));
 
         return this.prisma.purchase.create({
-            orderBy: {
-                created_at: "desc",
-            },
             data: {
                 purchase_quantity: data.purchase_quantity,
                 purchase_unit_cost: data.purchase_unit_cost,

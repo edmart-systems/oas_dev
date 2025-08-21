@@ -1,14 +1,11 @@
 import { ProductDtoInput  } from "@/modules/inventory/dtos/product.dto";
 import { PurchaseItemDtoInput  } from "@/modules/inventory/dtos/purchase_item.dto";
 import { PurchaseDtoInput  } from "@/modules/inventory/dtos/purchase.dto";
-import { SupplierDtoInput } from "../dtos/supplier.dto";
-import { Inventory_pointDtoInput } from "../dtos/inventory_point.dto";
-import { CompanyAddressDTO, CompanyDto } from "@/types/company.types";
+import { CompanyDto } from "@/types/company.types";
 import React, { Dispatch, forwardRef, Fragment, Ref, SetStateAction } from "react";
 import { Supplier } from "./supplier.types";
 import { InventoryPoint } from "./inventoryPoint.types";
 import { Product } from "@/types/product.types";
-import { Company } from "@prisma/client";
 
 
 

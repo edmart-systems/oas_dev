@@ -30,6 +30,8 @@ import { useEffect, useState } from "react";
 import MyCircularProgress from "@/components/common/my-circular-progress";
 
 
+
+
 export default function PurchaseMain() {
   const [products, setProducts] = useState<Product[]>([]);
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
@@ -124,38 +126,46 @@ export default function PurchaseMain() {
 
   const clearCart = () => setCart([]);
 
-  const processPurchase = async () => {
-    setProcessing(true);
-    if (cart.length === 0) return;
-    const purchaseData = {
-      inventory_point_id: inventoryPointId,
-      supplier_id: supplierId,
-      purchase_items: cart.map(item => ({
-        product_id: item.product_id,
-        quantity: item.quantity,
-        unit_cost: item.unit_cost
-      }))
-    };
+const processPurchase = async () => {
+  if (!supplierId || !inventoryPointId || cart.length === 0) {
+    toast.error("Please select supplier, inventory point, and add products");
+    return;
+  }
 
-    try {
-      const res = await fetch('/api/inventory/purchase', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(purchaseData)
-      });
-
-      if (!res.ok) throw new Error('Failed to create purchase');
-
-      toast.success(`Purchase created successfully!`);
-      clearCart();
-      fetchData();
-    } catch (error) {
-      console.error('Failed to create purchase:', error);
-      toast.error('Failed to create purchase');
-    }finally{
-      setProcessing(false)
-    }
+  setProcessing(true);
+  const purchaseData = {
+    inventory_point_id: inventoryPointId,
+    supplier_id: supplierId,
+    purchase_items: cart.map(item => ({
+      product_id: item.product_id,
+      quantity: item.quantity,
+      unit_cost: item.unit_cost
+    }))
   };
+
+  try {
+    const res = await fetch('/api/inventory/purchase', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(purchaseData),
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.message || 'Failed to create purchase');
+    }
+
+    toast.success("Purchase created successfully!");
+    clearCart();
+    fetchData();
+  } catch (error: any) {
+    console.error("Failed to create purchase:", error);
+    toast.error(error.message || "Failed to create purchase");
+  } finally {
+    setProcessing(false);
+  }
+};
+
 
   const handleAddForm = (type: 'product' | 'inventoryPoint' | 'supplier') => {
     setOpenForm(type);
