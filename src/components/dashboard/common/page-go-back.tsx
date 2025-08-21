@@ -5,6 +5,8 @@ import { Stack, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import nProgress from "nprogress";
 import React from "react";
+import { useQuotationNavigation } from "@/hooks/use-quotation-navigation";
+import { paths } from "@/utils/paths.utils";
 
 type Props = {
   backName?: string;
@@ -13,10 +15,18 @@ type Props = {
 
 const PageGoBack = ({ backName, link }: Props) => {
   const router = useRouter();
+  const { navigateBackToQuotations } = useQuotationNavigation();
 
   const backHandler = () => {
     nProgress.start();
-    backName && link ? router.push(link) : router.back();
+    
+    // Check if we're going back to quotations and use preserved state
+    if (link === paths.dashboard.quotations.main || 
+        (backName && (backName.toLowerCase().includes('quotation') || backName.toLowerCase().includes('quotations')))) {
+      navigateBackToQuotations();
+    } else {
+      backName && link ? router.push(link) : router.back();
+    }
   };
 
   return (

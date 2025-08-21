@@ -11,6 +11,7 @@ import {
 import React, {
   ChangeEvent,
   MouseEvent,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -33,6 +34,20 @@ import {
   clearQuotationSearchParams,
   setSearchingQuotation,
 } from "@/redux/slices/quotation-search.slice";
+import {
+  setTablePage,
+  setTableOffset,
+  setTableFilters,
+  setScrollPosition,
+  setSearchMode,
+  setSearchPage,
+  setSearchOffset,
+  setViewMode,
+  setExpandedQuotations,
+  toggleQuotationExpanded,
+} from "@/redux/slices/quotation-table-state.slice";
+import { updateQuotationSearchParams } from "@/redux/slices/quotation-search.slice";
+import { restoreScrollPosition, saveScrollPosition } from "@/utils/scroll-restoration.utils";
 
 type Props = {
   quotationsSummary: QuotationStatusCounts;
@@ -101,23 +116,36 @@ const QuotationsTableContainer = ({ quotationsSummary }: Props) => {
   const { params: filterParams } = useAppSelector(
     (state) => state.quotationSearch
   );
+  const tableState = useAppSelector((state) => state.quotationTableState);
   const searchParams = useSearchParams();
   const router = useRouter();
   const viewParam = searchParams.get("view");
-  const [page, setPage] = useState<number>(0);
+  const [page, setPage] = useState<number>(tableState.page);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [dataRows, setDataRows] = useState<SummarizedQuotation[]>([]);
   const [searchDataRows, setSearchDataRows] = useState<SummarizedQuotation[]>(
     []
   );
-  const [offset, setOffset] = useState<number>(0);
+  const [offset, setOffset] = useState<number>(tableState.offset);
   const [paginationDetails, setPaginationDetails] = useState<PaginationData>();
-  const [inSearchMode, setInSearchMode] = useState<boolean>(false);
+  const [inSearchMode, setInSearchMode] = useState<boolean>(tableState.inSearchMode);
   const [prevOffset, setPrevOffset] = useState<number>(0);
   const [prevPage, setPrevPage] = useState<number>(0);
   const [prevFilterParams, setPrevFilterParams] =
-    useState<QuotationFilters | null>(null);
+    useState<QuotationFilters | null>(tableState.filters);
+  const [expandedQuotations, setExpandedQuotations] = useState<string[]>(tableState.expandedQuotations);
+
+  const handleToggleExpanded = useCallback((quotationId: string) => {
+    const newExpanded = expandedQuotations.includes(quotationId)
+      ? expandedQuotations.filter(id => id !== quotationId)
+      : [...expandedQuotations, quotationId];
+    
+    setExpandedQuotations(newExpanded);
+    
+    // Use the individual toggle action instead
+    dispatch(toggleQuotationExpanded(quotationId));
+  }, [expandedQuotations, dispatch]);
 
   const fetchQuotations = async (
     offset: number,
@@ -127,6 +155,7 @@ const QuotationsTableContainer = ({ quotationsSummary }: Props) => {
 
     if (filterParams) {
       setInSearchMode(true);
+      dispatch(setSearchMode(true));
     }
 
     setIsFetching(true);
@@ -152,6 +181,7 @@ const QuotationsTableContainer = ({ quotationsSummary }: Props) => {
       setPaginationDetails(pagination);
       setSearchDataRows(quotations);
       setPrevFilterParams(filterParams);
+      dispatch(setTableFilters(filterParams));
       return;
     }
 
@@ -162,28 +192,34 @@ const QuotationsTableContainer = ({ quotationsSummary }: Props) => {
   const paginationHandler = async (direction: 0 | 1 | 2 | 3) => {
     //1=Right 0=Left
     if (direction == 0) {
-      setOffset((prev) => (prev - limit < 0 ? 0 : prev - limit));
-      page > 0 && setPage((prev) => prev - 1);
+      const newOffset = offset - limit < 0 ? 0 : offset - limit;
+      const newPage = page > 0 ? page - 1 : 0;
+      setOffset(newOffset);
+      setPage(newPage);
+      dispatch(setTableOffset(newOffset));
+      dispatch(setTablePage(newPage));
       return;
     } else if (direction == 1) {
-      setOffset((prev) => prev + limit);
-      setPage((prev) => prev + 1);
-      // const lastOffset = paginationDetails!.total - limit;
-      // const lastPage = Math.ceil(paginationDetails!.total / limit) - 1;
-      // setOffset((prev) =>
-      //   prev + limit > lastOffset ? lastOffset : prev + limit
-      // );
-      // setPage((prev) => (prev + 1 > lastPage ? lastPage : prev + 1));
+      const newOffset = offset + limit;
+      const newPage = page + 1;
+      setOffset(newOffset);
+      setPage(newPage);
+      dispatch(setTableOffset(newOffset));
+      dispatch(setTablePage(newPage));
       return;
     } else if (direction == 2) {
       const lastOffset = paginationDetails!.total - limit;
       const lastPage = Math.ceil(paginationDetails!.total / limit) - 1;
       setOffset(lastOffset);
       setPage(lastPage);
+      dispatch(setTableOffset(lastOffset));
+      dispatch(setTablePage(lastPage));
       return;
     } else if (direction == 3) {
       setOffset(0);
       setPage(0);
+      dispatch(setTableOffset(0));
+      dispatch(setTablePage(0));
       return;
     }
   };
@@ -193,6 +229,7 @@ const QuotationsTableContainer = ({ quotationsSummary }: Props) => {
     newPage: number
   ) => {
     setPage(newPage);
+    dispatch(setTablePage(newPage));
   };
 
   const handleChangeRowsPerPage = (
@@ -206,13 +243,82 @@ const QuotationsTableContainer = ({ quotationsSummary }: Props) => {
     setInSearchMode(false);
     setSearchDataRows([]);
     dispatch(clearQuotationSearchParams());
+    dispatch(setSearchMode(false));
     setOffset(prevOffset);
     setPage(prevPage);
     setPrevOffset(0);
     setPrevPage(0);
     setPrevFilterParams(null);
+    dispatch(setTableFilters(null));
     fetchQuotations(prevOffset);
   };
+
+  // Save scroll position on scroll (throttled)
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
+    const handleScroll = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        dispatch(setScrollPosition(saveScrollPosition()));
+      }, 100); // Throttle to avoid excessive updates
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(timeoutId);
+    };
+  }, [dispatch]);
+
+  // Restore scroll position on mount
+  useEffect(() => {
+    restoreScrollPosition(tableState.scrollPosition);
+  }, [tableState.scrollPosition]);
+
+  // Update view mode in state
+  useEffect(() => {
+    dispatch(setViewMode(viewParam));
+  }, [viewParam, dispatch]);
+
+  // Restore expanded quotations from state on mount
+  useEffect(() => {
+    setExpandedQuotations(tableState.expandedQuotations);
+  }, []);
+
+  // Initialize component with saved state on mount
+  useEffect(() => {
+    let mounted = true;
+    
+    const initializeState = async () => {
+      if (!mounted) return;
+      
+      if (tableState.filters && !filterParams && checkFilterParams(tableState.filters)) {
+        dispatch(updateQuotationSearchParams(tableState.filters));
+      } else if (!tableState.inSearchMode && offset === tableState.offset && tableState.offset > 0) {
+        // Fetch data for the saved page if not in search mode and offset matches
+        await fetchQuotations(tableState.offset);
+      }
+    };
+    
+    initializeState();
+    
+    return () => {
+      mounted = false;
+    };
+  }, []); // Empty dependency array for mount only
+
+  // Restore filters on mount if they exist in state
+  useEffect(() => {
+    if (tableState.filters && !filterParams) {
+      // Restore filters from saved state
+      const savedFilters = tableState.filters;
+      if (checkFilterParams(savedFilters)) {
+        // This will trigger the filter effect below
+        dispatch(updateQuotationSearchParams(savedFilters));
+      }
+    }
+  }, [tableState.filters, filterParams, dispatch]);
 
   useEffect(() => {
     if (inSearchMode) return;
@@ -237,11 +343,14 @@ const QuotationsTableContainer = ({ quotationsSummary }: Props) => {
       setOffset(0);
       setPage(0);
       setDataRows([]);
+      dispatch(setSearchOffset(0));
+      dispatch(setSearchPage(0));
       isFirstSearch = true;
     }
 
     if (!compareFilterParamEqual(prevFilterParams, filterParams)) {
       !isFirstSearch && setOffset(0);
+      !isFirstSearch && dispatch(setSearchOffset(0));
     }
 
     fetchQuotations(offset, filterParams);
@@ -266,6 +375,9 @@ const QuotationsTableContainer = ({ quotationsSummary }: Props) => {
   const refreshHandler = () => {
     fetchQuotations(0);
     setOffset(0);
+    setPage(0);
+    dispatch(setTableOffset(0));
+    dispatch(setTablePage(0));
     router.refresh();
   };
 
@@ -286,6 +398,8 @@ const QuotationsTableContainer = ({ quotationsSummary }: Props) => {
           <QuotationsTable
             visibleRows={visibleSearchRows}
             isFetching={isFetching}
+            expandedQuotations={expandedQuotations}
+            onToggleExpanded={handleToggleExpanded}
           />
         </Stack>
       ) : (
@@ -303,6 +417,8 @@ const QuotationsTableContainer = ({ quotationsSummary }: Props) => {
                 <QuotationsTable
                   visibleRows={visibleGroupedRows.created}
                   isFetching={isFetching}
+                  expandedQuotations={expandedQuotations}
+                  onToggleExpanded={handleToggleExpanded}
                 />
               </Stack>
               <Stack spacing={1}>
@@ -316,6 +432,8 @@ const QuotationsTableContainer = ({ quotationsSummary }: Props) => {
                 <QuotationsTable
                   visibleRows={visibleGroupedRows.sent}
                   isFetching={isFetching}
+                  expandedQuotations={expandedQuotations}
+                  onToggleExpanded={handleToggleExpanded}
                 />
               </Stack>
               <Stack spacing={1}>
@@ -329,6 +447,8 @@ const QuotationsTableContainer = ({ quotationsSummary }: Props) => {
                 <QuotationsTable
                   visibleRows={visibleGroupedRows.accepted}
                   isFetching={isFetching}
+                  expandedQuotations={expandedQuotations}
+                  onToggleExpanded={handleToggleExpanded}
                 />
               </Stack>
               <Stack spacing={1}>
@@ -342,6 +462,8 @@ const QuotationsTableContainer = ({ quotationsSummary }: Props) => {
                 <QuotationsTable
                   visibleRows={visibleGroupedRows.rejected}
                   isFetching={isFetching}
+                  expandedQuotations={expandedQuotations}
+                  onToggleExpanded={handleToggleExpanded}
                 />
               </Stack>
               <Stack spacing={1}>
@@ -355,6 +477,8 @@ const QuotationsTableContainer = ({ quotationsSummary }: Props) => {
                 <QuotationsTable
                   visibleRows={visibleGroupedRows.expired}
                   isFetching={isFetching}
+                  expandedQuotations={expandedQuotations}
+                  onToggleExpanded={handleToggleExpanded}
                 />
               </Stack>
             </Stack>
@@ -362,6 +486,8 @@ const QuotationsTableContainer = ({ quotationsSummary }: Props) => {
             <QuotationsTable
               visibleRows={visibleRows}
               isFetching={isFetching}
+              expandedQuotations={expandedQuotations}
+              onToggleExpanded={handleToggleExpanded}
             />
           )}
         </>

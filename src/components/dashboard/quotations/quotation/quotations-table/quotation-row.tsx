@@ -21,6 +21,7 @@ import {
 } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { fDateDdMmmYyyy, fDateTime12, fToNow } from "@/utils/time.utils";
+import { useQuotationNavigation } from "@/hooks/use-quotation-navigation";
 import { capitalizeFirstLetter } from "@/utils/formatters.util";
 import QuotationStatusChip from "../quotation-status-chip";
 import {
@@ -36,22 +37,25 @@ type Props = {
   index: number;
   openIndex: number;
   setOpenIndex: Dispatch<SetStateAction<number>>;
+  isExpanded?: boolean;
+  onToggleExpanded?: (quotationId: string) => void;
 };
 
-const QuotationRaw = ({ quotation, index, openIndex, setOpenIndex }: Props) => {
+const QuotationRaw = ({ quotation, index, openIndex, setOpenIndex, isExpanded = false, onToggleExpanded }: Props) => {
   const router = useRouter();
+  const { navigateToQuotation } = useQuotationNavigation();
 
   const openQuotation = () => {
     nProgress.start();
-    router.push(paths.dashboard.quotations.single(quotation.quotationId));
+    navigateToQuotation(quotation.quotationId);
   };
 
   const variants: EditedSummarizedQuotation[] = quotation.variants ?? [];
   const edited = quotation.edited;
 
   const isOpen: boolean = useMemo(
-    () => index === openIndex,
-    [index, openIndex]
+    () => isExpanded || index === openIndex,
+    [isExpanded, index, openIndex]
   );
 
   return (
@@ -151,7 +155,13 @@ const QuotationRaw = ({ quotation, index, openIndex, setOpenIndex }: Props) => {
             <Tooltip title={isOpen ? "Minimize" : "Expand"}>
               <IconButton
                 color="primary"
-                onClick={() => setOpenIndex(isOpen ? 0 : index)}
+                onClick={() => {
+                  if (onToggleExpanded) {
+                    onToggleExpanded(quotation.quotationId);
+                  } else {
+                    setOpenIndex(isOpen ? 0 : index);
+                  }
+                }}
               >
                 {isOpen ? (
                   <KeyboardArrowUp sx={{ width: "20px", height: "20px" }} />

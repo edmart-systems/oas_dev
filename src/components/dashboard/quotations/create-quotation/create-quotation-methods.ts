@@ -199,7 +199,9 @@ export const verifyLineItems = (
           missing.push(capitalizeFirstLetter(key));
         }
 
-        if (String(value).length > 30) {
+        // Allow longer names, but keep other fields with reasonable limits
+        const maxLength = key === "name" ? 255 : 30;
+        if (String(value).length > maxLength) {
           tooLong.push(capitalizeFirstLetter(key));
         }
 

@@ -5,6 +5,7 @@ import nProgress from "nprogress";
 import { paths } from "@/utils/paths.utils";
 import { useRouter } from "next/navigation";
 import { fDateDdMmmYyyy, fDateTime12, fToNow } from "@/utils/time.utils";
+import { useQuotationNavigation } from "@/hooks/use-quotation-navigation";
 import { capitalizeFirstLetter } from "@/utils/formatters.util";
 import QuotationStatusChip from "../quotation-status-chip";
 import {
@@ -18,22 +19,21 @@ type Props = {
 
 const VariantQuotationRow = ({ variant }: Props) => {
   const router = useRouter();
+  const { navigateToEditedQuotation } = useQuotationNavigation();
 
   const openEditedQuotation = () => {
     nProgress.start();
-    router.push(
-      paths.dashboard.quotations.edited({
-        quotationNumber: variant.quotationId,
-        quotationId: variant.id,
-      })
-    );
+    navigateToEditedQuotation(variant.quotationId, variant.id, variant.quotationId);
   };
 
   return (
     <TableRow
       hover
       tabIndex={-1}
-      sx={{ cursor: "pointer" }}
+      sx={(theme) => ({
+        cursor: "pointer",
+        backgroundColor: theme.palette.mode === "dark" ? "#2c3e50" : "#e8f5e8",
+      })}
       onClick={() => openEditedQuotation()}
     >
       <TableCell>
