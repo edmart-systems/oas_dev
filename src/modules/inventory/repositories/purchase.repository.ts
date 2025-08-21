@@ -1,5 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-import { CreatePurchaseInput } from "../dtos/purchase.dto";
+ import { CreatePurchaseInput } from "../dtos/purchase.dto";
 import { Purchase } from "@prisma/client";
 
 export class PurchaseRepository {

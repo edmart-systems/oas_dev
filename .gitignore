@@ -45,5 +45,3 @@ export_office_automata_*
 /Logs*
 
 
-.env
-.env.local
