@@ -10,7 +10,11 @@ type Props = {
 const LoadingBackdrop = ({ open, setOpen }: Props) => {
   return (
     <Backdrop
-      sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+      sx={(theme) => ({ 
+        color: "#fff", 
+        zIndex: theme.zIndex.drawer + 1,
+        backgroundColor: "rgba(0, 0, 0, 0.05)"
+      })}
       open={open}
       onClick={() => false}
     >

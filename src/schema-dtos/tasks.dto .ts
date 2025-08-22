@@ -7,7 +7,8 @@ export const TaskStatusDtoSchema = zod.enum([
   "Failed",
   "Done",
   "Completed",
-
+  "Pushed",
+  "Cancelled",
 ]);
 
 export const TaskPriorityDtoSchema = zod.enum([

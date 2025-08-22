@@ -6,6 +6,8 @@ import {
   PlayArrow,
   HighlightOff,
   PauseCircle,
+  Schedule,
+  Cancel,
 } from "@mui/icons-material";
 import { TaskStatus } from "@/types/tasks.types";
 
@@ -39,6 +41,14 @@ const statusConfig = {
     icon: <PauseCircle />,
     color: 'error' as const,
   },
+    'Pushed': {
+      icon: <Schedule />,
+      color: 'warning' as const,
+    },
+    'Cancelled': {
+      icon: <Cancel />,
+      color: 'error' as const,
+    },
 };
 
 export const TaskStatusChip = ({ status }: TaskStatusChipProps) => {

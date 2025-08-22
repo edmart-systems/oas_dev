@@ -17,7 +17,7 @@ import {
 import { TransitionProps } from "@mui/material/transitions";
 import { Save } from "@mui/icons-material";
 import { TaskStatus, TaskPriority } from "@/types/tasks.types";
-import { TASK_STATUSES, TASK_PRIORITIES } from '@/components/dashboard/tasks/constants/taskConstants';
+import { EDITABLE_TASK_STATUSES, TASK_PRIORITIES } from '@/components/dashboard/tasks/constants/taskConstants';
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -77,7 +77,7 @@ export const TaskMultiEditDialog: React.FC<TaskMultiEditDialogProps> = ({
               label="Status"
             >
               <MenuItem value="">Keep existing</MenuItem>
-              {TASK_STATUSES.map((status) => (
+              {EDITABLE_TASK_STATUSES.map((status) => (
                 <MenuItem key={status} value={status}>
                   {status}
                 </MenuItem>

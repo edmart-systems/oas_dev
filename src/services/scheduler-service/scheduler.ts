@@ -1,3 +1,5 @@
+// src/services/schedule-service/scheduler.ts
+
 "use server";
 import schedule from "node-schedule";
 import { logger } from "@/logger/default-logger";
@@ -8,10 +10,18 @@ import {
 } from "./jobs/quotation.jobs";
 import { deleteOldNotificationsJob } from "./jobs/notifications.jobs";
 import { LOCAL_TIMEZONE } from "@/utils/constants.utils";
-import { lockOldTasksJob, pushPendingTasksJob } from "./jobs/tasks.jobs";
+import { lockOldTasksJob, pushTasksToCurrentDayJob } from "./jobs/tasks.jobs";
 
 const startScheduler = () => {
   logger.info("Scheduler instantiated!");
+  console.log("Scheduler starting at:", new Date().toISOString());
+  console.log("LOCAL_TIMEZONE:", LOCAL_TIMEZONE);
+
+  // Test job every 10 seconds
+  const testJob = schedule.scheduleJob("*/10 * * * * *", () => {
+    console.log("Test job running at:", new Date().toISOString());
+    logger.info("Test job executed successfully");
+  });
 
   const recurring_7_10_13_16_19_Rule = new schedule.RecurrenceRule();
   recurring_7_10_13_16_19_Rule.hour = [7, 10, 13, 16, 19];
@@ -106,29 +116,25 @@ const startScheduler = () => {
     }
   );
 
-  const daily1159PMRule = new schedule.RecurrenceRule();
-  daily1159PMRule.hour = 11;
-  daily1159PMRule.minute = 59;
-  daily1159PMRule.second = 0;
-  daily1159PMRule.tz = LOCAL_TIMEZONE;
 
-  const daily1159PMJobs = schedule.scheduleJob(
-    daily1159PMRule,
-    async () => {
-      const jobsName = "Daily 11:59 PM Jobs";
-      try {
-        logger.info(jobsName + " Started");
 
-        const pushTasksRes: ActionResponse = await pushPendingTasksJob();
+  const daily_00_10_Rule = new schedule.RecurrenceRule();
+  daily_00_10_Rule.hour = 0;
+  daily_00_10_Rule.minute = 10;
+  daily_00_10_Rule.second = 0;
+  daily_00_10_Rule.tz = LOCAL_TIMEZONE;
 
-        const completionMessage = jobsName + " Completed: " + pushTasksRes.message;
-        logger.info(completionMessage);
-      } catch (err) {
-        logger.info(jobsName + " Failed");
-        logger.error(err);
-      }
+  const daily_00_10_Jobs = schedule.scheduleJob(daily_00_10_Rule, async () => {
+    const jobsName = "Daily 00:10 Jobs";
+    try {
+      logger.info(jobsName + " Started");
+      const pushTasksRes: ActionResponse = await pushTasksToCurrentDayJob();
+      logger.info(jobsName + " Completed: " + pushTasksRes.message);
+    } catch (err) {
+      logger.info(jobsName + " Failed");
+      logger.error(err);
     }
-  );
+  });
   // const firstDayOfMonthJobs = schedule.scheduleJob("0 0 0 1 * *", () => {});
   // const firstJanYearlyJobs = schedule.scheduleJob("0 0 0 1 1 *", () => {});
   // const everyMondayJobs = schedule.scheduleJob("0 0 0 * * 1", () => {});
