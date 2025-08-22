@@ -34,6 +34,15 @@ const UiActivityMonitor = ({ children }: Props) => {
 
   const checkActivity = async (expTime: number) => {
     if (isDateExpired(expTime)) {
+      console.log('User session expired, triggering auto-save before logout');
+      
+      // Trigger auto-save before logout
+      const autoSaveEvent = new CustomEvent('triggerAutoSave');
+      window.dispatchEvent(autoSaveEvent);
+      
+      // Small delay to allow auto-save to complete
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       try {
         await signOut();
       } catch (err) {

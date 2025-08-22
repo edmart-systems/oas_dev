@@ -193,6 +193,14 @@ export type QuotationDraftSummary = {
   name: string;
 };
 
+export type AutoDraftMetadata = {
+  userId: number;
+  timestamp: number;
+  draftType: 'auto' | 'manual';
+};
+
+export type QuotationDraftWithMetadata = NewQuotation & AutoDraftMetadata;
+
 export type QuotationObjectVerifyResponse = {
   valid: boolean;
   errors?: QuotationError[];
