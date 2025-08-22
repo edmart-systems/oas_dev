@@ -117,10 +117,10 @@ export const TaskToolbar: React.FC<TaskToolbarProps> = ({
               <TaskUserFilter value={userFilter} onChange={onUserFilterChange} tasks={tasks} />
             </Suspense>
             <Suspense fallback={<MyCircularProgress />}>
-              <TaskDayFilter value={dayFilter} onChange={onDayFilterChange} />
+              <TaskDayFilter value={dayFilter} onChange={onDayFilterChange} onDateChange={onDateFilterChange} />
             </Suspense>
             <Suspense fallback={<MyCircularProgress />}>
-              <TaskDateFilter value={dateFilter} onChange={onDateFilterChange} />
+              <TaskDateFilter value={dateFilter} onChange={onDateFilterChange} onDayChange={onDayFilterChange} />
             </Suspense>
             {inSearchMode && (
               <Button variant="text" onClick={onResetFilters}>

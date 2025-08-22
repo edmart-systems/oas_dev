@@ -690,6 +690,16 @@ export class TasksService {
     }
   };
 
+  pushTasksToCurrentDay = async (): Promise<ActionResponse> => {
+    try {
+      const responseMessage = await this.tasksRepo.pushTasksToCurrentDay();
+      return { status: true, message: responseMessage };
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
+    }
+  };
+
   private formattedSubTasks = (subTasks: NewRawSubTask[]): NewRawSubTask[] => {
     const checkSubTasks: NewRawSubTask[] = [];
     subTasks.forEach((subTask, index) => {

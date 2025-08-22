@@ -22,8 +22,9 @@ export function convertApiTaskToLocal(apiTask: ApiTask): TaskItem {
     status: apiTask.status.status,
     priority: apiTask.priority.priority,
     startTime: apiTask.startTime,
-    user: apiTask.user,
     endTime: apiTask.endTime,
+    time: apiTask.time,
+    user: apiTask.user,
     deleted: (apiTask.deleted || 0) === 1,
     push_count: apiTask.push_count || 0,
     archived: (apiTask.archived || 0) === 1,
@@ -70,8 +71,14 @@ export function sortTasks(
         const bPriority = priorityOrder[b.priority] ?? 999;
         return isAsc ? aPriority - bPriority : bPriority - aPriority;
       }
-      case "startTime":
-        return isAsc ? a.startTime - b.startTime : b.startTime - a.startTime;
+      case "startTime": {
+        const startTimeDiff = isAsc ? a.startTime - b.startTime : b.startTime - a.startTime;
+        if (startTimeDiff === 0) {
+          // If startTime is the same, sort by creation time (most recent first)
+          return b.time - a.time;
+        }
+        return startTimeDiff;
+      }
       case "user": {
         const aUser = a.user ? `${a.user.firstName} ${a.user.lastName}` : "";
         const bUser = b.user ? `${b.user.firstName} ${b.user.lastName}` : "";
@@ -85,11 +92,9 @@ export function sortTasks(
   });
 }
 
-export function filterTasks(
+export function filterTasksForCounts(
   tasks: TaskItem[],
   filters: {
-    selectedStatusTab: string;
-    statusFilter: string;
     monthFilter: string;
     priorityFilter: string;
     userFilter: string;
@@ -99,21 +104,6 @@ export function filterTasks(
   }
 ): TaskItem[] {
   let result = tasks;
-
-  // Filter by status tab
-  if (filters.statusFilter === "Deleted") {
-    result = result.filter((task) => task.deleted);
-  } else if (filters.statusFilter) {
-    result = result.filter((task) => task.status === filters.statusFilter);
-  } else {
-    if (filters.selectedStatusTab === "Deleted") {
-      result = result.filter((task) => task.deleted);
-    } else if (filters.selectedStatusTab !== "All") {
-      result = result.filter((task) => task.status === filters.selectedStatusTab);
-    } else {
-      result = result.filter((task) => !task.deleted);
-    }
-  }
 
   // Filter by month
   if (filters.monthFilter) {
@@ -184,6 +174,113 @@ export function filterTasks(
     result = result.filter((task) =>
       task.taskName.toLowerCase().includes(filters.taskNameFilter.toLowerCase())
     );
+  }
+
+  return result;
+}
+
+export function filterTasks(
+  tasks: TaskItem[],
+  filters: {
+    selectedStatusTab: string;
+    statusFilter: string;
+    monthFilter: string;
+    priorityFilter: string;
+    userFilter: string;
+    dayFilter: string;
+    dateFilter: string;
+    taskNameFilter: string;
+  }
+): TaskItem[] {
+  let result = tasks;
+
+  // Apply all other filters first (month, priority, user, day, date, taskName)
+  // so that deleted tab counts reflect these filters
+
+  // Filter by month
+  if (filters.monthFilter) {
+    const parts = filters.monthFilter.split('-');
+    if (parts.length === 2) {
+      const year = parseInt(parts[0]);
+      const month = parseInt(parts[1]);
+      if (!isNaN(year) && !isNaN(month)) {
+        result = result.filter((task) => {
+          const taskDate = new Date(task.startTime);
+          return taskDate.getFullYear() === year && 
+                 taskDate.getMonth() === month - 1;
+        });
+      }
+    }
+  }
+
+  // Filter by priority
+  if (filters.priorityFilter) {
+    result = result.filter((task) => task.priority === filters.priorityFilter);
+  }
+
+  // Filter by user
+  if (filters.userFilter) {
+    result = result.filter((task) => {
+      if (!task.user) return false;
+      const fullName = `${task.user.firstName} ${task.user.lastName}`;
+      return fullName === filters.userFilter;
+    });
+  }
+
+  // Filter by day
+  if (filters.dayFilter) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    result = result.filter((task) => {
+      const taskDate = new Date(task.startTime);
+      taskDate.setHours(0, 0, 0, 0);
+
+      if (filters.dayFilter === "today") {
+        return taskDate.getTime() === today.getTime();
+      } else if (filters.dayFilter === "yesterday") {
+        return taskDate.getTime() === yesterday.getTime();
+      }
+      return true;
+    });
+  }
+
+  // Filter by date
+  if (filters.dateFilter) {
+    const selectedDate = new Date(filters.dateFilter);
+    if (!isNaN(selectedDate.getTime())) {
+      selectedDate.setHours(0, 0, 0, 0);
+
+      result = result.filter((task) => {
+        const taskDate = new Date(task.startTime);
+        taskDate.setHours(0, 0, 0, 0);
+        return taskDate.getTime() === selectedDate.getTime();
+      });
+    }
+  }
+
+  // Filter by task name
+  if (filters.taskNameFilter) {
+    result = result.filter((task) =>
+      task.taskName.toLowerCase().includes(filters.taskNameFilter.toLowerCase())
+    );
+  }
+
+  // Apply status/deleted filtering last so counts reflect other filters
+  if (filters.statusFilter === "Deleted") {
+    result = result.filter((task) => task.deleted);
+  } else if (filters.statusFilter) {
+    result = result.filter((task) => !task.deleted && task.status === filters.statusFilter);
+  } else {
+    if (filters.selectedStatusTab === "Deleted") {
+      result = result.filter((task) => task.deleted);
+    } else if (filters.selectedStatusTab !== "All") {
+      result = result.filter((task) => !task.deleted && task.status === filters.selectedStatusTab);
+    } else {
+      result = result.filter((task) => !task.deleted);
+    }
   }
 
   return result;
