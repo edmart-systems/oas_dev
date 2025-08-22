@@ -869,6 +869,7 @@ private formatTasksOut = (tasks: any): TaskOut[] => {
         firstName: task.user.firstName,
         lastName: task.user.lastName,
         email: task.user.email,
+        profile_picture: task.user.profile_picture,
       } : undefined,
     };
   });
@@ -1044,5 +1045,68 @@ restoreUserTask = async (
       return Promise.reject(err);
     }
   };
+
+pushTasksToCurrentDay = async (): Promise<string> => {
+  const today = new Date();
+  today.setHours(8, 0, 0, 0);
+  const todayEnd = new Date(today);
+  todayEnd.setHours(23, 0, 0, 0);
+  
+  // Get today's start (midnight)
+  const todayStart = new Date(today);
+  todayStart.setHours(0, 0, 0, 0);
+  
+  const pushedStatus = await this.prisma.task_status.findFirst({ 
+    where: { status: "Pushed" } 
+  });
+  
+  if (!pushedStatus) {
+    return "Pushed status not found in database.";
+  }
+
+  // Only get tasks from BEFORE today that are still pending/in-progress
+  const tasksToUpdate = await this.prisma.task.findMany({
+    where: {
+      taskStatus: {
+        status: { in: ["Pending", "In-Progress", "Pushed"] }
+      },
+      startTime: { lt: BigInt(todayStart.getTime()) }, // Only tasks from before today
+      deleted: 0,
+      taskLocked: 0
+    },
+    include: { subTasks: true }
+  });
+
+  let processedCount = 0;
+  
+  for (const task of tasksToUpdate) {
+    await this.prisma.$transaction(async (txn) => {
+      await txn.task.update({
+        where: { taskId: task.taskId },
+        data: {
+          startTime: BigInt(today.getTime()),
+          endTime: BigInt(todayEnd.getTime()),
+          statusId: pushedStatus.id, // Set to Pushed status
+          push_count: (task.push_count || 0) + 1
+        }
+      });
+
+      if (task.subTasks.length > 0) {
+        await txn.sub_task.updateMany({
+          where: { taskId: task.taskId },
+          data: {
+            startTime: BigInt(today.getTime()),
+            endTime: BigInt(todayEnd.getTime()),
+            statusId: pushedStatus.id // Set to Pushed status
+          }
+        });
+      }
+    });
+    
+    processedCount++;
+  }
+
+  return `${processedCount} tasks pushed to current day with Pushed status.`;
+};
 
 }

@@ -269,6 +269,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({
                     <TableCell sx={{ maxWidth: "30px" }}>
                       <UserAvatar
                         userName={task.user ? `${task.user.firstName} ${task.user.lastName}` : `User ${task.userId}`}
+                        src={task.user?.profile_picture}
                         size={40}
                       />
                     </TableCell>

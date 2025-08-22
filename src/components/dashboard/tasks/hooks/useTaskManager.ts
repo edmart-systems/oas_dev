@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { toast } from "react-toastify";
 import { TaskApiService } from "@/components/dashboard/tasks/services/TaskApiService";
-import { convertApiTaskToLocal, filterTasks, sortTasks, groupTasksByWeek, generateId } from "@/components/dashboard/tasks/utils/taskUtils";
+import { convertApiTaskToLocal, filterTasks, filterTasksForCounts, sortTasks, groupTasksByWeek, generateId } from "@/components/dashboard/tasks/utils/taskUtils";
 import { getUgandaDateTime, isoToTimestamp } from "@/components/dashboard/tasks/utils/dateUtils";
 import { TaskItem, TaskForm, SubTaskForm, TaskStatus, TaskPriority, SortDirection, SortField } from "@/types/tasks.types";
 
@@ -32,8 +32,10 @@ export const useTaskManager = (userId: number, apiBaseUrl: string = "/api") => {
   const [openMultiAdd, setOpenMultiAdd] = useState(false);
   const [openMultiEdit, setOpenMultiEdit] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [failedDialogOpen, setFailedDialogOpen] = useState(false);
   const [editTaskId, setEditTaskId] = useState<string | null>(null);
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
+  const [taskToFail, setTaskToFail] = useState<{id: string, name: string} | null>(null);
   const [multiTaskData, setMultiTaskData] = useState<TaskForm[]>([]);
   const [multiEditData, setMultiEditData] = useState<Partial<TaskForm>>({});
 
@@ -80,6 +82,27 @@ export const useTaskManager = (userId: number, apiBaseUrl: string = "/api") => {
   const groupedTasks = useMemo(() => {
     return groupTasksByWeek(filteredAndSortedTasks);
   }, [filteredAndSortedTasks]);
+
+  const filteredStatusCounts = useMemo(() => {
+    const tasksForCounts = filterTasksForCounts(tasks, {
+      monthFilter,
+      priorityFilter,
+      userFilter,
+      dayFilter,
+      dateFilter,
+      taskNameFilter,
+    });
+    
+    return tasksForCounts.reduce((counts, task) => {
+      if (task.deleted) {
+        counts["Deleted"] = (counts["Deleted"] || 0) + 1;
+      } else {
+        const status = task.status;
+        counts[status] = (counts[status] || 0) + 1;
+      }
+      return counts;
+    }, {} as Record<TaskStatus | "Deleted", number>);
+  }, [tasks, monthFilter, priorityFilter, userFilter, dayFilter, dateFilter, taskNameFilter]);
 
   const refreshHandler = async () => {
     setLoading(true);
@@ -130,23 +153,41 @@ export const useTaskManager = (userId: number, apiBaseUrl: string = "/api") => {
       return;
     }
 
+    if (newStatus === "Failed") {
+      setTaskToFail({ id: taskId, name: task.taskName });
+      setFailedDialogOpen(true);
+      return;
+    }
+
     try {
       await apiService.updateTask(task.apiTaskId, userId, { statusStr: newStatus });
-
-      if (newStatus === "Failed") {
-        await refreshHandler();
-        toast("Task failed", { type: "success" });
-      } else {
-        setTasks((prev) =>
-          prev.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t))
-        );
-        if (newStatus !== "Pending") {
-          toast("Status updated successfully", { type: "success" });
-        }
+      setTasks((prev) =>
+        prev.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t))
+      );
+      if (newStatus !== "Pending") {
+        toast("Status updated successfully", { type: "success" });
       }
     } catch (err) {
       toast("Failed to update status", { type: "error" });
       throw err;
+    }
+  };
+
+  const confirmFailedStatus = async () => {
+    if (!taskToFail) return;
+    
+    try {
+      const task = tasks.find((t) => t.id === taskToFail.id);
+      if (task?.apiTaskId) {
+        await apiService.updateTask(task.apiTaskId, userId, { statusStr: "Failed" });
+        await refreshHandler();
+        toast("Task marked as failed", { type: "success" });
+      }
+    } catch (err) {
+      toast("Failed to update status", { type: "error" });
+    } finally {
+      setFailedDialogOpen(false);
+      setTaskToFail(null);
     }
   };
 
@@ -225,7 +266,6 @@ export const useTaskManager = (userId: number, apiBaseUrl: string = "/api") => {
   const addMultiTask = () => {
     const { nowISO, endISO } = getUgandaDateTime();
     setMultiTaskData((prev) => [
-      ...prev,
       {
         taskName: "",
         taskDetails: "",
@@ -237,6 +277,7 @@ export const useTaskManager = (userId: number, apiBaseUrl: string = "/api") => {
         subTasks: [],
         completed: false,
       },
+      ...prev,
     ]);
   };
 
@@ -334,7 +375,22 @@ export const useTaskManager = (userId: number, apiBaseUrl: string = "/api") => {
                 endTime: isoToTimestamp(taskData.endTime),
               });
               
-              // Handle subtasks
+              // Handle subtasks - find which ones to delete first
+              const originalTask = tasks.find(t => t.id === editTaskId);
+              const currentSubTaskIds = taskData.subTasks
+                .filter(st => st.apiSubTaskId)
+                .map(st => st.apiSubTaskId);
+              
+              // Delete removed subtasks
+              if (originalTask) {
+                for (const originalSubTask of originalTask.subTasks) {
+                  if (originalSubTask.apiSubTaskId && !currentSubTaskIds.includes(originalSubTask.apiSubTaskId)) {
+                    await apiService.deleteSubTask(originalSubTask.apiSubTaskId, userId, task.apiTaskId);
+                  }
+                }
+              }
+              
+              // Update/Add remaining subtasks
               for (const subTask of taskData.subTasks) {
                 if (subTask.taskName.trim()) {
                   if (subTask.apiSubTaskId) {
@@ -467,13 +523,16 @@ export const useTaskManager = (userId: number, apiBaseUrl: string = "/api") => {
     openMultiAdd,
     openMultiEdit,
     deleteDialogOpen,
+    failedDialogOpen,
     editTaskId,
     taskToDelete,
+    taskToFail,
     multiTaskData,
     multiEditData,
     
     // Computed
     statusCounts,
+    filteredStatusCounts,
     filteredAndSortedTasks,
     groupedTasks,
     
@@ -496,8 +555,10 @@ export const useTaskManager = (userId: number, apiBaseUrl: string = "/api") => {
     setOpenMultiAdd,
     setOpenMultiEdit,
     setDeleteDialogOpen,
+    setFailedDialogOpen,
     setEditTaskId,
     setTaskToDelete,
+    setTaskToFail,
     setMultiTaskData,
     setMultiEditData,
     
@@ -516,6 +577,7 @@ export const useTaskManager = (userId: number, apiBaseUrl: string = "/api") => {
     updateMultiSubTask,
     handleMultiAdd,
     handlePushTasks,
+    confirmFailedStatus,
     
     // Services
     apiService,

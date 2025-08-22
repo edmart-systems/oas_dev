@@ -13,6 +13,7 @@ export {
   TaskDateFilter
 } from '@/components/dashboard/tasks/components/TaskFilters';
 export { TaskDeleteDialog } from '@/components/dashboard/tasks/components/TaskDeleteDialog';
+export { TaskFailedDialog } from '@/components/dashboard/tasks/components/TaskFailedDialog';
 export { TaskMultiEditDialog } from '@/components/dashboard/tasks/components/TaskMultiEditDialog';
 export { TaskTable } from '@/components/dashboard/tasks/components/TaskTable';
 export { TaskToolbar } from '@/components/dashboard/tasks/components/TaskToolbar';
