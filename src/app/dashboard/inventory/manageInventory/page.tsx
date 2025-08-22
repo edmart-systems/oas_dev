@@ -9,8 +9,10 @@ import {
 import CategoryMain from "@/components/dashboard/inventory/category/categoryMain";
 import TagMain from "@/components/dashboard/inventory/tag/tagMain";
 import ProductsMain from "@/components/dashboard/inventory/products/productMain";
-import { Stack as PhosphorStack, Tag as TagIcon, StackSimple as CategoryIcon} from "@phosphor-icons/react";
+import { Stack as PhosphorStack, Tag as TagIcon, StackSimple as CategoryIcon ,Warehouse, PackageIcon, UniteSquareIcon, ArrowsClockwiseIcon} from "@phosphor-icons/react";
 import InventoryPointMain from "@/components/dashboard/inventory/inventoryPoint/inventoryPointMain";
+import StockMain from "@/components/dashboard/inventory/stock/stockMain";
+import { CurrencyEthIcon } from "@phosphor-icons/react/dist/ssr";
 
 
 
@@ -29,11 +31,28 @@ const CategoriesPage = () => {
                   Products
                 </Button>
                 <Button
+                  variant={tabValue === 6 ? "contained" : "outlined"}
+                  startIcon={<UniteSquareIcon size={20} />}
+                  onClick={() => setTabValue(6)}
+                  color="primary"
+                >
+                  Units
+                </Button>
+                <Button
+                  variant={tabValue === 7 ? "contained" : "outlined"}
+                  startIcon={<CurrencyEthIcon size={20} />}
+                  onClick={() => setTabValue(7)}
+                  color="primary"
+                >
+                  Currencies
+                </Button>
+                <Button
                   variant={tabValue === 1 ? "contained" : "outlined"}
                   startIcon={<TagIcon size={20} />}
                   onClick={() => setTabValue(1)}
                   color="primary"
                 >
+                  
                   Tags
                 </Button>
                 <Button
@@ -46,11 +65,28 @@ const CategoriesPage = () => {
                 </Button>
                 <Button
                   variant={tabValue === 3 ? "contained" : "outlined"}
-                  startIcon={<CategoryIcon size={20} />}
+                  startIcon={<Warehouse size={20} />}
                   onClick={() => setTabValue(3)}
                   color="primary"
                 >
                   Inventory Point
+                </Button>
+                
+                <Button
+                  variant={tabValue === 4 ? "contained" : "outlined"}
+                  startIcon={<PackageIcon size={20} />}
+                  onClick={() => setTabValue(4)}
+                  color="primary"
+                >
+                  Stock
+                </Button>
+                <Button
+                  variant={tabValue === 5 ? "contained" : "outlined"}
+                  startIcon={<ArrowsClockwiseIcon size={20} />}
+                  onClick={() => setTabValue(5)}
+                  color="primary"
+                >
+                  transfers
                 </Button>
 
       </Stack>
@@ -68,6 +104,18 @@ const CategoriesPage = () => {
       )}
       {(tabValue == 3) && (
         <InventoryPointMain/>
+      )} 
+      {(tabValue == 4) && (
+        <StockMain/>
+      )} 
+      {(tabValue == 5) && (
+        <h1>Transfers</h1>
+      )}
+      {(tabValue == 6) && (
+        <h1>Tags</h1>
+      )}
+      {(tabValue == 7) && (
+        <h1>Currencies</h1>
       )}  
 
     </Stack>

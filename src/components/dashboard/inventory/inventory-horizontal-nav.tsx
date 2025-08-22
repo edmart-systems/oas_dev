@@ -39,12 +39,12 @@ const inventoryNavItems: InventoryNavItem[] = [
   //   href: `${paths.dashboard.inventory.main}/products`,
   //   icon: "products",
   // },
-  {
-    key: "stock",
-    title: "Stock",
-    href: `${paths.dashboard.inventory.main}/stock`,
-    icon: "stock",
-  },
+  // {
+  //   key: "stock",
+  //   title: "Stock",
+  //   href: `${paths.dashboard.inventory.main}/stock`,
+  //   icon: "stock",
+  // },
   {
     key: "purchase",
     title: "Purchase",
@@ -69,18 +69,18 @@ const inventoryNavItems: InventoryNavItem[] = [
     href: `${paths.dashboard.inventory.main}/customers`,
     icon: "customers",
   },
-  {
-    key: "warehouse",
-    title: "Warehouse",
-    href: `${paths.dashboard.inventory.main}/warehouse`,
-    icon: "warehouse",
-  },
-  {
-    key: "transfers",
-    title: "Transfers",
-    href: `${paths.dashboard.inventory.main}/transfers`,
-    icon: "transfers",
-  },
+  // {
+  //   key: "warehouse",
+  //   title: "Warehouse",
+  //   href: `${paths.dashboard.inventory.main}/warehouse`,
+  //   icon: "warehouse",
+  // },
+  // {
+  //   key: "transfers",
+  //   title: "Transfers",
+  //   href: `${paths.dashboard.inventory.main}/transfers`,
+  //   icon: "transfers",
+  // },
   // {
   //   key: "categories",
   //   title: "Categories",
