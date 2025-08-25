@@ -1,10 +1,11 @@
-import { Stack, CircularProgress, TextField, Card, CardHeader, Button, CardContent, Box } from '@mui/material'
+import { Stack, TextField, Card, CardHeader, Button, CardContent, Box } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import StockTable from './stockTable'
 import { Stock } from '@/modules/inventory/types/stock.types'
 import { toast } from 'react-toastify'
 import { MagnifyingGlassIcon, PlusIcon } from '@phosphor-icons/react'
 import MyCircularProgress from '@/components/common/my-circular-progress'
+import StockAdjustmentForm from './stockAdjustmentForm'
 
 const StockMain = () => {
   const [stock, setStock] = useState<Stock[]>([])
@@ -44,55 +45,65 @@ const StockMain = () => {
     setOpenForm(true)
   }
 
+  const handleNewAdjustment = () => {
+    setSelectedStock(null) // null means new adjustment, not editing
+    setOpenForm(true)
+  }
+
+  const handleFormSuccess = (updatedStock: Stock) => {
+    toast.success("Stock adjusted successfully!")
+    // refresh the stock list
+    fetchData()
+    setOpenForm(false)
+    setSelectedStock(null)
+  }
+
   return (
-
     <Card>
-        <CardHeader
-          title="Stock"
-          action={
-            <Stack direction="row" spacing={2}>
-              <TextField
-                size="small"
-                placeholder="Search Stock..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                InputProps={{
-                  startAdornment: <MagnifyingGlassIcon size={20} />,
-                }}
-              />
-              <Button variant="contained" disabled={loading} startIcon={<PlusIcon />} onClick={() => setOpenForm(true )}>
-                New Stock Adjustment
-              </Button>
-            </Stack>
-          }
-        />
-        <CardContent>
-        
-          {loading ? (
-           <Box display="flex" justifyContent="center" alignItems="center" height={200}>
+      <CardHeader
+        title="Stock"
+        action={
+          <Stack direction="row" spacing={2}>
+            <TextField
+              size="small"
+              placeholder="Search Stock..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              InputProps={{
+                startAdornment: <MagnifyingGlassIcon size={20} />,
+              }}
+            />
+            <Button
+              variant="contained"
+              disabled={loading}
+              startIcon={<PlusIcon />}
+              onClick={handleNewAdjustment}
+            >
+              New Stock Adjustment
+            </Button>
+          </Stack>
+        }
+      />
+      <CardContent>
+        {loading ? (
+          <Box display="flex" justifyContent="center" alignItems="center" height={200}>
             <MyCircularProgress />
-            </Box>
+          </Box>
         ) : (
-          
-            
-                    <StockTable
-          Stock={filteredStock}
-          onEdit={handleEdit}
-        />
-
+          <StockTable Stock={filteredStock} onEdit={handleEdit} />
         )}
-        {/* Example: conditional form rendering */}
-      {openForm && selectedStock && (
-        <div>
-          {/* Replace with your form component */}
-          Editing stock: {selectedStock.product?.product_name}
-        </div>
-      )}
-        </CardContent>
-          
-      </Card>
 
-
+        {/* Stock Adjustment Form Modal */}
+        {openForm && (
+          <StockAdjustmentForm
+            open={openForm}
+            onClose={() => setOpenForm(false)}
+            initialData={selectedStock ?? undefined}
+            onSuccess={handleFormSuccess}
+          />
+        )}
+      </CardContent>
+    </Card>
   )
 }
 
