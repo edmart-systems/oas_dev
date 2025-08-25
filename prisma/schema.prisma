@@ -373,13 +373,22 @@ model Quotation_tagged_users {
 }
 
 model Quotation_draft {
-  id     BigInt @id
-  userId Int
-  draft  String @db.LongText
+  id         BigInt      @id
+  userId     Int
+  draft      String      @db.LongText
+  draft_type DraftType   @default(manual)
+  created_at DateTime    @default(now())
+  updated_at DateTime    @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
 
   user User @relation(fields: [userId], references: [userId])
 
+  @@index([userId, draft_type, updated_at], map: "idx_user_draft_type")
   @@map("quotation_draft")
+}
+
+enum DraftType {
+  manual
+  auto
 }
 
 model Notification_type {

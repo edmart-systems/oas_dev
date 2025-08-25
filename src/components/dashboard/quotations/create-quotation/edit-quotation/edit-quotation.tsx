@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Alert,
   Button,
   Card,
   CardActions,
@@ -56,6 +57,7 @@ import { paths } from "@/utils/paths.utils";
 import { useSession } from "next-auth/react";
 import QuotationDraftDialog from "../draft-preview/quotation-draft-dialog";
 import nProgress from "nprogress";
+import { saveAutoDraftHandler, deleteAutoDraftHandler } from "../../auto-draft-api";
 
 const MyDivider = styled(Divider)(({ theme }) => ({
   background: theme.palette.mode === "dark" ? "#b8b8b8" : "#dadada",
@@ -133,6 +135,7 @@ const EditQuotation = ({ baseData }: Props) => {
   const [selectedDate, setSelectedDate] = useState<string>(
     getDateStrYyMmDd(quotation.time)
   );
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
 
   const calculatePrices = () => {
     startCalculation(() => {
@@ -196,6 +199,63 @@ const EditQuotation = ({ baseData }: Props) => {
     dispatch(setCurrencies(currencies));
     setIncomingQuotationHandler();
   }, []);
+
+  // Auto-save functionality for edit quotation
+  const performAutoSave = async () => {
+    if (!sessionData || !hasUnsavedChanges) return;
+    
+    const { user } = sessionData;
+    
+    // Only auto-save if there's meaningful content
+    const hasContent = clientData.name || 
+                      lineItems.some(item => item.name || item.description);
+    
+    if (!hasContent) return;
+    
+    const autoDraft: NewQuotation = {
+      quotationId: getTimeNum(new Date()),
+      time: getTimeNum(selectedDate),
+      type: selectedQuoteType,
+      category: selectedCategory,
+      tcsEdited: editTcs,
+      vatExcluded: excludeVat,
+      tcs: selectedTcs,
+      currency: selectedCurrency,
+      clientData: clientData,
+      lineItems: lineItems,
+    };
+    
+    await saveAutoDraftHandler(autoDraft, user.userId);
+  };
+
+  // Listen for auto-save trigger from activity monitor
+  useEffect(() => {
+    const handleAutoSave = () => {
+      performAutoSave();
+    };
+    
+    window.addEventListener('triggerAutoSave', handleAutoSave);
+    
+    return () => {
+      window.removeEventListener('triggerAutoSave', handleAutoSave);
+    };
+  }, [hasUnsavedChanges, clientData, lineItems]);
+
+  // Periodic auto-save every 2 minutes
+  useEffect(() => {
+    if (!hasUnsavedChanges) return;
+    
+    const autoSaveInterval = setInterval(() => {
+      performAutoSave();
+    }, 2 * 60 * 1000); // 2 minutes
+    
+    return () => clearInterval(autoSaveInterval);
+  }, [hasUnsavedChanges, clientData, lineItems]);
+
+  // Track changes to enable auto-save
+  useEffect(() => {
+    setHasUnsavedChanges(true);
+  }, [clientData, lineItems, selectedQuoteType, selectedCategory, editTcs, excludeVat, selectedTcs, selectedCurrency, selectedDate]);
 
   const resetErrors = () => {
     setQuotationErrors([]);
@@ -299,6 +359,13 @@ const EditQuotation = ({ baseData }: Props) => {
     });
 
     resetQuotation();
+    
+    // Clear auto-draft after successful submission
+    if (sessionData) {
+      await deleteAutoDraftHandler(sessionData.user.userId);
+      setHasUnsavedChanges(false);
+    }
+    
     setIsCreated(true);
     router.push(paths.dashboard.quotations.edited(res.data));
   };
@@ -394,6 +461,10 @@ const EditQuotation = ({ baseData }: Props) => {
     <Card>
       <CardContent>
         <Stack spacing={2}>
+          {/* Auto-draft info message */}
+          <Alert severity="info" sx={{ mb: 2 }}>
+            Your progress will be saved automatically as a draft if you are logged out before submitting.
+          </Alert>
           <EditQuotationBasicInfo
             tin={company.tin ?? "N/A"}
             quotationId={quotationId}

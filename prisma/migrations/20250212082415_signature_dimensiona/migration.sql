@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE `user_signature` ADD COLUMN `height` INTEGER NOT NULL DEFAULT 30,
-    ADD COLUMN `width` INTEGER NOT NULL DEFAULT 120;

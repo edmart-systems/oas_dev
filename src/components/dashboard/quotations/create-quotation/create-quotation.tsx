@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Alert,
   Button,
   Card,
   CardActions,
@@ -59,6 +60,8 @@ import QuotationDraftDialog from "./draft-preview/quotation-draft-dialog";
 import { useSession } from "next-auth/react";
 import nProgress from "nprogress";
 import { MAXIMUM_QUOTATION_DRAFTS } from "@/utils/constants.utils";
+import { saveAutoDraftHandler, getLatestAutoDraftHandler, deleteAutoDraftHandler } from "../auto-draft-api";
+import AutoDraftRecoveryDialog from "../auto-draft-recovery-dialog";
 
 const MyDivider = styled(Divider)(({ theme }) => ({
   background: theme.palette.mode === "dark" ? "#b8b8b8" : "#dadada",
@@ -148,6 +151,9 @@ const CreateQuotation = ({ baseData }: Props) => {
   const [isCreated, setIsCreated] = useState<boolean>(false);
   const [openResetFields, setOpenResetField] = useState<boolean>(false);
   const [openDraftPreview, setOpenDraftPreview] = useState<boolean>(false);
+  const [autoDraftData, setAutoDraftData] = useState<{ draft: NewQuotation; timestamp: Date } | null>(null);
+  const [showAutoDraftDialog, setShowAutoDraftDialog] = useState<boolean>(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
 
   const calculatePrices = () => {
     startCalculation(() => {
@@ -211,9 +217,7 @@ const CreateQuotation = ({ baseData }: Props) => {
       setExcludeVat(selectedDraft.vatExcluded);
       setLineItems(selectedDraft.lineItems);
 
-      toast("Quotation Draft Opened Successfully", {
-        type: "success",
-      });
+      // Draft opened silently to avoid duplicate messages
     } catch (err) {
       // console.log(err);
     }
@@ -247,7 +251,151 @@ const CreateQuotation = ({ baseData }: Props) => {
   useEffect(() => {
     setSelectedDraftHandler();
     setReuseQuotationHandler();
+    checkForAutoDraft();
   }, [selectedDraftParams, reuseQuotation]);
+
+  // Check for auto-draft on component mount
+  const checkForAutoDraft = async () => {
+    if (!sessionData) return;
+    
+    const { user } = sessionData;
+    const autoRestore = searchParams.get('autoRestore');
+    
+    if (autoRestore === 'true') {
+      // Auto-restore from quotations page
+      const autoDraft = await getLatestAutoDraftHandler(user.userId);
+      if (autoDraft) {
+        const draft = autoDraft.draft;
+        setSelectedQuoteType(draft.type);
+        setSelectedCategory(draft.category);
+        setQuotationId(draft.quotationId);
+        setEditTcs(draft.tcsEdited);
+        setSelectedTcs(draft.tcs);
+        setSelectedCurrency(draft.currency);
+        setClientData(draft.clientData);
+        setExcludeVat(draft.vatExcluded);
+        setLineItems(draft.lineItems);
+        
+        // Auto-draft restored silently
+      }
+    } else {
+      // Normal check for auto-draft dialog
+      const autoDraft = await getLatestAutoDraftHandler(user.userId);
+      if (autoDraft) {
+        setAutoDraftData(autoDraft);
+        setShowAutoDraftDialog(true);
+      }
+    }
+  };
+
+  // Handle auto-draft recovery
+  const handleRestoreAutoDraft = () => {
+    if (!autoDraftData) return;
+    
+    const draft = autoDraftData.draft;
+    setQuotationErrors([]);
+    setSelectedQuoteType(draft.type);
+    setSelectedCategory(draft.category);
+    setQuotationId(draft.quotationId);
+    setEditTcs(draft.tcsEdited);
+    setSelectedTcs(draft.tcs);
+    setSelectedCurrency(draft.currency);
+    setClientData(draft.clientData);
+    setExcludeVat(draft.vatExcluded);
+    setLineItems(draft.lineItems);
+    
+    setShowAutoDraftDialog(false);
+    setAutoDraftData(null);
+    
+    toast("Auto-draft restored successfully", {
+      type: "success",
+    });
+  };
+
+  const handleDiscardAutoDraft = async () => {
+    if (!sessionData) return;
+    
+    const { user } = sessionData;
+    await deleteAutoDraftHandler(user.userId);
+    
+    setShowAutoDraftDialog(false);
+    setAutoDraftData(null);
+    
+    toast("Auto-draft discarded", {
+      type: "info",
+    });
+  };
+
+  // Auto-save functionality
+  const performAutoSave = async () => {
+    console.log('Auto-save triggered', { sessionData: !!sessionData, hasUnsavedChanges });
+    
+    if (!sessionData || !hasUnsavedChanges) {
+      console.log('Auto-save skipped: no session or no changes');
+      return;
+    }
+    
+    const { user } = sessionData;
+    
+    // Only auto-save if there's meaningful content
+    const hasContent = clientData.name || 
+                      lineItems.some(item => item.name || item.description);
+    
+    console.log('Auto-save content check:', { hasContent, clientName: clientData.name, lineItemsCount: lineItems.length });
+    
+    if (!hasContent) {
+      console.log('Auto-save skipped: no meaningful content');
+      return;
+    }
+    
+    const autoDraft: NewQuotation = {
+      quotationId: quotationId,
+      time: getTimeNum(quotationDate),
+      type: selectedQuoteType,
+      category: selectedCategory,
+      tcsEdited: editTcs,
+      vatExcluded: excludeVat,
+      tcs: selectedTcs,
+      currency: selectedCurrency,
+      clientData: clientData,
+      lineItems: lineItems,
+    };
+    
+    console.log('Saving auto-draft for user:', user.userId);
+    const result = await saveAutoDraftHandler(autoDraft, user.userId);
+    console.log('Auto-save result:', result);
+  };
+
+  // Listen for auto-save trigger from activity monitor
+  useEffect(() => {
+    const handleAutoSave = () => {
+      console.log('Auto-save triggered by activity monitor');
+      performAutoSave();
+    };
+    
+    window.addEventListener('triggerAutoSave', handleAutoSave);
+    
+    return () => {
+      window.removeEventListener('triggerAutoSave', handleAutoSave);
+    };
+  }, [hasUnsavedChanges, clientData, lineItems, sessionData]);
+
+  // Periodic auto-save every 2 minutes
+  useEffect(() => {
+    if (!hasUnsavedChanges) return;
+    
+    const autoSaveInterval = setInterval(() => {
+      performAutoSave();
+    }, 2 * 60 * 1000); // 2 minutes
+    
+    return () => clearInterval(autoSaveInterval);
+  }, [hasUnsavedChanges, clientData, lineItems]);
+
+  // Track changes to enable auto-save
+  useEffect(() => {
+    console.log('Form data changed, marking as unsaved');
+    setHasUnsavedChanges(true);
+  }, [clientData, lineItems, selectedQuoteType, selectedCategory, editTcs, excludeVat, selectedTcs, selectedCurrency]);
 
   useEffect(() => {
     calculatePrices();
@@ -349,13 +497,18 @@ const CreateQuotation = ({ baseData }: Props) => {
     dispatch(
       removeQuotationDraft({ draftId: quotationId, userId: user.userId })
     );
+    
+    // Clear auto-draft after successful submission
+    await deleteAutoDraftHandler(user.userId);
+    setHasUnsavedChanges(false);
+    
     setIsCreated(true);
     const createdQuotationId = res.data as string;
     nProgress.start();
     router.push(paths.dashboard.quotations.single(createdQuotationId));
   };
 
-  const saveQuotationDraftHandler = () => {
+  const saveQuotationDraftHandler = async () => {
     if (!sessionData) return null;
 
     const { user } = sessionData;
@@ -409,6 +562,9 @@ const CreateQuotation = ({ baseData }: Props) => {
         quotationDraft: quotationDraft,
       })
     );
+
+    // Delete auto-draft when saving as manual draft
+    await deleteAutoDraftHandler(user.userId);
 
     toast("Quotation Draft Saved Successfully", {
       type: "success",
@@ -503,9 +659,15 @@ const CreateQuotation = ({ baseData }: Props) => {
   // }, [selectedQuoteType]);
 
   return (
+    <>
     <Card>
       <CardContent>
         <Stack spacing={2}>
+          {/* Auto-draft info message */}
+          <Alert severity="info" sx={{ mb: 2 }}>
+            Your progress will be saved automatically as a draft if you are logged out before submitting.
+          </Alert>
+          
           <BasicInfo
             tin={company.tin ?? "N/A"}
             quotationTypes={quotationTypes}
@@ -641,6 +803,16 @@ const CreateQuotation = ({ baseData }: Props) => {
         />
       )}
     </Card>
+    
+    {/* Auto-draft recovery dialog */}
+    <AutoDraftRecoveryDialog
+      open={showAutoDraftDialog}
+      onClose={() => setShowAutoDraftDialog(false)}
+      onRestore={handleRestoreAutoDraft}
+      onDiscard={handleDiscardAutoDraft}
+      autoDraft={autoDraftData}
+    />
+    </>
   );
 };
 

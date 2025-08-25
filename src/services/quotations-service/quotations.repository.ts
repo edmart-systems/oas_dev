@@ -1428,6 +1428,7 @@ export class QuotationsRepository {
       const createdDraft = await this.prisma.quotation_draft.count({
         where: {
           userId: userId,
+          draft_type: 'manual', // Only count manual drafts for limit checking
         },
       });
 
@@ -1440,7 +1441,8 @@ export class QuotationsRepository {
 
   recordQuotationDraft = async (
     quotationDraft: NewQuotation,
-    userId: number
+    userId: number,
+    draftType: 'manual' | 'auto' = 'manual'
   ): Promise<boolean> => {
     try {
       const { quotationId } = quotationDraft;
@@ -1451,9 +1453,11 @@ export class QuotationsRepository {
           id: BigInt(quotationId),
           userId: userId,
           draft: JSON.stringify(quotationDraft),
+          draft_type: draftType,
         },
         update: {
           draft: JSON.stringify(quotationDraft),
+          draft_type: draftType,
         },
       });
 
@@ -1466,12 +1470,96 @@ export class QuotationsRepository {
     }
   };
 
+  recordAutoDraft = async (
+    quotationDraft: NewQuotation,
+    userId: number
+  ): Promise<boolean> => {
+    try {
+      // Delete existing auto-draft for this user to prevent clutter
+      await this.prisma.quotation_draft.deleteMany({
+        where: {
+          userId: userId,
+          draft_type: 'auto',
+        },
+      });
+
+      // Create new auto-draft with current timestamp as ID
+      const autoDraftId = BigInt(new Date().getTime());
+      const createdDraft = await this.prisma.quotation_draft.create({
+        data: {
+          id: autoDraftId,
+          userId: userId,
+          draft: JSON.stringify(quotationDraft),
+          draft_type: 'auto',
+        },
+      });
+
+      return Promise.resolve(!!createdDraft);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
+    }
+  };
+
+  fetchLatestAutoDraft = async (
+    userId: number
+  ): Promise<{ draft: NewQuotation; timestamp: Date } | null> => {
+    try {
+      const autoDraft = await this.prisma.quotation_draft.findFirst({
+        where: {
+          userId: userId,
+          draft_type: 'auto',
+        },
+        orderBy: {
+          updated_at: 'desc',
+        },
+      });
+
+      if (!autoDraft) return Promise.resolve(null);
+
+      try {
+        const draft: NewQuotation = JSON.parse(autoDraft.draft);
+        return Promise.resolve({
+          draft,
+          timestamp: autoDraft.updated_at,
+        });
+      } catch (err) {
+        logger.error('Error parsing auto-draft', err);
+        return Promise.resolve(null);
+      }
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
+    }
+  };
+
+  deleteAutoDraft = async (userId: number): Promise<boolean> => {
+    try {
+      await this.prisma.quotation_draft.deleteMany({
+        where: {
+          userId: userId,
+          draft_type: 'auto',
+        },
+      });
+      return Promise.resolve(true);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
+    }
+  };
+
   fetchUserQuotationDrafts = async (
     userId: number
   ): Promise<NewQuotation[]> => {
     try {
       const dbQuotationDrafts = await this.prisma.quotation_draft.findMany({
-        where: { userId: userId },
+        where: { 
+          userId: userId
+          // Include both manual and auto drafts in the list
+        },
+        orderBy: {
+          updated_at: 'desc'
+        }
       });
 
       const quotationDrafts: NewQuotation[] = [];
@@ -1479,6 +1567,9 @@ export class QuotationsRepository {
       for (const dbDraft of dbQuotationDrafts) {
         try {
           const draft: NewQuotation = JSON.parse(dbDraft.draft);
+          // Add draft type indicator to the draft object
+          (draft as any).draftType = dbDraft.draft_type;
+          (draft as any).draftTimestamp = dbDraft.updated_at;
           quotationDrafts.push(draft);
         } catch (err) {
           logger.error("Error parsing quotation draft " + dbDraft.id, err);
