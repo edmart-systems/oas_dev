@@ -63,7 +63,15 @@ const FilterQuotationsDialog = () => {
         onClose={closeHandler}
         aria-describedby="filter-quotations-dialog-slide"
         aria-labelledby="draggable-dialog-title"
-        sx={{ display: { xl: "none", lg: "block", md: "block", sm: "block" } }}
+        sx={{ 
+          display: { xl: "none", lg: "block", md: "block", sm: "block" },
+          '& .MuiDialog-paper': {
+            maxHeight: '90vh',
+            margin: '16px',
+            width: 'calc(100% - 32px)',
+            maxWidth: '500px'
+          }
+        }}
       >
         <QuotationsFilterCard closeHandler={closeHandler} />
       </Dialog>

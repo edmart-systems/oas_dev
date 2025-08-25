@@ -173,7 +173,13 @@ const QuotationsFilterCard = ({ closeHandler }: Props) => {
   // }, [newParams]);
 
   return (
-    <Card sx={{ height: "fit-content" }}>
+    <Card sx={{ 
+      height: "fit-content",
+      maxHeight: '85vh',
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'hidden'
+    }}>
       <CardContent>
         <Stack
           direction="row"
@@ -192,7 +198,17 @@ const QuotationsFilterCard = ({ closeHandler }: Props) => {
           )}
         </Stack>
       </CardContent>
-      <CardContent>
+      <CardContent sx={{ 
+        flex: 1,
+        overflow: 'auto',
+        '&::-webkit-scrollbar': {
+          width: '6px'
+        },
+        '&::-webkit-scrollbar-thumb': {
+          backgroundColor: 'rgba(0,0,0,0.2)',
+          borderRadius: '3px'
+        }
+      }}>
         <Stack spacing={3}>
           <TextField
             label="Quotation Id"

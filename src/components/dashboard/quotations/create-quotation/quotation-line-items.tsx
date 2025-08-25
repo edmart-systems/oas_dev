@@ -8,8 +8,18 @@ import React, {
   useRef,
   useState,
   useTransition,
+  useCallback,
 } from "react";
 import QuotationListItem from "./quotation-line-item";
+
+const MemoizedQuotationLineItem = React.memo(QuotationListItem, (prevProps, nextProps) => {
+  return (
+    prevProps.lineItem === nextProps.lineItem &&
+    prevProps.num === nextProps.num &&
+    prevProps.itemsLength === nextProps.itemsLength &&
+    prevProps.selectedCurrency.currency_code === nextProps.selectedCurrency.currency_code
+  );
+});
 import { QuotationInputLineItem } from "@/types/quotations.types";
 import { Currency2 } from "@/types/currency.types";
 import LineItemDialog from "./line-item-dialog";
@@ -49,67 +59,60 @@ const QuotationListItems = ({
     setLineItems((prev) => [...prev, blankLineItem(getTimeNum())]);
   };
 
-  const addFullItem = (item: QuotationInputLineItem) => {
+  const addFullItem = useCallback((item: QuotationInputLineItem) => {
     setLineItems((prev) => [...prev, item]);
-  };
+  }, []);
 
-  const removeItem = (id: number) => {
+  const removeItem = useCallback((id: number) => {
     setLineItems((prev) => prev.filter((item) => item.id !== id));
-  };
+  }, []);
 
-  const updateLineItem = (
+  const updateLineItem = useCallback((
     id: number,
     field: keyof QuotationInputLineItem,
     value: any
   ) => {
-    setLineItems((prev) =>
-      prev.map((item) => {
-        return item.id === id ? { ...item, [field]: value } : item;
-      })
-    );
-  };
+    setLineItems((prev) => {
+      const index = prev.findIndex(item => item.id === id);
+      if (index === -1) return prev;
+      
+      const newItems = [...prev];
+      newItems[index] = { ...newItems[index], [field]: value };
+      return newItems;
+    });
+  }, []);
 
-  const updateFullItem = (updatedItem: QuotationInputLineItem) => {
-    setLineItems((prev) =>
-      prev.map((item) => {
-        return item.id === updatedItem.id ? updatedItem : item;
-      })
-    );
-  };
+  const updateFullItem = useCallback((updatedItem: QuotationInputLineItem) => {
+    setLineItems((prev) => {
+      const index = prev.findIndex(item => item.id === updatedItem.id);
+      if (index === -1) return prev;
+      
+      const newItems = [...prev];
+      newItems[index] = updatedItem;
+      return newItems;
+    });
+  }, []);
 
-  const clearList = () => {
+  const clearList = useCallback(() => {
     setLineItems([blankLineItem(getTimeNum())]);
-  };
+  }, []);
 
-  const moveQuotationItem = (id: number, direction: 1 | 0) => {
+  const moveQuotationItem = useCallback((id: number, direction: 1 | 0) => {
     if (isPending) return;
 
-    startTransition(() => {
-      const index = lineItems.findIndex((item) => item.id === id);
-
-      if (direction === 1) {
-        if (index <= 0) return;
-      } else {
-        if (index === lineItems.length - 1) return;
-      }
-
-      const newList = [...lineItems];
-
-      if (direction === 1) {
-        [newList[index - 1], newList[index]] = [
-          newList[index],
-          newList[index - 1],
-        ];
-      } else {
-        [newList[index], newList[index + 1]] = [
-          newList[index + 1],
-          newList[index],
-        ];
-      }
-
-      setLineItems(newList);
+    setLineItems(prev => {
+      const index = prev.findIndex(item => item.id === id);
+      if (index === -1) return prev;
+      
+      if (direction === 1 && index <= 0) return prev;
+      if (direction === 0 && index >= prev.length - 1) return prev;
+      
+      const newList = [...prev];
+      const targetIndex = direction === 1 ? index - 1 : index + 1;
+      [newList[index], newList[targetIndex]] = [newList[targetIndex], newList[index]];
+      return newList;
     });
-  };
+  }, [isPending]);
 
   return (
     <Stack spacing={2}>
@@ -118,8 +121,8 @@ const QuotationListItems = ({
       </Typography>
       {lineItems.map((item, index) => {
         return (
-          <QuotationListItem
-            key={item.id + "-" + index}
+          <MemoizedQuotationLineItem
+            key={item.id}
             itemsLength={lineItems.length}
             num={index + 1}
             lineItem={item}
