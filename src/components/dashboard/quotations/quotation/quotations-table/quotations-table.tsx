@@ -18,9 +18,11 @@ import QuotationRaw from "./quotation-row";
 type Props = {
   isFetching: boolean;
   visibleRows: SummarizedQuotation[];
+  expandedQuotations?: string[];
+  onToggleExpanded?: (quotationId: string) => void;
 };
 
-const QuotationsTable = ({ isFetching, visibleRows }: Props) => {
+const QuotationsTable = ({ isFetching, visibleRows, expandedQuotations = [], onToggleExpanded }: Props) => {
   const [openRow, setOpenRow] = useState<number>(0);
   const dense = false;
   const emptyRows = 0;
@@ -44,6 +46,8 @@ const QuotationsTable = ({ isFetching, visibleRows }: Props) => {
                     index={index + 1}
                     openIndex={openRow}
                     setOpenIndex={setOpenRow}
+                    isExpanded={expandedQuotations.includes(row.quotationId)}
+                    onToggleExpanded={onToggleExpanded}
                   />
                 ))}
                 {emptyRows > 0 && (

@@ -11,6 +11,7 @@ import { unitsReducer } from "./slices/units.slice";
 import { currenciesReducer } from "./slices/currencies.slice";
 import { quotationsReducer } from "./slices/quotation.slice";
 import { quotationSearchReducer } from "./slices/quotation-search.slice";
+import { quotationTableStateReducer } from "./slices/quotation-table-state.slice";
 import { userReducer } from "./slices/user.slice";
 import { activityReducer } from "./slices/activity.slice";
 
@@ -70,6 +71,11 @@ const quotationSearchPersistConfig = {
   blacklist: ["params"],
 };
 
+const quotationTableStatePersistConfig = {
+  key: "quotationTableState",
+  storage: fixedStorage,
+};
+
 const userPersistConfig = {
   key: "user",
   storage: fixedStorage,
@@ -93,6 +99,10 @@ const rootReducer = combineReducers({
   quotationSearch: persistReducer(
     quotationSearchPersistConfig,
     quotationSearchReducer
+  ),
+  quotationTableState: persistReducer(
+    quotationTableStatePersistConfig,
+    quotationTableStateReducer
   ),
   user: persistReducer(userPersistConfig, userReducer),
   activity: persistReducer(activityPersistConfig, activityReducer),
