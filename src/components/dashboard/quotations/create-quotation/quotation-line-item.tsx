@@ -103,7 +103,6 @@ const QuotationListItem = ({
     <Stack
       pt={2}
       pb={2}
-      // spacing={2}
       sx={(theme) => ({
         cursor: "pointer",
         marginTop: "0px !important",
@@ -120,7 +119,6 @@ const QuotationListItem = ({
           size={{ xl: 0.4, lg: 0.4, md: 0.4, sm: 0.4, xs: 1 }}
           display="flex"
           justifyContent="center"
-          // alignItems="center"
           mt={0.5}
           onClick={openItemEditorHandler}
         >
@@ -187,7 +185,7 @@ const QuotationListItem = ({
               handleFieldChange("units", newValue)
             }
             onChange={(evt, newValue) => handleFieldChange("units", newValue)}
-            renderOption={useCallback((props, option, { inputValue }) => {
+            renderOption={(props: any, option: string, { inputValue }: { inputValue: string }) => {
               if (!inputValue) return <li {...props}>{option}</li>;
               
               const regex = new RegExp(`(${inputValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi");
@@ -209,40 +207,8 @@ const QuotationListItem = ({
                   )}
                 </li>
               );
-            }, [])}
-          />
-          {/* <TextField
-            label="Units"
-            value={lineItem.units || ""}
-            select
-            size="small"
-            fullWidth
-            onChange={(evt) => handleFieldChange("units", evt.target.value)}
-            onClick={openItemEditorHandler}
-          >
-            {units &&
-              units.map((item, index) => {
-                return (
-                  <MenuItem key={item.short_name} value={item.name}>
-                    {item.name}
-                  </MenuItem>
-                );
-              })}
-          </TextField> */}
-
-          {/* <AutoComplete
-            selectedOption={selectedUnit}
-            setSelectedOption={setUnitMethod}
-            staticData={mappedUnits}
-            fieldProps={{
-              label: "Units",
-              variant: "outlined",
-              size: "small",
-              fullWidth: true,
             }}
-            allowOther
-            initValue={lineItem.units ?? ""}
-          /> */}
+          />
         </Grid>
         <Grid size={{ xl: 2, lg: 2, md: 6.4, sm: 5.4, xs: 12 }}>
           <TextField
@@ -287,7 +253,6 @@ const QuotationListItem = ({
           display="flex"
           direction="row"
           justifyContent="space-between"
-          // alignItems="center"
         >
           <Stack>
             <IconButton onClick={deleteFn}>
@@ -297,7 +262,6 @@ const QuotationListItem = ({
           <Stack
             direction="column"
             alignItems="center"
-            // justifyContent="center"
             className="arrange-btns"
             display="none"
           >
@@ -327,7 +291,6 @@ const QuotationListItem = ({
           </Stack>
         </Grid>
       </Grid>
-      {/* <Divider /> */}
       {openAddNewItem && (
         <LineItemDialog
           mode="update"
