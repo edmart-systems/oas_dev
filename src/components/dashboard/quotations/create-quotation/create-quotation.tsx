@@ -12,7 +12,7 @@ import {
   styled,
   Tooltip,
 } from "@mui/material";
-import React, { useEffect, useState, useTransition } from "react";
+import React, { useEffect, useState, useTransition, useCallback, useMemo } from "react";
 import BasicInfo from "./basic-info";
 import ClientInfo from "./client-info";
 import QuotationListItems from "./quotation-line-items";
@@ -20,6 +20,7 @@ import TaxDiscountInfo from "./tax-discount-info";
 import NewQuotationTscInfo from "./new-quotation-tsc-info";
 import NewQuotationPriceSummary from "./new-quotation-price-summary";
 import { OpenInNew, Preview, Save } from "@mui/icons-material";
+import { debounce } from "@/utils/debounce.utils";
 import {
   CreateQuotationPageData,
   NewQuotation,
@@ -155,27 +156,19 @@ const CreateQuotation = ({ baseData }: Props) => {
   const [showAutoDraftDialog, setShowAutoDraftDialog] = useState<boolean>(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
 
-  const calculatePrices = () => {
-    startCalculation(() => {
-      let subtotal = 0;
-      for (const item of lineItems) {
-        if (!item.quantity || !item.unitPrice) continue;
-        subtotal += item.quantity * item.unitPrice;
-      }
-
-      const vat = excludeVat
-        ? 0
-        : (subtotal * selectedTcs.vat_percentage) / 100;
-      const finalTotal = subtotal + vat;
-
-      const pricesSummary = calculateQuotationPricesSummary({
-        lineItems: lineItems,
-        excludeVat: excludeVat,
-        selectedTcs: selectedTcs,
+  const debouncedCalculatePrices = useMemo(
+    () => debounce(() => {
+      startCalculation(() => {
+        const pricesSummary = calculateQuotationPricesSummary({
+          lineItems,
+          excludeVat,
+          selectedTcs,
+        });
+        setPriceSummary(pricesSummary);
       });
-      setPriceSummary(pricesSummary);
-    });
-  };
+    }, 300),
+    [lineItems, excludeVat, selectedTcs]
+  );
 
   const resetQuotation = () => {
     if (isFetching) return;
@@ -327,13 +320,8 @@ const CreateQuotation = ({ baseData }: Props) => {
   };
 
   // Auto-save functionality
-  const performAutoSave = async () => {
-    console.log('Auto-save triggered', { sessionData: !!sessionData, hasUnsavedChanges });
-    
-    if (!sessionData || !hasUnsavedChanges) {
-      console.log('Auto-save skipped: no session or no changes');
-      return;
-    }
+  const performAutoSave = useCallback(async () => {
+    if (!sessionData || !hasUnsavedChanges) return;
     
     const { user } = sessionData;
     
@@ -341,65 +329,55 @@ const CreateQuotation = ({ baseData }: Props) => {
     const hasContent = clientData.name || 
                       lineItems.some(item => item.name || item.description);
     
-    console.log('Auto-save content check:', { hasContent, clientName: clientData.name, lineItemsCount: lineItems.length });
+    if (!hasContent) return;
     
-    if (!hasContent) {
-      console.log('Auto-save skipped: no meaningful content');
-      return;
+    try {
+      const autoDraft: NewQuotation = {
+        quotationId: quotationId,
+        time: getTimeNum(quotationDate),
+        type: selectedQuoteType,
+        category: selectedCategory,
+        tcsEdited: editTcs,
+        vatExcluded: excludeVat,
+        tcs: selectedTcs,
+        currency: selectedCurrency,
+        clientData: clientData,
+        lineItems: lineItems,
+      };
+      
+      await saveAutoDraftHandler(autoDraft, user.userId);
+    } catch (error) {
+      // Auto-save failed - continue without interrupting user workflow
     }
-    
-    const autoDraft: NewQuotation = {
-      quotationId: quotationId,
-      time: getTimeNum(quotationDate),
-      type: selectedQuoteType,
-      category: selectedCategory,
-      tcsEdited: editTcs,
-      vatExcluded: excludeVat,
-      tcs: selectedTcs,
-      currency: selectedCurrency,
-      clientData: clientData,
-      lineItems: lineItems,
-    };
-    
-    console.log('Saving auto-draft for user:', user.userId);
-    const result = await saveAutoDraftHandler(autoDraft, user.userId);
-    console.log('Auto-save result:', result);
-  };
+  }, [sessionData, hasUnsavedChanges, clientData, lineItems, quotationId, quotationDate, selectedQuoteType, selectedCategory, editTcs, excludeVat, selectedTcs, selectedCurrency]);
 
   // Listen for auto-save trigger from activity monitor
   useEffect(() => {
-    const handleAutoSave = () => {
-      console.log('Auto-save triggered by activity monitor');
-      performAutoSave();
-    };
-    
-    window.addEventListener('triggerAutoSave', handleAutoSave);
+    window.addEventListener('triggerAutoSave', performAutoSave);
     
     return () => {
-      window.removeEventListener('triggerAutoSave', handleAutoSave);
+      window.removeEventListener('triggerAutoSave', performAutoSave);
     };
-  }, [hasUnsavedChanges, clientData, lineItems, sessionData]);
+  }, [performAutoSave]);
 
-  // Periodic auto-save every 2 minutes
+  // Periodic auto-save with dynamic interval based on item count
   useEffect(() => {
     if (!hasUnsavedChanges) return;
     
-    const autoSaveInterval = setInterval(() => {
-      performAutoSave();
-    }, 2 * 60 * 1000); // 2 minutes
+    const interval = lineItems.length > 20 ? 5 * 60 * 1000 : 2 * 60 * 1000;
+    const autoSaveInterval = setInterval(performAutoSave, interval);
     
     return () => clearInterval(autoSaveInterval);
-  }, [hasUnsavedChanges, clientData, lineItems]);
+  }, [hasUnsavedChanges, lineItems.length, performAutoSave]);
 
   // Track changes to enable auto-save
-  useEffect(() => {
-    console.log('Form data changed, marking as unsaved');
+  const trackChanges = useCallback(() => {
     setHasUnsavedChanges(true);
-  }, [clientData, lineItems, selectedQuoteType, selectedCategory, editTcs, excludeVat, selectedTcs, selectedCurrency]);
+  }, []);
 
-  useEffect(() => {
-    calculatePrices();
-  }, [lineItems, excludeVat]);
+  useEffect(trackChanges, [clientData, lineItems, selectedQuoteType, selectedCategory, editTcs, excludeVat, selectedTcs, selectedCurrency]);
+
+  useEffect(debouncedCalculatePrices, [debouncedCalculatePrices]);
 
   useEffect(() => {
     dispatch(setUnits(units));

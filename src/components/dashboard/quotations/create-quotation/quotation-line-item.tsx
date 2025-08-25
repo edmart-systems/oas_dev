@@ -18,7 +18,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState, useCallback } from "react";
 import LineItemDialog from "./line-item-dialog";
 import {
   MAX_LINE_ITEM_DESCRIPTION_LENGTH,
@@ -57,10 +57,12 @@ const QuotationListItem = ({
   const isFirst = num === 1;
   const isLast = num === itemsLength;
 
-  const totalPrice =
+  const totalPrice = useMemo(() => 
     lineItem.unitPrice && lineItem.quantity
       ? lineItem.unitPrice * lineItem.quantity
-      : null;
+      : null,
+    [lineItem.unitPrice, lineItem.quantity]
+  );
 
   const openItemEditorHandler = () => {
     if (itemsLength < 4) {
@@ -69,7 +71,7 @@ const QuotationListItem = ({
     setOpenNewItem(true);
   };
 
-  const handleFieldChange = (
+  const handleFieldChange = useCallback((
     field: keyof QuotationInputLineItem,
     value: any
   ) => {
@@ -91,7 +93,7 @@ const QuotationListItem = ({
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [lineItem.id, updateFn]);
 
   const mappedUnits: string[] = useMemo(
     () => units.map((item) => item.name),
@@ -185,8 +187,11 @@ const QuotationListItem = ({
               handleFieldChange("units", newValue)
             }
             onChange={(evt, newValue) => handleFieldChange("units", newValue)}
-            renderOption={(props, option, { inputValue }) => {
-              const parts = option.split(new RegExp(`(${inputValue})`, "gi"));
+            renderOption={useCallback((props, option, { inputValue }) => {
+              if (!inputValue) return <li {...props}>{option}</li>;
+              
+              const regex = new RegExp(`(${inputValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi");
+              const parts = option.split(regex);
 
               return (
                 <li {...props}>
@@ -204,7 +209,7 @@ const QuotationListItem = ({
                   )}
                 </li>
               );
-            }}
+            }, [])}
           />
           {/* <TextField
             label="Units"
