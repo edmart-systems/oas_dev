@@ -266,6 +266,7 @@ export const useTaskManager = (userId: number, apiBaseUrl: string = "/api") => {
   const addMultiTask = () => {
     const { nowISO, endISO } = getUgandaDateTime();
     setMultiTaskData((prev) => [
+        ...prev,
       {
         taskName: "",
         taskDetails: "",
@@ -277,7 +278,6 @@ export const useTaskManager = (userId: number, apiBaseUrl: string = "/api") => {
         subTasks: [],
         completed: false,
       },
-      ...prev,
     ]);
   };
 
@@ -358,7 +358,7 @@ export const useTaskManager = (userId: number, apiBaseUrl: string = "/api") => {
     setLoading(true);
     try {
       let successCount = 0;
-      for (let i = 0; i < multiTaskData.length; i++) {
+      for (let i = multiTaskData.length - 1; i >= 0; i--) {
         const taskData = multiTaskData[i];
         if (taskData.taskName.trim()) {
           if (editTaskId && i === 0) {

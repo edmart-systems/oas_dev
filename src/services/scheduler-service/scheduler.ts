@@ -10,18 +10,24 @@ import {
 } from "./jobs/quotation.jobs";
 import { deleteOldNotificationsJob } from "./jobs/notifications.jobs";
 import { LOCAL_TIMEZONE } from "@/utils/constants.utils";
-import { lockOldTasksJob, pushTasksToCurrentDayJob } from "./jobs/tasks.jobs";
+import { pushPendingTasksJob } from "./jobs/tasks.jobs";
+
+let schedulerStarted = false;
 
 const startScheduler = () => {
+  if (schedulerStarted) {
+    logger.info("Scheduler already running, skipping duplicate start");
+    return;
+  }
+  
+  schedulerStarted = true;
   logger.info("Scheduler instantiated!");
   console.log("Scheduler starting at:", new Date().toISOString());
   console.log("LOCAL_TIMEZONE:", LOCAL_TIMEZONE);
 
-  // Test job every 10 seconds
-  const testJob = schedule.scheduleJob("*/10 * * * * *", () => {
-    console.log("Test job running at:", new Date().toISOString());
-    logger.info("Test job executed successfully");
-  });
+
+
+
 
   const recurring_7_10_13_16_19_Rule = new schedule.RecurrenceRule();
   recurring_7_10_13_16_19_Rule.hour = [7, 10, 13, 16, 19];
@@ -99,15 +105,13 @@ const startScheduler = () => {
         const quotationExpiryRes: ActionResponse =
           await deleteOldNotificationsJob();
 
-        const expiredTasksRes: ActionResponse = await lockOldTasksJob();
-
         //Add other jobs above this line
         const completionMessage =
           jobsName +
           " Completed" +
           `Delete Old Notifications: ${String(quotationExpiryRes.status)}: ${
             quotationExpiryRes.message
-          }\nLock Old Tasks: ${expiredTasksRes.message}`;
+          }`;
         logger.info(completionMessage);
       } catch (err) {
         logger.info(jobsName + " Failed");
@@ -118,23 +122,28 @@ const startScheduler = () => {
 
 
 
-  const daily_00_10_Rule = new schedule.RecurrenceRule();
-  daily_00_10_Rule.hour = 0;
-  daily_00_10_Rule.minute = 10;
-  daily_00_10_Rule.second = 0;
-  daily_00_10_Rule.tz = LOCAL_TIMEZONE;
+  const dailyTaskProcessingRule = new schedule.RecurrenceRule();
+  dailyTaskProcessingRule.hour = 0; 
+  dailyTaskProcessingRule.minute = 0;
+  dailyTaskProcessingRule.second = 0;
+  dailyTaskProcessingRule.tz = LOCAL_TIMEZONE;
 
-  const daily_00_10_Jobs = schedule.scheduleJob(daily_00_10_Rule, async () => {
-    const jobsName = "Daily 00:10 Jobs";
+  const dailyTaskProcessingJobs = schedule.scheduleJob(dailyTaskProcessingRule, async () => {
+    const jobsName = "Daily Task Processing - Push Pending Tasks";
     try {
       logger.info(jobsName + " Started");
-      const pushTasksRes: ActionResponse = await pushTasksToCurrentDayJob();
-      logger.info(jobsName + " Completed: " + pushTasksRes.message);
+      const pushPendingRes: ActionResponse = await pushPendingTasksJob();
+      logger.info(jobsName + " Completed: " + pushPendingRes.message);
     } catch (err) {
       logger.info(jobsName + " Failed");
       logger.error(err);
     }
   });
+
+  logger.info("Scheduler jobs configured:");
+  logger.info("- Daily 00:00: Delete old notifications");
+  logger.info("- Test 13:50: Process tasks (expire + push) (TESTING)");
+  logger.info("- Multiple times daily: Quotation jobs");
   // const firstDayOfMonthJobs = schedule.scheduleJob("0 0 0 1 * *", () => {});
   // const firstJanYearlyJobs = schedule.scheduleJob("0 0 0 1 1 *", () => {});
   // const everyMondayJobs = schedule.scheduleJob("0 0 0 * * 1", () => {});

@@ -51,7 +51,7 @@ export const TaskFailedDialog: React.FC<TaskFailedDialogProps> = ({
       </DialogTitle>
       <DialogContent>
         <Typography>
-          Are you sure you want to mark "{taskName}" as Failed? This action cannot be undone.
+          Are you sure you want to mark &quot;{taskName}&quot; as Failed? This action cannot be undone.
         </Typography>
       </DialogContent>
       <DialogActions>

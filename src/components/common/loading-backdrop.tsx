@@ -1,6 +1,7 @@
+// src/components/common/loading-backdrop.tsx
 import React, { Dispatch, SetStateAction } from "react";
 import Backdrop from "@mui/material/Backdrop";
-import Image from "next/image";
+import Box from "@mui/material/Box";
 
 type Props = {
   open: boolean;
@@ -18,11 +19,16 @@ const LoadingBackdrop = ({ open, setOpen }: Props) => {
       open={open}
       onClick={() => false}
     >
-      <Image
+      <Box
+        component="img"
         alt="Loading"
         src="/assets/Animation.gif"
-        width={150}
-        height={35}
+        sx={{
+          display: "inline-block",
+          height: "auto",
+          maxWidth: "100%",
+          width: "auto",
+        }}
       />
     </Backdrop>
   );

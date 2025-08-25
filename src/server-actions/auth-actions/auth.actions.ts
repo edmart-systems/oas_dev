@@ -116,7 +116,7 @@ export const authOptions: NextAuthOptions = {
     jwt: async ({ token, user, account, profile, isNewUser, trigger, session }) => {
       if (trigger === "update" && session) {
         // Handle session updates (like profile picture changes)
-        token.user = { ...token.user, ...session.user };
+        token.user = { ...(token.user || {}), ...session.user };
         token.picture = session.user.profile_picture;
         return token;
       }

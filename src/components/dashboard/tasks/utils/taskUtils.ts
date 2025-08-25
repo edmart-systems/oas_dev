@@ -72,12 +72,13 @@ export function sortTasks(
         return isAsc ? aPriority - bPriority : bPriority - aPriority;
       }
       case "startTime": {
-        const startTimeDiff = isAsc ? a.startTime - b.startTime : b.startTime - a.startTime;
-        if (startTimeDiff === 0) {
-          // If startTime is the same, sort by creation time (most recent first)
-          return b.time - a.time;
+        // Sort by full timestamp (date + time)
+        const timeDiff = isAsc ? a.startTime - b.startTime : b.startTime - a.startTime;
+        // If start times are identical, sort by creation time (time field)
+        if (timeDiff === 0) {
+          return isAsc ? a.time - b.time : b.time - a.time;
         }
-        return startTimeDiff;
+        return timeDiff;
       }
       case "user": {
         const aUser = a.user ? `${a.user.firstName} ${a.user.lastName}` : "";

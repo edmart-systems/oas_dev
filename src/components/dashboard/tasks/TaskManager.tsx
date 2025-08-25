@@ -530,6 +530,10 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                         const existingTime = task.startTime.slice(11) || "08:00:00";
                         const newDateTime = `${selectedDate}T${existingTime}`;
                         updateMultiTask(index, "startTime", newDateTime);
+                        // Auto-update end date to match start date
+                        const endTime = task.endTime.slice(11) || "23:59:00";
+                        const newEndDateTime = `${selectedDate}T${endTime}`;
+                        updateMultiTask(index, "endTime", newEndDateTime);
                       }
                     }}
                     fullWidth

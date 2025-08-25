@@ -19,8 +19,7 @@ import {
   InputLabel, 
   Select, 
   MenuItem,
-  Button,
-  Input
+  Button
 } from "@mui/material";
 import { PhotoCamera } from "@mui/icons-material";
 import Image from "next/image";
@@ -152,7 +151,7 @@ const SettingsPage = () => {
               size={80} 
             />
             <Box sx={{ mt: 2, display: 'flex', gap: 1, flexDirection: 'column', alignItems: 'center' }}>
-              <Input
+              <input
                 accept="image/*"
                 style={{ display: 'none' }}
                 id="profile-picture-upload"
