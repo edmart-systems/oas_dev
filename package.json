@@ -2,7 +2,7 @@
   "name": "office-automation",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://dev.oas.edmartsystems.com",
+  "homepage": "http://localhost:3765",
   "scripts": {
     "dev": "nodemon server.js",
     "build": "next build",

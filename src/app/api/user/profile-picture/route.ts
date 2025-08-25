@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
+import { writeFile, mkdir, unlink } from "fs/promises";
 import { join } from "path";
 import { existsSync } from "fs";
 import { ActionResponse } from "@/types/actions-response.types";
@@ -57,6 +57,24 @@ export async function POST(request: NextRequest) {
 
     await writeFile(filePath, buffer);
 
+    // Get current profile picture to delete old file
+    const currentUser = await prisma.user.findUnique({
+      where: { userId: session.user.userId },
+      select: { profile_picture: true }
+    });
+
+    // Delete old profile picture file if exists
+    if (currentUser?.profile_picture) {
+      try {
+        const oldFilePath = join(process.cwd(), "public", currentUser.profile_picture);
+        if (existsSync(oldFilePath)) {
+          await unlink(oldFilePath);
+        }
+      } catch (error) {
+        console.log("Could not delete old profile picture:", error);
+      }
+    }
+
     const profilePictureUrl = `/uploads/profiles/${fileName}`;
     
     await prisma.user.update({
@@ -89,6 +107,24 @@ export async function DELETE(request: NextRequest) {
         { status: false, message: "Unauthorized" },
         { status: 401 }
       );
+    }
+
+    // Get current profile picture to delete file
+    const currentUser = await prisma.user.findUnique({
+      where: { userId: session.user.userId },
+      select: { profile_picture: true }
+    });
+
+    // Delete profile picture file if exists
+    if (currentUser?.profile_picture) {
+      try {
+        const filePath = join(process.cwd(), "public", currentUser.profile_picture);
+        if (existsSync(filePath)) {
+          await unlink(filePath);
+        }
+      } catch (error) {
+        console.log("Could not delete profile picture file:", error);
+      }
     }
 
     // Update user profile picture to null in database
