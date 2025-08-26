@@ -349,11 +349,14 @@ const QuotationsTableContainer = ({ quotationsSummary }: Props) => {
     }
 
     if (!compareFilterParamEqual(prevFilterParams, filterParams)) {
-      !isFirstSearch && setOffset(0);
-      !isFirstSearch && dispatch(setSearchOffset(0));
+      setOffset(0);
+      setPage(0);
+      dispatch(setSearchOffset(0));
+      dispatch(setSearchPage(0));
+      fetchQuotations(0, filterParams);
+    } else {
+      fetchQuotations(offset, filterParams);
     }
-
-    fetchQuotations(offset, filterParams);
     return;
   }, [filterParams, offset]);
 
