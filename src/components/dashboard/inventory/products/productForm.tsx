@@ -95,7 +95,7 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
     }
     fetchData();
     setGeneralError(null);
-  }, [initialData, openForm]);
+  }, [initialData]);
 
     const fetchData = async () => {
 
