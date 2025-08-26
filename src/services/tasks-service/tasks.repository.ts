@@ -613,7 +613,6 @@ export class TasksRepository {
               data: {
                 push_count: nextPushCount,
                 startTime: BigInt(today.getTime()),
-                endTime: BigInt(todayEnd.getTime()),
                 time: BigInt(currentTime),
                 statusId: pushedStatus?.id || task.statusId
               }
@@ -624,7 +623,6 @@ export class TasksRepository {
                 where: { taskId: task.taskId },
                 data: {
                   startTime: BigInt(today.getTime()),
-                  endTime: BigInt(todayEnd.getTime()),
                   time: BigInt(currentTime),
                   statusId: pushedStatus?.id
                 }

@@ -1,7 +1,0 @@
-### Test Push Pending Tasks
-POST http://localhost:3765/api/tasks/push-pending
-Content-Type: application/json
-
-### Test Lock Expired Tasks  
-POST http://localhost:3765/api/tasks/expire
-Content-Type: application/json

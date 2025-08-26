@@ -26,7 +26,9 @@ nextApp
           dev ? "development" : process.env.NODE_ENV
         }`
       );
-      await startScheduler();
+      if (!dev) {
+        await startScheduler();
+      }
     });
   })
   .catch(async (err) => {
@@ -35,8 +37,7 @@ nextApp
 
 const startScheduler = async () => {
   try {
-    const protocol = hostname === "localhost" ? "http" : "https";
-    const res = await fetch(`${protocol}://${hostname}:${port}/api/services/scheduler`, {
+    const res = await fetch(`https://${hostname}/api/services/scheduler`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

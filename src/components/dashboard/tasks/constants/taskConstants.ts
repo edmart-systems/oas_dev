@@ -18,7 +18,6 @@ export const EDITABLE_TASK_STATUSES: TaskStatus[] = [
   "Failed",
   "Done",
   "Completed",
-  "Pushed",
   "Cancelled"
 ];
 
