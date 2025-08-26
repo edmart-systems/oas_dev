@@ -74,7 +74,7 @@ export const GET = async (req: NextRequest): Promise<NextResponse> => {
     const validHost = (host: string | null) => {
       if (!host) return false;
       return (
-        host.includes("oas.edmartsystems.com") || 
+        host.includes("dev.oas.edmartsystems.com") || 
         host.includes("localhost") ||
         host.includes("127.0.0.1")
       );
