@@ -22,7 +22,6 @@ const TASK_STATUSES: TaskStatus[] = [
   "Failed",
   "Done",
   "Completed",
-  "Pushed",
   "Cancelled",
 ];
 

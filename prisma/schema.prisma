@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-1.1.x"] // c-panel binary target
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -13,9 +13,8 @@ model Role {
   role       String   @db.VarChar(24)
   role_desc  String?  @db.VarChar(160)
   created_at DateTime @default(now())
-  updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
-
-  users User[]
+  updated_at DateTime @default(now())
+  users      User[]
 
   @@map("role")
 }
@@ -25,67 +24,66 @@ model Status {
   status      String   @db.VarChar(24)
   status_desc String?  @db.VarChar(160)
   created_at  DateTime @default(now())
-  updated_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
-
-  users User[]
+  updated_at  DateTime @default(now())
+  users       User[]
 
   @@map("status")
 }
 
 model User {
-  userId          Int      @id @default(autoincrement())
-  co_user_id      String   @unique @db.VarChar(20)
-  firstName       String   @db.VarChar(24)
-  lastName        String   @db.VarChar(24)
-  otherName       String?  @db.VarChar(24)
-  email           String   @unique @db.VarChar(64)
-  email_verified  Int      @default(0)
-  phone_number    String   @unique @db.VarChar(16)
-  phone_verified  Int      @default(0)
-  hash            String   @db.VarChar(244)
-  profile_picture String?  @db.VarChar(120)
-  status_id       Int
-  status_reason   String?  @db.VarChar(260)
-  role_id         Int
-  signed          Int      @default(0)
-  created_at      DateTime @default(now())
-  updated_at      DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+  userId                 Int                @id @default(autoincrement())
+  co_user_id             String             @unique @db.VarChar(20)
+  firstName              String             @db.VarChar(24)
+  lastName               String             @db.VarChar(24)
+  otherName              String?            @db.VarChar(24)
+  email                  String             @unique @db.VarChar(64)
+  email_verified         Int                @default(0)
+  phone_number           String             @unique @db.VarChar(16)
+  phone_verified         Int                @default(0)
+  hash                   String             @db.VarChar(244)
+  profile_picture        String?            @db.VarChar(120)
+  status_id              Int
+  status_reason          String?            @db.VarChar(260)
+  role_id                Int
+  signed                 Int                @default(0)
+  created_at             DateTime           @default(now())
+  updated_at             DateTime           @default(now())
+  createdCategories      Category[]         @relation("CategoryCreator")
+  updatedCategories      Category[]         @relation("CategoryUpdater")
+  Edited_quotation       Edited_quotation[]
+  createdInventoryPoints Inventory_point[]  @relation("InventoryPointCreator")
+  updatedInventoryPoints Inventory_point[]  @relation("InventoryPointUpdater")
+  passwordResets         PasswordReset[]
+  createdProducts        Product[]          @relation("ProductCreator")
+  updatedProducts        Product[]          @relation("ProductUpdater")
+  createdPurchases       Purchase[]         @relation("PurchaseCreator")
+  updatedPurchases       Purchase[]         @relation("PurchaseUpdater")
+  quotations             Quotation[]
+  quotation_drafts       Quotation_draft[]
+  sales                  Sale[]             @relation("SaleSeller")
+  createdSuppliers       Supplier[]         @relation("SupplierCreator")
+  updatedSuppliers       Supplier[]         @relation("SupplierUpdater")
+  createdTags            Tag[]              @relation("TagCreator")
+  updatedTags            Tag[]              @relation("TagUpdater")
+  tasks                  Task[]
+  role                   Role               @relation(fields: [role_id], references: [role_id])
+  status                 Status             @relation(fields: [status_id], references: [status_id])
+  signatures             User_signature?
 
-  role             Role               @relation(fields: [role_id], references: [role_id])
-  status           Status             @relation(fields: [status_id], references: [status_id])
-  quotations       Quotation[]
-  signatures       User_signature[]
-  Edited_quotation Edited_quotation[]
-  quotation_drafts Quotation_draft[]
-  tasks            Task[]
-  passwordResets   PasswordReset[]
-  
-  // Inventory relations
-  createdTags         Tag[] @relation("TagCreator")
-  updatedTags         Tag[] @relation("TagUpdater")
-  createdCategories   Category[] @relation("CategoryCreator")
-  updatedCategories   Category[] @relation("CategoryUpdater")
-  createdSuppliers    Supplier[] @relation("SupplierCreator")
-  updatedSuppliers    Supplier[] @relation("SupplierUpdater")
-  createdInventoryPoints Inventory_point[] @relation("InventoryPointCreator")
-  updatedInventoryPoints Inventory_point[] @relation("InventoryPointUpdater")
-  createdProducts     Product[] @relation("ProductCreator")
-  updatedProducts     Product[] @relation("ProductUpdater")
-  createdPurchases    Purchase[] @relation("PurchaseCreator")
-  updatedPurchases    Purchase[] @relation("PurchaseUpdater")
-  sales               Sale[] @relation("SaleSeller")
-
+  @@index([role_id], map: "user_role_id_fkey")
+  @@index([status_id], map: "user_status_id_fkey")
   @@map("user")
 }
 
 model PasswordReset {
-  id        Int      @id @default(autoincrement())
-  token     String   @unique @db.VarChar(244) 
-  userId    Int
-  user      User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  expires_at DateTime 
+  id         Int      @id @default(autoincrement())
+  token      String   @unique
+  userId     Int
+  expires_at DateTime
   created_at DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
+  @@index([userId], map: "password_reset_userId_fkey")
   @@map("password_reset")
 }
 
@@ -94,60 +92,56 @@ model User_signature {
   co_user_id String   @unique
   canUpdate  Int      @default(0)
   dataUrl    String   @db.LongText
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
   height     Int      @default(30)
   width      Int      @default(120)
-  created_at DateTime @default(now())
-  updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
-
-  user User @relation(fields: [co_user_id], references: [co_user_id])
+  user       User     @relation(fields: [co_user_id], references: [co_user_id])
 
   @@map("user_signature")
 }
 
 model Currency {
-  currency_id   Int      @id @default(autoincrement())
-  currency_code String   @db.VarChar(6)
-  currency_name String   @db.VarChar(24)
-  created_at    DateTime @default(now())
-  updated_at    DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
-
-  quotations       Quotation[]
+  currency_id      Int                @id @default(autoincrement())
+  currency_code    String             @db.VarChar(6)
+  currency_name    String             @db.VarChar(24)
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @default(now())
   Edited_quotation Edited_quotation[]
-  Product Product[]
-  Sale Sale[]
+  Product          Product[]
+  quotations       Quotation[]
+  Sale             Sale[]
 
   @@map("currency")
 }
 
 model Unit {
-  unit_id    Int      @id @default(autoincrement())
-  name       String   @db.VarChar(160)
-  short_name String?  @db.VarChar(160)
-  unit_desc  String?  @db.VarChar(160)
-  created_at DateTime @default(now())
-  updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
-
-  Product Product[]
+  unit_id    Int       @id @default(autoincrement())
+  name       String    @db.VarChar(160)
+  short_name String?   @db.VarChar(160)
+  unit_desc  String?   @db.VarChar(160)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now())
+  Product    Product[]
 
   @@map("unit")
 }
 
 model Company {
-  co_id           Int      @id @default(autoincrement())
-  legal_name      String?  @db.VarChar(64)
-  business_name   String   @db.VarChar(64)
+  co_id           Int               @id @default(autoincrement())
+  legal_name      String?           @db.VarChar(64)
+  business_name   String            @db.VarChar(64)
   tin             String?
-  email           String   @db.VarChar(64)
-  phone_number_1  String   @db.VarChar(16)
-  phone_number_2  String?  @db.VarChar(16)
-  landline_number String?  @db.VarChar(16)
-  logo            String?  @db.VarChar(120)
-  web             String?  @db.VarChar(120)
-  created_at      DateTime @default(now())
-  updated_at      DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
-
-  addresses Company_address[]
-  bank      Bank[]
+  email           String            @db.VarChar(64)
+  phone_number_1  String            @db.VarChar(16)
+  phone_number_2  String?           @db.VarChar(16)
+  landline_number String?           @db.VarChar(16)
+  logo            String?           @db.VarChar(120)
+  web             String?           @db.VarChar(120)
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @default(now())
+  bank            Bank[]
+  addresses       Company_address[]
 
   @@map("company")
 }
@@ -169,96 +163,94 @@ model Company_address {
   subcounty     String   @db.VarChar(20)
   village       String   @db.VarChar(20)
   created_at    DateTime @default(now())
-  updated_at    DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+  updated_at    DateTime @default(now())
+  company       Company  @relation(fields: [co_id], references: [co_id])
 
-  company Company @relation(fields: [co_id], references: [co_id])
-
+  @@index([co_id], map: "company_address_co_id_fkey")
   @@map("company_address")
 }
 
 model Bank {
-  bank_id     Int      @id @default(autoincrement())
-  co_id       Int
-  name        String   @db.VarChar(60)
-  branch_name String   @db.VarChar(60)
-  swift_code  String?  @db.VarChar(60)
-  ac_title    String   @db.VarChar(60)
-  ac_number   String   @db.VarChar(60)
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
-
+  bank_id      Int             @id @default(autoincrement())
+  co_id        Int
+  name         String          @db.VarChar(60)
+  branch_name  String          @db.VarChar(60)
+  swift_code   String?         @db.VarChar(60)
+  ac_title     String          @db.VarChar(60)
+  ac_number    String          @db.VarChar(60)
+  created_at   DateTime        @default(now())
+  updated_at   DateTime        @default(now())
   company      Company         @relation(fields: [co_id], references: [co_id])
   quotationTcs Quotation_tcs[]
 
+  @@index([co_id], map: "bank_co_id_fkey")
   @@map("bank")
 }
 
 model Quotation_type {
-  type_id Int    @id @default(autoincrement())
-  name    String @db.VarChar(60)
-
-  quotationTcs     Quotation_tcs[]
-  quotations       Quotation[]
+  type_id          Int                @id @default(autoincrement())
+  name             String             @db.VarChar(60)
   Edited_quotation Edited_quotation[]
+  quotations       Quotation[]
+  quotationTcs     Quotation_tcs[]
 
   @@map("quotation_type")
 }
 
 model Quotation_category {
-  cat_id Int    @id @default(autoincrement())
-  cat    String @db.VarChar(60)
-
-  quotations       Quotation[]
+  cat_id           Int                @id @default(autoincrement())
+  cat              String             @db.VarChar(60)
   Edited_quotation Edited_quotation[]
+  quotations       Quotation[]
 
   @@map("quotation_category")
 }
 
 model Quotation_tcs {
-  tc_id                      Int      @id @default(autoincrement())
+  tc_id                      Int                @id @default(autoincrement())
   delivery_days              Int
-  delivery_words             String   @db.VarChar(120)
+  delivery_words             String             @db.VarChar(120)
   validity_days              Int
-  validity_words             String?  @db.VarChar(120)
+  validity_words             String?            @db.VarChar(120)
   payment_grace_days         Int?
-  payment_words              String?  @db.VarChar(160)
+  payment_words              String?            @db.VarChar(160)
   initial_payment_percentage Int?
   last_payment_percentage    Int?
-  payment_method_words       String?  @db.VarChar(160)
+  payment_method_words       String?            @db.VarChar(160)
   quotation_type_id          Int
   bank_id                    Int
-  vat_percentage             Int      @default(18)
-  created_at                 DateTime @default(now())
-  updated_at                 DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+  vat_percentage             Int                @default(18)
+  created_at                 DateTime           @default(now())
+  updated_at                 DateTime           @default(now())
+  Edited_quotation           Edited_quotation[]
+  quotations                 Quotation[]
+  bank                       Bank               @relation(fields: [bank_id], references: [bank_id])
+  quotationType              Quotation_type     @relation(fields: [quotation_type_id], references: [type_id])
 
-  quotationType    Quotation_type     @relation(fields: [quotation_type_id], references: [type_id])
-  bank             Bank               @relation(fields: [bank_id], references: [bank_id])
-  quotations       Quotation[]
-  Edited_quotation Edited_quotation[]
-
+  @@index([bank_id], map: "quotation_tcs_bank_id_fkey")
+  @@index([quotation_type_id], map: "quotation_tcs_quotation_type_id_fkey")
   @@map("quotation_tcs")
 }
 
 model Quotation_status {
-  status_id Int    @id @default(autoincrement())
-  status    String @db.VarChar(12)
-
-  Quotation        Quotation[]
+  status_id        Int                @id @default(autoincrement())
+  status           String             @db.VarChar(12)
   Edited_quotation Edited_quotation[]
+  Quotation        Quotation[]
 
   @@map("quotation_status")
 }
 
 model Quotation {
-  id                         Int      @id @default(autoincrement())
-  quotation_id               String   @unique @db.VarChar(12)
-  status_id                  Int      @default(1)
-  co_user_id                 String   @db.VarChar(20)
+  id                         Int                      @id @default(autoincrement())
+  quotation_id               String                   @unique @db.VarChar(12)
+  status_id                  Int                      @default(1)
+  co_user_id                 String                   @db.VarChar(20)
   time                       BigInt
   quotation_type_id          Int
   cat_id                     Int
-  tcs_edited                 Int      @default(0)
-  vat_excluded               Int      @default(0)
+  tcs_edited                 Int                      @default(0)
+  vat_excluded               Int                      @default(0)
   tcs_id                     Int
   currency_id                Int
   client_data_id             Int
@@ -269,36 +261,42 @@ model Quotation {
   payment_grace_days         Int?
   initial_payment_percentage Int?
   last_payment_percentage    Int?
-  edited                     Int      @default(0)
-  created_at                 DateTime @default(now())
-  updated_at                 DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
-
-  quotationStatus      Quotation_status         @relation(fields: [status_id], references: [status_id])
-  quotationType        Quotation_type           @relation(fields: [quotation_type_id], references: [type_id])
-  quotationCategory    Quotation_category       @relation(fields: [cat_id], references: [cat_id])
-  currency             Currency                 @relation(fields: [currency_id], references: [currency_id])
-  user                 User                     @relation(fields: [co_user_id], references: [co_user_id])
-  client_data          Quotation_client_data    @relation(fields: [client_data_id], references: [client_id])
-  lineItems            Quotation_items[]
-  tcs                  Quotation_tcs            @relation(fields: [tcs_id], references: [tc_id])
-  editedQuotations     Edited_quotation[]
-  quotationTaggedUsers Quotation_tagged_users[]
+  edited                     Int                      @default(0)
+  created_at                 DateTime                 @default(now())
+  updated_at                 DateTime                 @default(now())
+  editedQuotations           Edited_quotation[]
+  quotationCategory          Quotation_category       @relation(fields: [cat_id], references: [cat_id])
+  client_data                Quotation_client_data    @relation(fields: [client_data_id], references: [client_id])
+  user                       User                     @relation(fields: [co_user_id], references: [co_user_id])
+  currency                   Currency                 @relation(fields: [currency_id], references: [currency_id])
+  quotationType              Quotation_type           @relation(fields: [quotation_type_id], references: [type_id])
+  quotationStatus            Quotation_status         @relation(fields: [status_id], references: [status_id])
+  tcs                        Quotation_tcs            @relation(fields: [tcs_id], references: [tc_id])
+  lineItems                  Quotation_items[]
+  quotationTaggedUsers       Quotation_tagged_users[]
 
   @@index([quotation_id], map: "idx_quotation_quotation_id")
+  @@index([cat_id], map: "quotation_cat_id_fkey")
+  @@index([client_data_id], map: "quotation_client_data_id_fkey")
+  @@index([co_user_id], map: "quotation_co_user_id_fkey")
+  @@index([currency_id], map: "quotation_currency_id_fkey")
+  @@index([quotation_type_id], map: "quotation_quotation_type_id_fkey")
+  @@index([status_id], map: "quotation_status_id_fkey")
+  @@index([tcs_id], map: "quotation_tcs_id_fkey")
   @@map("quotation")
 }
 
 model Edited_quotation {
-  id                         Int      @id @default(autoincrement())
-  quotation_id               String   @db.VarChar(12)
-  status_id                  Int      @default(1)
-  co_user_id                 String   @db.VarChar(20)
+  id                         Int                      @id @default(autoincrement())
+  quotation_id               String                   @db.VarChar(12)
+  status_id                  Int                      @default(1)
+  co_user_id                 String                   @db.VarChar(20)
   time                       BigInt
   created_time               BigInt
   quotation_type_id          Int
   cat_id                     Int
-  tcs_edited                 Int      @default(0)
-  vat_excluded               Int      @default(0)
+  tcs_edited                 Int                      @default(0)
+  vat_excluded               Int                      @default(0)
   tcs_id                     Int
   currency_id                Int
   client_data_id             Int
@@ -309,384 +307,404 @@ model Edited_quotation {
   payment_grace_days         Int?
   initial_payment_percentage Int?
   last_payment_percentage    Int?
-  created_at                 DateTime @default(now())
-  updated_at                 DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+  created_at                 DateTime                 @default(now())
+  updated_at                 DateTime                 @default(now())
+  quotationCategory          Quotation_category       @relation(fields: [cat_id], references: [cat_id])
+  client_data                Quotation_client_data    @relation(fields: [client_data_id], references: [client_id])
+  user                       User                     @relation(fields: [co_user_id], references: [co_user_id])
+  currency                   Currency                 @relation(fields: [currency_id], references: [currency_id])
+  originalQuotation          Quotation                @relation(fields: [quotation_id], references: [quotation_id])
+  quotationType              Quotation_type           @relation(fields: [quotation_type_id], references: [type_id])
+  quotationStatus            Quotation_status         @relation(fields: [status_id], references: [status_id])
+  tcs                        Quotation_tcs            @relation(fields: [tcs_id], references: [tc_id])
+  lineItems                  Quotation_items[]
+  quotationTaggedUsers       Quotation_tagged_users[]
 
-  originalQuotation    Quotation                @relation(fields: [quotation_id], references: [quotation_id])
-  quotationStatus      Quotation_status         @relation(fields: [status_id], references: [status_id])
-  quotationType        Quotation_type           @relation(fields: [quotation_type_id], references: [type_id])
-  quotationCategory    Quotation_category       @relation(fields: [cat_id], references: [cat_id])
-  currency             Currency                 @relation(fields: [currency_id], references: [currency_id])
-  user                 User                     @relation(fields: [co_user_id], references: [co_user_id])
-  client_data          Quotation_client_data    @relation(fields: [client_data_id], references: [client_id])
-  lineItems            Quotation_items[]
-  tcs                  Quotation_tcs            @relation(fields: [tcs_id], references: [tc_id])
-  quotationTaggedUsers Quotation_tagged_users[]
-
+  @@index([cat_id], map: "edited_quotation_cat_id_fkey")
+  @@index([client_data_id], map: "edited_quotation_client_data_id_fkey")
+  @@index([co_user_id], map: "edited_quotation_co_user_id_fkey")
+  @@index([currency_id], map: "edited_quotation_currency_id_fkey")
+  @@index([quotation_id], map: "edited_quotation_quotation_id_fkey")
+  @@index([quotation_type_id], map: "edited_quotation_quotation_type_id_fkey")
+  @@index([status_id], map: "edited_quotation_status_id_fkey")
+  @@index([tcs_id], map: "edited_quotation_tcs_id_fkey")
   @@map("edited_quotation")
 }
 
 model Quotation_client_data {
-  client_id      Int     @id @default(autoincrement())
-  name           String?
-  external_ref   String?
-  contact_person String?
-  email          String?
-  phone          String?
-  box_number     Int?
-  country        String?
-  city           String?
-  address_Line_1 String?
-
-  quotations       Quotation[]
+  client_id        Int                @id @default(autoincrement())
+  name             String?
+  external_ref     String?
+  contact_person   String?
+  email            String?
+  phone            String?
+  box_number       Int?
+  country          String?
+  city             String?
+  address_Line_1   String?
   Edited_quotation Edited_quotation[]
+  quotations       Quotation[]
 
   @@map("quotation_client_data")
 }
 
 model Quotation_items {
-  item_id        Int     @id @default(autoincrement())
-  quot_id        Int?
-  edited_quot_id Int?
-  name           String
-  description    String? @db.LongText
-  quantity       Float
-  units          String
-  unitPrice      Float
-
-  quotation        Quotation?        @relation(fields: [quot_id], references: [id])
+  item_id          Int               @id @default(autoincrement())
+  quot_id          Int?
+  edited_quot_id   Int?
+  name             String
+  description      String?           @db.LongText
+  quantity         Float
+  units            String
+  unitPrice        Float
   Edited_quotation Edited_quotation? @relation(fields: [edited_quot_id], references: [id])
+  quotation        Quotation?        @relation(fields: [quot_id], references: [id])
 
+  @@index([edited_quot_id], map: "quotation_items_edited_quot_id_fkey")
+  @@index([quot_id], map: "quotation_items_quot_id_fkey")
   @@map("quotation_items")
 }
 
 model Quotation_tagged_users {
-  id                  Int     @id @default(autoincrement())
-  main_quotation_id   String? @db.VarChar(12)
+  id                  Int               @id @default(autoincrement())
+  main_quotation_id   String?           @db.VarChar(12)
   edited_quotation_id Int?
-  taggedUsers         String  @db.Text
+  taggedUsers         String            @db.Text
+  editedQuotation     Edited_quotation? @relation(fields: [edited_quotation_id], references: [id])
+  mainQuotation       Quotation?        @relation(fields: [main_quotation_id], references: [quotation_id])
 
-  mainQuotation   Quotation?        @relation(fields: [main_quotation_id], references: [quotation_id])
-  editedQuotation Edited_quotation? @relation(fields: [edited_quotation_id], references: [id])
-
+  @@index([edited_quotation_id], map: "quotation_tagged_users_edited_quotation_id_fkey")
+  @@index([main_quotation_id], map: "quotation_tagged_users_main_quotation_id_fkey")
   @@map("quotation_tagged_users")
 }
 
 model Quotation_draft {
-  id         BigInt      @id
+  id         BigInt    @id
   userId     Int
-  draft      String      @db.LongText
-  draft_type DraftType   @default(manual)
-  created_at DateTime    @default(now())
-  updated_at DateTime    @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
-
-  user User @relation(fields: [userId], references: [userId])
+  draft      String    @db.LongText
+  draft_type DraftType @default(manual)
+  created_at DateTime  @default(now()) @db.DateTime(0)
+  updated_at DateTime  @default(now()) @db.DateTime(0)
+  user       User      @relation(fields: [userId], references: [userId], onUpdate: Restrict, map: "quotation_draft_ibfk_1")
 
   @@index([userId, draft_type, updated_at], map: "idx_user_draft_type")
   @@map("quotation_draft")
 }
 
-enum DraftType {
-  manual
-  auto
-}
-
 model Notification_type {
-  id   Int    @id @default(autoincrement())
-  type String
-
+  id            Int            @id @default(autoincrement())
+  type          String
   notifications Notification[]
 
   @@map("notification_type")
 }
 
 model Notification_template {
-  id       Int    @id @default(autoincrement())
-  name     String
-  template String @db.VarChar(380)
-
+  id            Int            @id @default(autoincrement())
+  name          String
+  template      String         @db.VarChar(380)
   notifications Notification[]
 
   @@map("notification_template")
 }
 
 model Notification {
-  id          Int     @id @default(autoincrement())
+  id          Int                    @id @default(autoincrement())
   type_id     Int
   time        BigInt
   userId      Int
   title       String?
-  message     String  @db.Text
+  message     String                 @db.Text
   template_id Int?
-  isRead      Int     @default(0)
-  deleted     Int     @default(0)
+  isRead      Int                    @default(0)
+  deleted     Int                    @default(0)
   action_data String?
+  template    Notification_template? @relation(fields: [template_id], references: [id])
+  type        Notification_type      @relation(fields: [type_id], references: [id])
 
-  type     Notification_type      @relation(fields: [type_id], references: [id])
-  template Notification_template? @relation(fields: [template_id], references: [id])
-
+  @@index([template_id], map: "notification_template_id_fkey")
+  @@index([type_id], map: "notification_type_id_fkey")
   @@map("notification")
 }
 
 model Task_priority {
-  id       Int    @id @default(autoincrement())
-  priority String @db.VarChar(10)
-
-  tasks    Task[]
+  id       Int        @id @default(autoincrement())
+  priority String     @db.VarChar(10)
   subTasks Sub_task[]
+  tasks    Task[]
 
   @@map("task_priority")
 }
 
 model Task_status {
-  id     Int    @id @default(autoincrement())
-  status String @db.VarChar(18)
-
-  tasks    Task[]
+  id       Int        @id @default(autoincrement())
+  status   String     @db.VarChar(18)
   subTasks Sub_task[]
+  tasks    Task[]
 
   @@map("task_status")
 }
 
 model Task {
-  taskId      Int      @id @default(autoincrement())
-  userId      Int
-  statusId    Int      @default(1)
-  priorityId  Int      @default(2)
-  taskName    String   @db.Text
-  taskDetails String?  @db.LongText
-  comments    String?  @db.LongText
-  time        BigInt
-  startTime   BigInt
-  endTime     BigInt?
-  taskLocked  Int      @default(0)
-  deleted     Int      @default(0)
-  push_count  Int      @default(0)
-  archived    Int      @default(0)
-  archived_at DateTime?
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
-
-  subTasks Sub_task[]
-
-  user         User          @relation(fields: [userId], references: [userId])
-  taskStatus   Task_status   @relation(fields: [statusId], references: [id])
+  taskId       Int           @id @default(autoincrement())
+  userId       Int
+  statusId     Int           @default(1)
+  priorityId   Int           @default(2)
+  taskName     String        @db.Text
+  taskDetails  String?       @db.LongText
+  comments     String?       @db.LongText
+  startTime    BigInt
+  endTime      BigInt?
+  taskLocked   Int           @default(0)
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @default(now())
+  time         BigInt
+  archived     Int           @default(0)
+  archived_at  DateTime?
+  deleted      Int           @default(0)
+  push_count   Int           @default(0)
+  subTasks     Sub_task[]
   taskPriority Task_priority @relation(fields: [priorityId], references: [id])
+  taskStatus   Task_status   @relation(fields: [statusId], references: [id])
+  user         User          @relation(fields: [userId], references: [userId])
 
+  @@index([priorityId], map: "task_priorityId_fkey")
+  @@index([statusId], map: "task_statusId_fkey")
+  @@index([userId], map: "task_userId_fkey")
   @@map("task")
 }
 
 model Sub_task {
-  subTaskId   Int      @id @default(autoincrement())
-  taskId      Int
-  statusId    Int      @default(1)
-  priorityId  Int?     @default(2)
-  taskName    String   @db.Text
-  taskDetails String?  @db.LongText
-  comments    String   @db.LongText
-  time        BigInt
-  startTime   BigInt?
-  endTime     BigInt?
-  deleted     Int      @default(0)
-  push_count  Int      @default(0)
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
-
-  parentTask   Task           @relation(fields: [taskId], references: [taskId], onDelete: Cascade)
-  taskStatus   Task_status    @relation(fields: [statusId], references: [id])
+  subTaskId    Int            @id @default(autoincrement())
+  taskId       Int
+  statusId     Int            @default(1)
+  priorityId   Int?           @default(2)
+  taskName     String         @db.Text
+  taskDetails  String?        @db.LongText
+  comments     String         @db.LongText
+  startTime    BigInt?
+  endTime      BigInt?
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @default(now())
+  time         BigInt
+  deleted      Int            @default(0)
+  push_count   Int            @default(0)
   taskPriority Task_priority? @relation(fields: [priorityId], references: [id])
+  taskStatus   Task_status    @relation(fields: [statusId], references: [id])
+  parentTask   Task           @relation(fields: [taskId], references: [taskId], onDelete: Cascade)
 
+  @@index([priorityId], map: "sub_task_priorityId_fkey")
+  @@index([statusId], map: "sub_task_statusId_fkey")
+  @@index([taskId], map: "sub_task_taskId_fkey")
   @@map("sub_task")
 }
 
-model Tag{
-  tag_id Int @id @default(autoincrement()) 
-  tag String @unique 
+model Tag {
+  tag_id     Int       @id @default(autoincrement())
+  tag        String    @unique(map: "Tag_tag_key")
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now())
   created_by String?
   updated_by String?
-  created_at DateTime @default(now())
-  updated_at DateTime  @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+  Product    Product[]
+  creator    User?     @relation("TagCreator", fields: [created_by], references: [co_user_id])
+  updater    User?     @relation("TagUpdater", fields: [updated_by], references: [co_user_id])
 
-  Product Product[]
-  creator User? @relation("TagCreator", fields: [created_by], references: [co_user_id])
-  updater User? @relation("TagUpdater", fields: [updated_by], references: [co_user_id])
-
+  @@index([created_by], map: "tag_created_by_fkey")
+  @@index([updated_by], map: "tag_updated_by_fkey")
   @@map("tag")
 }
 
-model Category{
-  category_id Int @id @default(autoincrement()) 
-  category String @unique 
-  created_by String?
-  updated_by String?
-  created_at DateTime @default(now())
-  updated_at DateTime  @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+model Category {
+  category_id Int       @id @default(autoincrement())
+  category    String    @unique(map: "Category_category_key")
+  created_by  String?
+  updated_by  String?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @default(now())
+  creator     User?     @relation("CategoryCreator", fields: [created_by], references: [co_user_id])
+  updater     User?     @relation("CategoryUpdater", fields: [updated_by], references: [co_user_id])
+  Product     Product[]
 
-  Product Product[]
-  creator User? @relation("CategoryCreator", fields: [created_by], references: [co_user_id])
-  updater User? @relation("CategoryUpdater", fields: [updated_by], references: [co_user_id])
-
+  @@index([created_by], map: "category_created_by_fkey")
+  @@index([updated_by], map: "category_updated_by_fkey")
   @@map("category")
 }
 
 model Supplier {
-  supplier_id         Int       @id @default(autoincrement())
-  supplier_name       String    @unique
-  supplier_email      String?    @unique
+  supplier_id         Int        @id @default(autoincrement())
+  supplier_name       String     @unique(map: "Supplier_supplier_name_key")
+  supplier_email      String?    @unique(map: "Supplier_supplier_email_key")
   supplier_phone      String?
-  supplier_address   String?
-  supplier_tinNumber Int?   @unique
-  created_by         String?
-  updated_by         String?
-  supplier_created_at DateTime @default(now())
-  supplier_updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+  supplier_address    String?
+  supplier_tinNumber  Int?       @unique(map: "Supplier_supplier_tinNumber_key")
+  supplier_created_at DateTime   @default(now())
+  supplier_updated_at DateTime   @default(now())
+  created_by          String?
+  updated_by          String?
+  Product             Product[]
+  Purchase            Purchase[]
+  creator             User?      @relation("SupplierCreator", fields: [created_by], references: [co_user_id])
+  updater             User?      @relation("SupplierUpdater", fields: [updated_by], references: [co_user_id])
 
-  Product Product[]
-  Purchase Purchase[]
-  creator User? @relation("SupplierCreator", fields: [created_by], references: [co_user_id])
-  updater User? @relation("SupplierUpdater", fields: [updated_by], references: [co_user_id])
-
+  @@index([created_by], map: "supplier_created_by_fkey")
+  @@index([updated_by], map: "supplier_updated_by_fkey")
   @@map("supplier")
 }
 
-model Inventory_point{
-  inventory_point_id Int @id @default(autoincrement())
-  inventory_point String @unique
-  created_by String?
-  updated_by String?
-  created_at DateTime @default(now())
-  updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+model Inventory_point {
+  inventory_point_id Int        @id @default(autoincrement())
+  inventory_point    String     @unique(map: "Inventory_point_inventory_point_key")
+  created_by         String?
+  updated_by         String?
+  created_at         DateTime   @default(now())
+  updated_at         DateTime   @default(now())
+  creator            User?      @relation("InventoryPointCreator", fields: [created_by], references: [co_user_id])
+  updater            User?      @relation("InventoryPointUpdater", fields: [updated_by], references: [co_user_id])
+  Purchase           Purchase[]
+  Stock              Stock[]
 
-  Purchase Purchase[]
-  Stock Stock[]
-  creator User? @relation("InventoryPointCreator", fields: [created_by], references: [co_user_id])
-  updater User? @relation("InventoryPointUpdater", fields: [updated_by], references: [co_user_id])
-
+  @@index([created_by], map: "inventory_point_created_by_fkey")
+  @@index([updated_by], map: "inventory_point_updated_by_fkey")
   @@map("inventory_point")
 }
 
 model Product {
-  product_id          Int       @id @default(autoincrement())
-  supplier_id         Int?
-  product_name        String    @unique
-  product_barcode     Int       @unique
-  product_description String
-  unit_id             Int
-  category_id         Int
-  tag_id              Int
-  currency_id         Int
-  product_quantity    Int  @default(0)
-  product_max_quantity Int? @default(0)
-  product_min_quantity Int? @default(0)
-  product_status      Int? @default(1)
-  buying_price        Int @default(0)
-  selling_price       Int @default(0)
-  markup_percentage  Int @default(0)
-  vat_inclusive       Int      @default(0)
-  created_by               String?
-  updated_by              String?
-  product_created_at  DateTime @default(now())
-  product_updated_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
-  
-  unit                Unit      @relation(fields: [unit_id], references: [unit_id])
-  category            Category  @relation(fields: [category_id], references: [category_id])
-  tag                 Tag       @relation(fields: [tag_id], references: [tag_id])
-  currency            Currency  @relation(fields: [currency_id], references: [currency_id])
-  supplier           Supplier? @relation(fields: [supplier_id], references: [supplier_id])
-  Purchase_items Purchase_item[]
-  Stock Stock[]
-  Sale_item Sale_item[]
-  creator User? @relation("ProductCreator", fields: [created_by], references: [co_user_id])
-  updater User? @relation("ProductUpdater", fields: [updated_by], references: [co_user_id])
+  product_id           Int             @id @default(autoincrement())
+  product_name         String          @unique(map: "Product_product_name_key")
+  product_barcode      Int             @unique(map: "Product_product_barcode_key")
+  product_description  String
+  product_quantity     Int             @default(0)
+  unit_id              Int
+  category_id          Int
+  tag_id               Int
+  buying_price         Int             @default(0)
+  selling_price        Int             @default(0)
+  vat_inclusive        Int             @default(0)
+  currency_id          Int
+  created_by           String?
+  updated_by           String?
+  product_status       Int?            @default(1)
+  product_created_at   DateTime        @default(now())
+  product_updated_at   DateTime        @default(now())
+  supplier_id          Int?
+  markup_percentage    Int             @default(0)
+  product_max_quantity Int?            @default(0)
+  product_min_quantity Int?            @default(0)
+  category             Category        @relation(fields: [category_id], references: [category_id])
+  creator              User?           @relation("ProductCreator", fields: [created_by], references: [co_user_id])
+  currency             Currency        @relation(fields: [currency_id], references: [currency_id])
+  supplier             Supplier?       @relation(fields: [supplier_id], references: [supplier_id])
+  tag                  Tag             @relation(fields: [tag_id], references: [tag_id])
+  unit                 Unit            @relation(fields: [unit_id], references: [unit_id])
+  updater              User?           @relation("ProductUpdater", fields: [updated_by], references: [co_user_id])
+  Purchase_items       Purchase_item[]
+  Stock                Stock[]
 
+  @@index([category_id], map: "Product_category_id_fkey")
+  @@index([currency_id], map: "Product_currency_id_fkey")
+  @@index([supplier_id], map: "Product_supplier_id_fkey")
+  @@index([tag_id], map: "Product_tag_id_fkey")
+  @@index([unit_id], map: "Product_unit_id_fkey")
+  @@index([created_by], map: "product_created_by_fkey")
+  @@index([updated_by], map: "product_updated_by_fkey")
   @@map("product")
 }
 
 model Purchase {
-  purchase_id           Int      @id  @default(autoincrement())
-  purchase_quantity     Int
-  purchase_unit_cost    Int
-  purchase_total_cost   Int
-  purchase_created_by   String?
-  purchase_updated_by   String?
-  inventory_point_id  Int @default(1)
+  purchase_id         Int             @id @default(autoincrement())
+  purchase_quantity   Int
+  purchase_unit_cost  Int
+  purchase_total_cost Int
+  purchase_created_by String?
+  purchase_updated_by String?
+  inventory_point_id  Int             @default(1)
   supplier_id         Int
-  purchase_created_at   DateTime @default(now())
-  purchase_updated_at   DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
-
-  supplier           Supplier @relation(fields: [supplier_id], references: [supplier_id])
+  purchase_created_at DateTime        @default(now())
+  purchase_updated_at DateTime        @default(now())
   inventory_point     Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
-  Purchase_items Purchase_item[]
-  creator User? @relation("PurchaseCreator", fields: [purchase_created_by], references: [co_user_id])
-  updater User? @relation("PurchaseUpdater", fields: [purchase_updated_by], references: [co_user_id])
+  creator             User?           @relation("PurchaseCreator", fields: [purchase_created_by], references: [co_user_id])
+  updater             User?           @relation("PurchaseUpdater", fields: [purchase_updated_by], references: [co_user_id])
+  supplier            Supplier        @relation(fields: [supplier_id], references: [supplier_id])
+  Purchase_items      Purchase_item[]
 
+  @@index([inventory_point_id], map: "Purchase_inventory_point_id_fkey")
+  @@index([supplier_id], map: "Purchase_supplier_id_fkey")
+  @@index([purchase_created_by], map: "purchase_purchase_created_by_fkey")
+  @@index([purchase_updated_by], map: "purchase_purchase_updated_by_fkey")
   @@map("purchase")
 }
 
 model Purchase_item {
-  purchase_item_id Int @id @default(autoincrement())
-  purchase_id Int
-  product_id Int
-  quantity Int
-  unit_cost Int
-  total_cost Int
+  purchase_item_id Int      @id @default(autoincrement())
+  purchase_id      Int
+  product_id       Int
+  quantity         Int
+  unit_cost        Int
+  total_cost       Int
+  product          Product  @relation(fields: [product_id], references: [product_id])
+  purchase         Purchase @relation(fields: [purchase_id], references: [purchase_id])
 
-  purchase Purchase @relation(fields: [purchase_id], references: [purchase_id])
-  product Product @relation(fields: [product_id], references: [product_id])
-  
-    @@map("purchase_item")
+  @@index([product_id], map: "Purchase_item_product_id_fkey")
+  @@index([purchase_id], map: "Purchase_item_purchase_id_fkey")
+  @@map("purchase_item")
 }
 
 model Stock {
-  stock_id         Int       @id @default(autoincrement())
-  product_id       Int
+  stock_id           Int             @id @default(autoincrement())
+  product_id         Int
   inventory_point_id Int
-  change_type      String     
-  quantity_change  Int        
-  resulting_stock  Int        
-  reference_id     Int?       
-  created_at       DateTime   @default(now())
+  change_type        String
+  quantity_change    Int
+  resulting_stock    Int
+  reference_id       Int?
+  created_at         DateTime        @default(now())
+  inventory_point    Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
+  product            Product         @relation(fields: [product_id], references: [product_id])
 
-  product          Product    @relation(fields: [product_id], references: [product_id])
-  inventory_point Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
-
+  @@index([inventory_point_id], map: "Stock_inventory_point_id_fkey")
+  @@index([product_id], map: "Stock_product_id_fkey")
   @@map("stock")
 }
 
-model Sale{
+model Sale {
   sale_id             Int      @id @default(autoincrement())
-  sale_no             String   @unique @db.VarChar(12)
+  sale_no             String   @unique(map: "Sale_sale_no_key") @db.VarChar(12)
   seller_id           Int
-  sale_total_quantity Int@default(0)
+  sale_total_quantity Int      @default(0)
   sale_total_amount   Int
-  sale_total_discount Int @default(0)
-  sale_total_tax      Int @default(0)
-  sale_grand_total Int @default(0)
+  sale_total_discount Int      @default(0)
+  sale_total_tax      Int      @default(0)
   currency_id         Int
-  inventory_point_id  Int @default(1)
-  sale_status         Int @default(1)
   sale_created_at     DateTime @default(now())
-  sale_updated_at     DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+  sale_updated_at     DateTime @default(now())
+  inventory_point_id  Int      @default(1)
+  sale_status         Int      @default(1)
+  sale_grand_total    Int      @default(0)
+  currency            Currency @relation(fields: [currency_id], references: [currency_id])
+  seller              User     @relation("SaleSeller", fields: [seller_id], references: [userId])
 
-  currency            Currency  @relation(fields: [currency_id], references: [currency_id])
-  Sale_items          Sale_item[]
-  seller User @relation("SaleSeller", fields: [seller_id], references: [userId])
-
+  @@index([currency_id], map: "Sale_currency_id_fkey")
+  @@index([seller_id], map: "sale_seller_id_fkey")
   @@map("sale")
 }
 
 model Sale_item {
-  sale_item_id   Int    @id @default(autoincrement())
-  sale_id        Int
-  product_id     Int
-  quantity       Int
-  unit_price     Int
-  total_price    Int
-  discount       Int @default(0)
-  tax            Int @default(0)
+  sale_item_id Int @id @default(autoincrement())
+  sale_id      Int
+  product_id   Int
+  quantity     Int
+  unit_price   Int
+  total_price  Int
+  discount     Int @default(0)
+  tax          Int @default(0)
 
-  sale           Sale    @relation(fields: [sale_id], references: [sale_id])
-  product        Product @relation(fields: [product_id], references: [product_id])
-
+  @@index([product_id], map: "Sale_item_product_id_fkey")
+  @@index([sale_id], map: "Sale_item_sale_id_fkey")
   @@map("sale_item")
+}
+
+enum DraftType {
+  manual
+  auto
 }

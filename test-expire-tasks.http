@@ -1,3 +1,0 @@
-### Test Expire Tasks
-POST http://localhost:3765/api/tasks/expire
-Content-Type: application/json

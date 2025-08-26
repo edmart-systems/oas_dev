@@ -123,8 +123,8 @@ const startScheduler = () => {
 
 
   const dailyTaskProcessingRule = new schedule.RecurrenceRule();
-  dailyTaskProcessingRule.hour = 0; 
-  dailyTaskProcessingRule.minute = 0;
+  dailyTaskProcessingRule.hour = 23; 
+  dailyTaskProcessingRule.minute = 59;
   dailyTaskProcessingRule.second = 0;
   dailyTaskProcessingRule.tz = LOCAL_TIMEZONE;
 
@@ -142,8 +142,9 @@ const startScheduler = () => {
 
   logger.info("Scheduler jobs configured:");
   logger.info("- Daily 00:00: Delete old notifications");
-  logger.info("- Test 13:50: Process tasks (expire + push) (TESTING)");
-  logger.info("- Multiple times daily: Quotation jobs");
+  logger.info("- Daily 23:59: Push pending tasks");
+  logger.info("- Multiple times daily: Quotation Expiry (7,10,13,16,19 hrs)");
+  logger.info("- Multiple times daily: Quotation Followup (6,12,18,0 hrs)");
   // const firstDayOfMonthJobs = schedule.scheduleJob("0 0 0 1 * *", () => {});
   // const firstJanYearlyJobs = schedule.scheduleJob("0 0 0 1 1 *", () => {});
   // const everyMondayJobs = schedule.scheduleJob("0 0 0 * * 1", () => {});
