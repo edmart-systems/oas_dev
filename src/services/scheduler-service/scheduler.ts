@@ -12,15 +12,7 @@ import { deleteOldNotificationsJob } from "./jobs/notifications.jobs";
 import { LOCAL_TIMEZONE } from "@/utils/constants.utils";
 import { pushPendingTasksJob } from "./jobs/tasks.jobs";
 
-let schedulerStarted = false;
-
 const startScheduler = () => {
-  if (schedulerStarted) {
-    logger.info("Scheduler already running, skipping duplicate start");
-    return;
-  }
-  
-  schedulerStarted = true;
   logger.info("Scheduler instantiated!");
   console.log("Scheduler starting at:", new Date().toISOString());
   console.log("LOCAL_TIMEZONE:", LOCAL_TIMEZONE);
@@ -123,7 +115,7 @@ const startScheduler = () => {
 
 
   const dailyTaskProcessingRule = new schedule.RecurrenceRule();
-  dailyTaskProcessingRule.hour = 23; 
+  dailyTaskProcessingRule.hour = 6; 
   dailyTaskProcessingRule.minute = 59;
   dailyTaskProcessingRule.second = 0;
   dailyTaskProcessingRule.tz = LOCAL_TIMEZONE;
