@@ -75,6 +75,12 @@ model User {
   updatedPurchases    Purchase[] @relation("PurchaseUpdater")
   sales               Sale[] @relation("SaleSeller")
 
+  // CRM/Orders back-relations
+  createdCustomers    Customer[] @relation("CustomerCreator")
+  updatedCustomers    Customer[] @relation("CustomerUpdater")
+  createdOrders       Order[]    @relation("OrderCreator")
+  updatedOrders       Order[]    @relation("OrderUpdater")
+
   @@map("user")
 }
 
@@ -536,6 +542,7 @@ model Supplier {
   Purchase Purchase[]
   creator User? @relation("SupplierCreator", fields: [created_by], references: [co_user_id])
   updater User? @relation("SupplierUpdater", fields: [updated_by], references: [co_user_id])
+  orders  Order[]
 
   @@map("supplier")
 }
@@ -592,6 +599,7 @@ model Product {
   Inventory_stock Inventory_stock[]
   Transfer_item Transfer_item[]
   Sale_item Sale_item[]
+  Order_item Order_item[]
   creator User? @relation("ProductCreator", fields: [created_by], references: [co_user_id])
   updater User? @relation("ProductUpdater", fields: [updated_by], references: [co_user_id])
 
@@ -726,4 +734,61 @@ model Sale_item {
   product        Product @relation(fields: [product_id], references: [product_id])
 
   @@map("sale_item")
+}
+
+/// Simple CRM customer record for sales flows (independent of orders)
+model Customer {
+  customer_id   Int      @id @default(autoincrement())
+  name          String   @db.VarChar(120)
+  email         String?  @unique @db.VarChar(120)
+  phone         String?  @db.VarChar(24)
+  address       String?  @db.VarChar(200)
+  status        String   @default("Active") @db.VarChar(18)
+  created_by    String?
+  updated_by    String?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+
+  creator User? @relation("CustomerCreator", fields: [created_by], references: [co_user_id])
+  updater User? @relation("CustomerUpdater", fields: [updated_by], references: [co_user_id])
+
+  @@map("customer")
+}
+
+/// Non-stock-affecting order document, linked only to a Supplier; items may reference Product for pricing
+model Order {
+  order_id      Int      @id @default(autoincrement())
+  order_number  String   @unique @db.VarChar(24)
+  supplier_id   Int
+  order_date    DateTime @default(now())
+  delivery_date DateTime?
+  status        String   @default("Pending") @db.VarChar(18)
+  items_count   Int      @default(0)
+  total_amount  Int      @default(0)
+  created_by    String?
+  updated_by    String?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+
+  supplier Supplier @relation(fields: [supplier_id], references: [supplier_id])
+  items    Order_item[]
+
+  creator User? @relation("OrderCreator", fields: [created_by], references: [co_user_id])
+  updater User? @relation("OrderUpdater", fields: [updated_by], references: [co_user_id])
+
+  @@map("inv_order")
+}
+
+model Order_item {
+  order_item_id Int @id @default(autoincrement())
+  order_id      Int
+  product_id    Int
+  quantity      Int
+  unit_price    Int
+  total_price   Int
+
+  order   Order   @relation(fields: [order_id], references: [order_id])
+  product Product @relation(fields: [product_id], references: [product_id])
+
+  @@map("order_item")
 }

@@ -46,7 +46,7 @@ const SupplierTable = ({suppliers, onEdit, onDelete}:Props) => {
               </TableHead>
                <TableBody>
                 {paginatedSuppliers.map((supplier) => (
-                  <TableRow key={supplier.supplier_id}>
+                  <TableRow key={supplier.supplier_id} sx={{ '&:nth-of-type(odd)': { bgcolor: 'action.hover' } }}>
                     <TableCell>{supplier.supplier_name}</TableCell>
                     <TableCell>
                       <Stack spacing={0.5}>

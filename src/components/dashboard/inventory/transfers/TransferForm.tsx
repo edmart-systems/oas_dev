@@ -183,7 +183,7 @@ const TransferForm: React.FC<TransferFormProps> = ({ open, onClose, onSuccess })
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button onClick={handleSubmit} variant="contained" disabled={loading}>
-          {loading ? <MyCircularProgress size={20} /> : "Create"}
+          {loading ? <MyCircularProgress /> : "Create"}
         </Button>
       </DialogActions>
     </Dialog>
