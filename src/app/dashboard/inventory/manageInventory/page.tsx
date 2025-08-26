@@ -13,8 +13,8 @@ import { Stack as PhosphorStack, Tag as TagIcon, StackSimple as CategoryIcon ,Wa
 import InventoryPointMain from "@/components/dashboard/inventory/inventoryPoint/inventoryPointMain";
 import StockMain from "@/components/dashboard/inventory/stock/stockMain";
 import { CurrencyEthIcon } from "@phosphor-icons/react/dist/ssr";
-
-
+import UnitMain from "@/components/dashboard/inventory/units/UnitMain";
+import CurrencyMain from "@/components/dashboard/inventory/units/CurrencyMain";
 
 
 const CategoriesPage = () => {
@@ -112,10 +112,10 @@ const CategoriesPage = () => {
         <h1>Transfers</h1>
       )}
       {(tabValue == 6) && (
-        <h1>Tags</h1>
+        <UnitMain/>
       )}
       {(tabValue == 7) && (
-        <h1>Currencies</h1>
+        <CurrencyMain/>
       )}  
 
     </Stack>

@@ -644,6 +644,47 @@ model Stock {
   @@map("stock")
 }
 
+/// Tracks the current quantity of a product at a specific inventory point
+model Inventory_stock {
+  inv_stock_id        Int @id @default(autoincrement())
+  product_id          Int
+  inventory_point_id  Int
+  quantity            Int @default(0)
+
+  product         Product         @relation(fields: [product_id], references: [product_id])
+  inventory_point Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
+
+  @@unique([product_id, inventory_point_id], map: "ux_inv_stock_product_point")
+  @@map("inventory_stock")
+}
+
+/// Transfer document – groups transfer items from one point to another
+model Transfer {
+  transfer_id            Int      @id @default(autoincrement())
+  from_inventory_point_id Int
+  to_inventory_point_id   Int
+  note                   String?  @db.VarChar(200)
+  created_at             DateTime @default(now())
+
+  from_point Inventory_point @relation("TransferFromPoint", fields: [from_inventory_point_id], references: [inventory_point_id])
+  to_point   Inventory_point @relation("TransferToPoint", fields: [to_inventory_point_id], references: [inventory_point_id])
+  items      Transfer_item[]
+
+  @@map("transfer")
+}
+
+model Transfer_item {
+  transfer_item_id Int @id @default(autoincrement())
+  transfer_id      Int
+  product_id       Int
+  quantity         Int
+
+  transfer Transfer @relation(fields: [transfer_id], references: [transfer_id])
+  product  Product  @relation(fields: [product_id], references: [product_id])
+
+  @@map("transfer_item")
+}
+
 model Sale{
   sale_id             Int      @id @default(autoincrement())
   sale_no             String   @unique @db.VarChar(12)

@@ -62,7 +62,7 @@ const StockAdjustmentForm: React.FC<Props> = ({ open, onClose, onSuccess, initia
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch("/api/inventory/products")
+      const res = await fetch("/api/inventory/product")
       if (!res.ok) throw new Error("Failed to fetch products")
       const data: Product[] = await res.json()
       setProducts(data)
@@ -74,7 +74,7 @@ const StockAdjustmentForm: React.FC<Props> = ({ open, onClose, onSuccess, initia
 
   const fetchInventoryPoints = async () => {
     try {
-      const res = await fetch("/api/inventory/inventory-points")
+      const res = await fetch("/api/inventory/inventory_point")
       if (!res.ok) throw new Error("Failed to fetch inventory points")
       const data: InventoryPoint[] = await res.json()
       setInventoryPoints(data)

@@ -11,16 +11,18 @@ interface CurrencyFormProps {
 
 const CurrencyForm: React.FC<CurrencyFormProps> = ({ open, onClose, onSuccess, currency }) => {
   const [formData, setFormData] = useState({
-    currency: ''
+    currency_code: '',
+    currency_name: '',
   });
 
   useEffect(() => {
     if (currency) {
       setFormData({
-        currency: currency.currency || ''
+        currency_code: currency.currency_code || '',
+        currency_name: currency.currency_name || '',
       });
     } else {
-      setFormData({ currency: '' });
+      setFormData({ currency_code: '', currency_name: '' });
     }
   }, [currency]);
 
@@ -29,9 +31,9 @@ const CurrencyForm: React.FC<CurrencyFormProps> = ({ open, onClose, onSuccess, c
     
     try {
       await saveOrUpdate({
-        endpoint: '/api/inventory/currencies',
+        endpoint: '/api/inventory/currency',
         data: formData,
-        id: currency?.id,
+        id: currency?.currency_id,
         onSuccess: () => {
           onSuccess();
           onClose();
@@ -51,9 +53,18 @@ const CurrencyForm: React.FC<CurrencyFormProps> = ({ open, onClose, onSuccess, c
             <Grid2 size={12}>
               <TextField
                 fullWidth
-                label="Currency"
-                value={formData.currency}
-                onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                label="Currency Code (e.g., USD)"
+                value={formData.currency_code}
+                onChange={(e) => setFormData({ ...formData, currency_code: e.target.value })}
+                required
+              />
+            </Grid2>
+            <Grid2 size={12}>
+              <TextField
+                fullWidth
+                label="Currency Name (e.g., US Dollar)"
+                value={formData.currency_name}
+                onChange={(e) => setFormData({ ...formData, currency_name: e.target.value })}
                 required
               />
             </Grid2>
