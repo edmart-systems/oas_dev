@@ -571,7 +571,7 @@ export class TasksRepository {
       const tasksToPush = await this.prisma.task.findMany({
         where: {
           taskStatus: {
-            status: { in: ["Pending", "In-Progress"] }
+            status: { in: ["Pending", "In-Progress", "Pushed"] }
           },
           startTime: { lte: BigInt(todayEnd.getTime()) }, // Only tasks scheduled for today or before
           deleted: 0,
