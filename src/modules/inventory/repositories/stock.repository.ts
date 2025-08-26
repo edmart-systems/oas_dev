@@ -1,8 +1,8 @@
-import { PrismaClient, Stock } from "@prisma/client";
+import { PrismaClient, type Prisma, Stock } from "@prisma/client";
 import { StockDtoInput } from "../dtos/stock.dto"; 
 
 export class StockRepository {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient | Prisma.TransactionClient) {}
 
   /**
    * Create a stock record

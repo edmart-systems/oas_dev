@@ -1,11 +1,11 @@
-import { PrismaClient, Stock } from "@prisma/client";
+import { Prisma, PrismaClient, Stock } from "@prisma/client";
 import { StockDtoInput } from "../dtos/stock.dto";
 import { StockRepository } from "../repositories/stock.repository";
 import { calculateProductStatus } from "../methods/purchase.method";
 
 export class StockService {
   constructor(
-    private prisma: PrismaClient,
+    private prisma: PrismaClient | Prisma.TransactionClient,
     private stockRepo: StockRepository
   ) {}
 
@@ -88,6 +88,14 @@ export class StockService {
       select: { product_quantity: true },
     });
     return product?.product_quantity ?? 0;
+  }
+
+  async getAvailableAtPoint(product_id: number, inventory_point_id: number): Promise<number> {
+    const row = await this.prisma.inventory_stock.findUnique({
+      where: { product_id_inventory_point_id: { product_id, inventory_point_id } },
+      select: { quantity: true },
+    });
+    return row?.quantity ?? 0;
   }
 
   /**

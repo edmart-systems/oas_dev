@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -24,68 +24,121 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Tabs,
-  Tab,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import { Plus, Minus, Trash, ShoppingCart, MagnifyingGlass, Receipt, List as ListIcon } from "@phosphor-icons/react";
 import PageTitle from "@/components/dashboard/common/page-title";
 import InventoryHorizontalNav from "@/components/dashboard/inventory/inventory-horizontal-nav";
+import { toast } from "react-toastify";
+import SalesHistoryTable from "@/components/dashboard/inventory/sale/salesHistory/salesHistoryTable";
+import { useCurrency } from "@/components/currency/currency-context";
 
-interface Product {
-  id: number;
-  name: string;
-  sku: string;
-  price: number;
-  stock: number;
-  category: string;
+// Backend product row shape (minimal fields used by POS)
+interface ProductRow {
+  product_id: number;
+  product_name: string;
+  sku?: string | null;
+  selling_price?: number | null;
+  product_quantity?: number | null; // aggregate across points
 }
 
-interface CartItem extends Product {
+interface CartItem {
+  product_id: number;
+  product_name: string;
+  unit_price: number;
   quantity: number;
 }
 
-interface Sale {
-  id: number;
-  saleNumber: string;
-  customer: string;
-  date: string;
-  items: number;
-  total: number;
-  status: "Completed" | "Refunded";
+interface SaleRow {
+  sale_id: number;
+  sale_no: string;
+  sale_grand_total?: number | null;
+  sale_created_at?: string | null;
 }
 
-const SalesPage = () => {
-  const [products] = useState<Product[]>([
-    { id: 1, name: "Laptop Dell XPS", sku: "DELL001", price: 1200, stock: 25, category: "Electronics" },
-    { id: 2, name: "Office Chair", sku: "CHAIR001", price: 250, stock: 15, category: "Furniture" },
-    { id: 3, name: "Wireless Mouse", sku: "MOUSE001", price: 35, stock: 50, category: "Electronics" },
-    { id: 4, name: "Keyboard", sku: "KEY001", price: 75, stock: 30, category: "Electronics" },
-    { id: 5, name: "Monitor", sku: "MON001", price: 300, stock: 20, category: "Electronics" },
-    { id: 6, name: "Desk Lamp", sku: "LAMP001", price: 45, stock: 40, category: "Furniture" },
-  ]);
+interface InventoryPointRow { inventory_point_id: number; inventory_point: string }
 
+const SalesPage = () => {
+  const [products, setProducts] = useState<ProductRow[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [tabValue, setTabValue] = useState(0);
-  const [sales, setSales] = useState<Sale[]>([
-    { id: 1, saleNumber: "SALE-001", customer: "John Doe", date: "2024-01-15", items: 3, total: 1485, status: "Completed" },
-    { id: 2, saleNumber: "SALE-002", customer: "Jane Smith", date: "2024-01-15", items: 2, total: 325, status: "Completed" },
-    { id: 3, saleNumber: "SALE-003", customer: "Bob Wilson", date: "2024-01-14", items: 1, total: 1200, status: "Refunded" },
-  ]);
+  const [sales, setSales] = useState<SaleRow[]>([]);
+  const [inventoryPoints, setInventoryPoints] = useState<InventoryPointRow[]>([]);
+  const [inventoryPointId, setInventoryPointId] = useState<number>(1);
+  const [loading, setLoading] = useState(false);
+  const { formatCurrency } = useCurrency();
 
-  const addToCart = (product: Product) => {
-    const existingItem = cart.find(item => item.id === product.id);
-    if (existingItem) {
-      if (existingItem.quantity < product.stock) {
-        setCart(cart.map(item => 
-          item.id === product.id 
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        ));
+  const safeCurrency = (amount: number) => {
+    try {
+      return formatCurrency(amount);
+    } catch {
+      return `$${(amount ?? 0).toFixed(2)}`;
+    }
+  };
+
+  const fetchAll = async () => {
+    try {
+      setLoading(true);
+      const [prodRes, ipRes, salesRes] = await Promise.all([
+        fetch("/api/inventory/product", { credentials: "include" }),
+        fetch("/api/inventory/inventory_point", { credentials: "include" }),
+        fetch("/api/inventory/sale", { credentials: "include" }),
+      ]);
+      // Products
+      if (prodRes.ok) {
+        const prods = await prodRes.json();
+        setProducts(prods);
+      } else {
+        const err = await prodRes.json().catch(() => ({}));
+        throw new Error(err?.error || err?.message || "Failed to fetch products");
       }
+      // Inventory points (tolerate 401 if not logged in client-side)
+      if (ipRes.ok) {
+        const ips = await ipRes.json();
+        setInventoryPoints(ips);
+        if (ips?.[0]) setInventoryPointId(ips[0].inventory_point_id);
+      } else if (ipRes.status === 401) {
+        setInventoryPoints([]);
+        setInventoryPointId(1); // fallback to default
+      } else {
+        const err = await ipRes.json().catch(() => ({}));
+        toast.warn(err?.error || err?.message || "Inventory points unavailable");
+        setInventoryPoints([]);
+      }
+      // Sales history
+      if (salesRes.ok) {
+        const salesList = await salesRes.json();
+        setSales(salesList);
+      } else {
+        const err = await salesRes.json().catch(() => ({}));
+        toast.warn(err?.error || err?.message || "Failed to fetch sales history");
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Failed to load POS data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAll();
+  }, []);
+
+  const addToCart = (product: ProductRow) => {
+    const existingItem = cart.find(item => item.product_id === product.product_id);
+    if (existingItem) {
+      setCart(cart.map(item => 
+        item.product_id === product.product_id 
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      ));
     } else {
-      setCart([...cart, { ...product, quantity: 1 }]);
+      setCart([...cart, { product_id: product.product_id, product_name: product.product_name, unit_price: product.selling_price ?? 0, quantity: 1 }]);
     }
   };
 
@@ -94,16 +147,13 @@ const SalesPage = () => {
       removeFromCart(id);
       return;
     }
-    const product = products.find(p => p.id === id);
-    if (product && quantity <= product.stock) {
-      setCart(cart.map(item => 
-        item.id === id ? { ...item, quantity } : item
-      ));
-    }
+    setCart(cart.map(item => 
+      item.product_id === id ? { ...item, quantity } : item
+    ));
   };
 
   const removeFromCart = (id: number) => {
-    setCart(cart.filter(item => item.id !== id));
+    setCart(cart.filter(item => item.product_id !== id));
   };
 
   const clearCart = () => {
@@ -112,7 +162,7 @@ const SalesPage = () => {
   };
 
   const getSubtotal = () => {
-    return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    return cart.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
   };
 
   const getTax = () => {
@@ -123,30 +173,56 @@ const SalesPage = () => {
     return getSubtotal() + getTax();
   };
 
-  const processSale = () => {
+  const processSale = async () => {
     if (cart.length === 0) return;
-    
-    const customerDisplay = customerName.trim() || 'Walk-in Customer';
-    
-    const newSale: Sale = {
-      id: Date.now(),
-      saleNumber: `SALE-${String(sales.length + 1).padStart(3, '0')}`,
-      customer: customerDisplay,
-      date: new Date().toISOString().split('T')[0],
-      items: cart.reduce((sum, item) => sum + item.quantity, 0),
-      total: getTotal(),
-      status: "Completed"
-    };
-    
-    setSales([newSale, ...sales]);
-    alert(`Sale processed for ${customerDisplay}\nTotal: $${getTotal().toFixed(2)}`);
-    clearCart();
+    try {
+      setLoading(true);
+      const sale_no = `S${Date.now().toString().slice(-10)}`.slice(0, 12);
+      const body: any = {
+        sale_no,
+        seller_id: 1, // TODO: wire to current user
+        currency_id: 1, // TODO: wire to selected currency
+        sale_items: cart.map(ci => ({
+          product_id: ci.product_id,
+          quantity: ci.quantity,
+          unit_price: ci.unit_price,
+          discount: 0,
+          tax: 0,
+        })),
+      };
+      if (typeof inventoryPointId === 'number' && !Number.isNaN(inventoryPointId)) {
+        body.inventory_point_id = inventoryPointId;
+      }
+      const res = await fetch("/api/inventory/sale", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error || err?.message || "Failed to process sale");
+      }
+      toast.success("Sale processed successfully");
+      clearCart();
+      // refresh history
+      const salesRes = await fetch("/api/inventory/sale", { credentials: "include" });
+      if (salesRes.ok) setSales(await salesRes.json());
+    } catch (e: any) {
+      toast.error(e.message || "Failed to process sale");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.sku.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProducts = useMemo(() => {
+    const term = searchTerm.toLowerCase();
+    if (!term) return products;
+    return products.filter(p =>
+      (p.product_name || "").toLowerCase().includes(term) ||
+      (p.sku || "").toLowerCase().includes(term)
+    );
+  }, [products, searchTerm]);
 
   return (
     <Stack >
@@ -190,7 +266,7 @@ const SalesPage = () => {
             <CardContent>
               <Grid container spacing={2}>
                 {filteredProducts.map((product) => (
-                  <Grid item xs={12} sm={6} md={4} key={product.id}>
+                  <Grid item xs={12} sm={6} md={4} key={product.product_id}>
                     <Card 
                       sx={{ 
                         cursor: 'pointer',
@@ -200,21 +276,23 @@ const SalesPage = () => {
                       onClick={() => addToCart(product)}
                     >
                       <CardContent>
-                        <Typography variant="h6" noWrap>{product.name}</Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {product.sku}
-                        </Typography>
+                        <Typography variant="h6" noWrap>{product.product_name}</Typography>
+                        {product.sku && (
+                          <Typography variant="body2" color="text.secondary">
+                            {product.sku}
+                          </Typography>
+                        )}
                         <Typography variant="h5" color="primary" sx={{ mt: 1 }}>
-                          ${product.price}
+                          {safeCurrency(product.selling_price ?? 0)}
                         </Typography>
                         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 1 }}>
                           <Chip 
-                            label={product.category} 
+                            label={"Product"} 
                             size="small" 
                             color="info"
                           />
                           <Typography variant="caption">
-                            Stock: {product.stock}
+                            Stock: {product.product_quantity ?? '-'}
                           </Typography>
                         </Stack>
                       </CardContent>
@@ -245,6 +323,18 @@ const SalesPage = () => {
               }
             />
             <CardContent>
+              <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                <InputLabel>Inventory Point</InputLabel>
+                <Select
+                  label="Inventory Point"
+                  value={inventoryPointId}
+                  onChange={(e) => setInventoryPointId(Number(e.target.value))}
+                >
+                  {inventoryPoints.map(ip => (
+                    <MenuItem key={ip.inventory_point_id} value={ip.inventory_point_id}>{ip.inventory_point}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
               <TextField
                 label="Customer Name (Optional)"
                 value={customerName}
@@ -263,16 +353,16 @@ const SalesPage = () => {
                 <>
                   <List dense>
                     {cart.map((item) => (
-                      <ListItem key={item.id} sx={{ px: 0 }}>
+                      <ListItem key={item.product_id} sx={{ px: 0 }}>
                         <ListItemText
-                          primary={item.name}
-                          secondary={`$${item.price} x ${item.quantity}`}
+                          primary={item.product_name}
+                          secondary={`${safeCurrency(item.unit_price)} x ${item.quantity}`}
                         />
                         <ListItemSecondaryAction>
                           <Stack direction="row" alignItems="center" spacing={1}>
                             <IconButton 
                               size="small" 
-                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
                             >
                               <Minus size={16} />
                             </IconButton>
@@ -281,14 +371,14 @@ const SalesPage = () => {
                             </Typography>
                             <IconButton 
                               size="small" 
-                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
                             >
                               <Plus size={16} />
                             </IconButton>
                             <IconButton 
                               size="small" 
                               color="error"
-                              onClick={() => removeFromCart(item.id)}
+                              onClick={() => removeFromCart(item.product_id)}
                             >
                               <Trash size={16} />
                             </IconButton>
@@ -303,17 +393,17 @@ const SalesPage = () => {
                   <Stack spacing={1}>
                     <Stack direction="row" justifyContent="space-between">
                       <Typography>Subtotal:</Typography>
-                      <Typography>${getSubtotal().toFixed(2)}</Typography>
+                      <Typography>{safeCurrency(getSubtotal())}</Typography>
                     </Stack>
                     <Stack direction="row" justifyContent="space-between">
                       <Typography>Tax (10%):</Typography>
-                      <Typography>${getTax().toFixed(2)}</Typography>
+                      <Typography>{safeCurrency(getTax())}</Typography>
                     </Stack>
                     <Divider />
                     <Stack direction="row" justifyContent="space-between">
                       <Typography variant="h6">Total:</Typography>
                       <Typography variant="h6" color="primary">
-                        ${getTotal().toFixed(2)}
+                        {safeCurrency(getTotal())}
                       </Typography>
                     </Stack>
                   </Stack>
@@ -325,8 +415,9 @@ const SalesPage = () => {
                     startIcon={<Receipt />}
                     onClick={processSale}
                     sx={{ mt: 2 }}
+                    disabled={loading}
                   >
-                    {customerName.trim() ? `Process Sale for ${customerName}` : 'Process Walk-in Sale'}
+                    {loading ? 'Processing...' : (customerName.trim() ? `Process Sale for ${customerName}` : 'Process Walk-in Sale')}
                   </Button>
                 </>
               )}
@@ -335,43 +426,7 @@ const SalesPage = () => {
         </Grid>
       </Grid>
       ) : (
-        <Card>
-          <CardHeader title="Sales History" />
-          <CardContent>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Sale Number</TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Items</TableCell>
-                    <TableCell>Total</TableCell>
-                    <TableCell>Status</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {sales.map((sale) => (
-                    <TableRow key={sale.id}>
-                      <TableCell>{sale.saleNumber}</TableCell>
-                      <TableCell>{sale.customer}</TableCell>
-                      <TableCell>{sale.date}</TableCell>
-                      <TableCell>{sale.items}</TableCell>
-                      <TableCell>${sale.total.toFixed(2)}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={sale.status}
-                          color={sale.status === "Completed" ? "success" : "error"}
-                          size="small"
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </CardContent>
-        </Card>
+        <SalesHistoryTable sales={sales as any} />
       )}
     </Stack>
   );

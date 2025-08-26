@@ -26,9 +26,14 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    // Inject logged-in user's email or id here
+    // Inject logged-in user's identity: default seller_co_user_id from session when missing
+    const sellerDefaults = (!body?.seller_co_user_id)
+      ? { seller_co_user_id: session.user.co_user_id, seller_id: session.user.userId }
+      : {};
+
     const tagData = {
       ...body,
+      ...sellerDefaults,
       sale_created_by: session.user?.email || session.user?.userId || "unknown",
     };
 
@@ -47,10 +52,19 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (err: any) {
-    return NextResponse.json(
-      { error: err.message || "Internal Server Error" },
-      { status: 500 }
-    );
+    const msg = err?.message ?? "Internal Server Error";
+    // User-friendly insufficient stock response
+    if (err?.code === "INSUFFICIENT_STOCK") {
+      return NextResponse.json(
+        {
+          message: "Some items are out of stock at the selected inventory point.",
+          inventory_point_id: err.inventory_point_id,
+          items: err.details ?? [],
+        },
+        { status: 400 }
+      );
+    }
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
 
