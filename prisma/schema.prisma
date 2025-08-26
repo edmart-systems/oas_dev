@@ -550,6 +550,9 @@ model Inventory_point{
 
   Purchase Purchase[]
   Stock Stock[]
+  Inventory_stock Inventory_stock[]
+  transfersFrom Transfer[] @relation("TransferFromPoint")
+  transfersTo   Transfer[] @relation("TransferToPoint")
   creator User? @relation("InventoryPointCreator", fields: [created_by], references: [co_user_id])
   updater User? @relation("InventoryPointUpdater", fields: [updated_by], references: [co_user_id])
 
@@ -586,6 +589,8 @@ model Product {
   supplier           Supplier? @relation(fields: [supplier_id], references: [supplier_id])
   Purchase_items Purchase_item[]
   Stock Stock[]
+  Inventory_stock Inventory_stock[]
+  Transfer_item Transfer_item[]
   Sale_item Sale_item[]
   creator User? @relation("ProductCreator", fields: [created_by], references: [co_user_id])
   updater User? @relation("ProductUpdater", fields: [updated_by], references: [co_user_id])
