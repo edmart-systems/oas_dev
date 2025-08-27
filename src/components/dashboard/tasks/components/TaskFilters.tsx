@@ -9,6 +9,8 @@ const TASK_STATUSES: TaskStatus[] = [
   "Failed",
   "Done",
   "Completed",
+  "Pushed",
+  "Cancelled",
 ];
 
 const TASK_PRIORITIES: TaskPriority[] = ["Urgent", "High", "Moderate", "Low"];
@@ -157,16 +159,37 @@ export const TaskUserFilter = ({ value, onChange, tasks }: TaskUserFilterProps) 
 interface TaskDayFilterProps {
   value: string;
   onChange: (value: string) => void;
+  onDateChange?: (date: string) => void;
 }
 
-export const TaskDayFilter = ({ value, onChange }: TaskDayFilterProps) => {
+export const TaskDayFilter = ({ value, onChange, onDateChange }: TaskDayFilterProps) => {
+  const handleDayChange = (dayValue: string) => {
+    onChange(dayValue);
+    
+    if (onDateChange) {
+      if (dayValue === "") {
+        // All - clear date picker
+        onDateChange("");
+      } else if (dayValue === "today") {
+        // Today - set date picker to today
+        const today = new Date().toISOString().split('T')[0];
+        onDateChange(today);
+      } else if (dayValue === "yesterday") {
+        // Yesterday - set date picker to yesterday
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        onDateChange(yesterday.toISOString().split('T')[0]);
+      }
+    }
+  };
+
   return (
     <FormControl size="small" sx={{ minWidth: 120 }}>
       <InputLabel>Day</InputLabel>
       <Select
         label="Day"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => handleDayChange(e.target.value)}
       >
         <MenuItem value="">All</MenuItem>
         <MenuItem value="today">Today</MenuItem>
@@ -179,16 +202,44 @@ export const TaskDayFilter = ({ value, onChange }: TaskDayFilterProps) => {
 interface TaskDateFilterProps {
   value: string;
   onChange: (value: string) => void;
+  onDayChange?: (day: string) => void;
 }
 
-export const TaskDateFilter = ({ value, onChange }: TaskDateFilterProps) => {
+export const TaskDateFilter = ({ value, onChange, onDayChange }: TaskDateFilterProps) => {
+  const handleDateChange = (dateValue: string) => {
+    onChange(dateValue);
+    
+    if (onDayChange && dateValue) {
+      const selectedDate = new Date(dateValue);
+      const today = new Date();
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      
+      // Normalize dates to compare only date part
+      selectedDate.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
+      yesterday.setHours(0, 0, 0, 0);
+      
+      if (selectedDate.getTime() === today.getTime()) {
+        onDayChange("today");
+      } else if (selectedDate.getTime() === yesterday.getTime()) {
+        onDayChange("yesterday");
+      } else {
+        onDayChange(""); // Clear day filter for other dates
+      }
+    } else if (onDayChange && !dateValue) {
+      // If date is cleared, clear day filter too
+      onDayChange("");
+    }
+  };
+
   return (
     <TextField
       size="small"
       label="Date"
       type="date"
       value={value}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={(e) => handleDateChange(e.target.value)}
       InputLabelProps={{ shrink: true }}
       sx={{ minWidth: 150 }}
     />

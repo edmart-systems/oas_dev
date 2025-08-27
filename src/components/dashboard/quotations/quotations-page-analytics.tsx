@@ -1,7 +1,7 @@
 "use client";
 
 import { Grid2 as Grid, useTheme } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AnalyticV1, { analyticIconStyle } from "../common/analytic-v1";
 import { QuotationStatusCounts } from "@/types/quotations.types";
 import {
@@ -12,14 +12,30 @@ import {
   RemoveCircle,
 } from "@mui/icons-material";
 import { fShortenNumber } from "@/utils/number.utils";
+import { getQuotationsSums } from "@/server-actions/quotations-actions/quotations.actions";
 
 type Props = {
   quotationsSummary: QuotationStatusCounts;
 };
 
 const QuotationsPageAnalytics = ({ quotationsSummary }: Props) => {
-  const { created, sent, accepted, expired, rejected, all } = quotationsSummary;
+  const [counts, setCounts] = useState(quotationsSummary);
   const theme = useTheme();
+  
+  useEffect(() => {
+    const refreshCounts = async () => {
+      const res = await getQuotationsSums();
+      if (res.status && res.data) {
+        setCounts(res.data);
+      }
+    };
+    
+    refreshCounts();
+    const interval = setInterval(refreshCounts, 30000);
+    return () => clearInterval(interval);
+  }, []);
+  
+  const { created, sent, accepted, expired, rejected, all } = counts;
 
   return (
     <Grid container spacing={3}>
@@ -27,7 +43,7 @@ const QuotationsPageAnalytics = ({ quotationsSummary }: Props) => {
         <AnalyticV1
           title="Created"
           icon={<AutoAwesome {...analyticIconStyle(theme, true)} />}
-          content={String(created.count)}
+          content={String(created?.count || 0)}
           // secondaryContent="Quotations"
         />
       </Grid>
@@ -35,7 +51,7 @@ const QuotationsPageAnalytics = ({ quotationsSummary }: Props) => {
         <AnalyticV1
           title="Sent"
           icon={<QueryBuilder {...analyticIconStyle(theme, true)} />}
-          content={String(sent.count)}
+          content={String(sent?.count || 0)}
           // secondaryContent="Quotations"
         />
       </Grid>
@@ -43,7 +59,7 @@ const QuotationsPageAnalytics = ({ quotationsSummary }: Props) => {
         <AnalyticV1
           title="Accepted"
           icon={<Done {...analyticIconStyle(theme, true)} />}
-          content={String(accepted.count)}
+          content={String(accepted?.count || 0)}
           // secondaryContent="Quotations"
         />
       </Grid>
@@ -51,7 +67,7 @@ const QuotationsPageAnalytics = ({ quotationsSummary }: Props) => {
         <AnalyticV1
           title="Rejected"
           icon={<HighlightOff {...analyticIconStyle(theme, true)} />}
-          content={String(rejected.count)}
+          content={String(rejected?.count || 0)}
           // secondaryContent="Quotations"
         />
       </Grid>
@@ -59,7 +75,7 @@ const QuotationsPageAnalytics = ({ quotationsSummary }: Props) => {
         <AnalyticV1
           title="Expired"
           icon={<RemoveCircle {...analyticIconStyle(theme, false)} />}
-          content={String(expired.count)}
+          content={String(expired?.count || 0)}
           // secondaryContent="Quotations"
         />
       </Grid>

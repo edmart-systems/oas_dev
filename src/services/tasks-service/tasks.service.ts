@@ -658,21 +658,7 @@ export class TasksService {
     }
   };
 
-  lockExpiredTasks = async (): Promise<ActionResponse> => {
-    try {
-      const responseMessage = await this.tasksRepo.lockExpiredTasks();
 
-      const res: ActionResponse = {
-        status: true,
-        message: responseMessage,
-      };
-
-      return Promise.resolve(res);
-    } catch (err) {
-      logger.error(err);
-      return Promise.reject(err);
-    }
-  };
 
   pushPendingTasks = async (): Promise<ActionResponse> => {
     try {
@@ -689,6 +675,8 @@ export class TasksService {
       return Promise.reject(err);
     }
   };
+
+
 
   private formattedSubTasks = (subTasks: NewRawSubTask[]): NewRawSubTask[] => {
     const checkSubTasks: NewRawSubTask[] = [];

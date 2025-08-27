@@ -11,9 +11,9 @@ import { Add, Save, KeyboardArrowUp,
 } from "@mui/icons-material";
 import { Trash } from "@phosphor-icons/react/dist/ssr";
 import {SortField, TaskManagerProps} from "@/types/tasks.types";
-import {TaskTableTabs,TaskDeleteDialog,TaskMultiEditDialog,TaskTable,TaskToolbar} from '@/components/dashboard/tasks/components';
+import {TaskTableTabs,TaskDeleteDialog,TaskFailedDialog,TaskMultiEditDialog,TaskTable,TaskToolbar} from '@/components/dashboard/tasks/components';
 import { useTaskManager } from '@/components/dashboard/tasks/hooks/useTaskManager';
-import { TASK_STATUSES, TASK_PRIORITIES } from '@/components/dashboard/tasks/constants/taskConstants';
+import { EDITABLE_TASK_STATUSES, TASK_PRIORITIES } from '@/components/dashboard/tasks/constants/taskConstants';
 import { timestampToISO } from '@/components/dashboard/tasks/utils/dateUtils';
 import { forwardRef, Ref } from "react";
 
@@ -39,10 +39,11 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
 }) => {
   const {
     // State
-    tasks,loading,selected,page,rowsPerPage,selectedStatusTab,inSearchMode,order,orderBy,expandedTasks,showBackToTop,    filterLoading,monthFilter,statusFilter,priorityFilter,userFilter,dayFilter,dateFilter,taskNameFilter,openMultiAdd,openMultiEdit,deleteDialogOpen,editTaskId,taskToDelete,multiTaskData,multiEditData,
+    tasks,loading,selected,page,rowsPerPage,selectedStatusTab,inSearchMode,order,orderBy,expandedTasks,showBackToTop,    filterLoading,monthFilter,statusFilter,priorityFilter,userFilter,dayFilter,dateFilter,taskNameFilter,openMultiAdd,openMultiEdit,deleteDialogOpen,failedDialogOpen,editTaskId,taskToDelete,taskToFail,multiTaskData,multiEditData,
     
     // Computed
     statusCounts,
+    filteredStatusCounts,
     groupedTasks,
     
     // Actions
@@ -64,8 +65,10 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
     setOpenMultiAdd,
     setOpenMultiEdit,
     setDeleteDialogOpen,
+    setFailedDialogOpen,
     setEditTaskId,
     setTaskToDelete,
+    setTaskToFail,
     setMultiTaskData,
     setMultiEditData,
     
@@ -84,6 +87,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
     updateMultiSubTask,
     handleMultiAdd,
     handlePushTasks,
+    confirmFailedStatus,
     
     // Services
     apiService,
@@ -244,6 +248,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         <Suspense fallback={<MyCircularProgress />}>
           <TaskTableTabs
             statusCounts={statusCounts}
+            filteredStatusCounts={filteredStatusCounts}
             selectedTab={selectedStatusTab}
             setSelectedTab={setSelectedStatusTab}
             onAddTask={handleOpenMultiAdd}
@@ -481,10 +486,18 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                       <InputLabel>Status</InputLabel>
                       <Select
                         value={task.status}
-                        onChange={(e) => updateMultiTask(index, "status", e.target.value)}
+                        onChange={(e) => {
+                          const newStatus = e.target.value;
+                          if (newStatus === "Failed") {
+                            setTaskToFail({ id: editTaskId || '', name: task.taskName });
+                            setFailedDialogOpen(true);
+                          } else {
+                            updateMultiTask(index, "status", newStatus);
+                          }
+                        }}
                         label="Status"
                       >
-                        {TASK_STATUSES.map((status) => (
+                        {EDITABLE_TASK_STATUSES.map((status) => (
                           <MenuItem key={status} value={status}>
                             {status}
                           </MenuItem>
@@ -510,10 +523,26 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                     label="Start Date"
                     type="date"
                     value={task.startTime.slice(0, 10)}
+                    onChange={(e) => {
+                      const selectedDate = e.target.value;
+                      const today = new Date().toISOString().split('T')[0];
+                      if (selectedDate >= today) {
+                        const existingTime = task.startTime.slice(11) || "08:00:00";
+                        const newDateTime = `${selectedDate}T${existingTime}`;
+                        updateMultiTask(index, "startTime", newDateTime);
+                        // Auto-update end date to match start date
+                        const endTime = task.endTime.slice(11) || "23:59:00";
+                        const newEndDateTime = `${selectedDate}T${endTime}`;
+                        updateMultiTask(index, "endTime", newEndDateTime);
+                      }
+                    }}
                     fullWidth
                     InputLabelProps={{ shrink: true }}
-                    disabled={true}
+                    disabled={loading}
                     size="small"
+                    inputProps={{
+                      min: new Date().toISOString().split('T')[0]
+                    }}
                   />
                   <TextField
                     label="Start Time"
@@ -521,18 +550,26 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                     value="08:00"
                     fullWidth
                     InputLabelProps={{ shrink: true }}
-                    disabled={true}
+                    disabled={false}
                     size="small"
                   />
                   <TextField
                     label="End Time"
                     type="datetime-local"
                     value={task.endTime}
-                    onChange={(e) => updateMultiTask(index, "endTime", e.target.value)}
+                    onChange={(e) => {
+                      const selectedEndTime = e.target.value;
+                      if (selectedEndTime >= task.startTime) {
+                        updateMultiTask(index, "endTime", selectedEndTime);
+                      }
+                    }}
                     fullWidth
                     InputLabelProps={{ shrink: true }}
                     disabled={loading}
                     size="small"
+                    inputProps={{
+                      min: task.startTime
+                    }}
                   />
                   
                   {/* Subtasks section */}
@@ -618,6 +655,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         </DialogActions>
       </Dialog>
 
+      {/* Multi-Edit Tasks Dialog */}
       <TaskMultiEditDialog
         open={openMultiEdit}
         onClose={() => setOpenMultiEdit(false)}
@@ -638,6 +676,23 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
           return task && task.status !== "Failed";
         }).length}
       />
+
+      <TaskFailedDialog
+        open={failedDialogOpen}
+        onClose={() => {
+          setFailedDialogOpen(false);
+          setTaskToFail(null);
+        }}
+        onConfirm={() => {
+          if (taskToFail && editTaskId) {
+            updateMultiTask(0, "status", "Failed");
+          }
+          confirmFailedStatus();
+        }}
+        taskName={taskToFail?.name}
+      />
+
+
 
       {/* Back to Top Button */}
       {showBackToTop && (

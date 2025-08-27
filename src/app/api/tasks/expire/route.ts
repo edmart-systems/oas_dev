@@ -19,12 +19,11 @@ export const POST = async (req: NextRequest) => {
       });
     }
 
-    const result = await tasksService.lockExpiredTasks();
+    const result = await tasksService.pushPendingTasks();
 
-    const resData: ActionResponse<string> = {
+    const resData: ActionResponse = {
       status: result.status,
       message: result.message,
-      data: result.message,
     };
 
     return NextResponse.json(resData, { status: 200 });

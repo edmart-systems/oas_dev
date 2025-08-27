@@ -113,11 +113,18 @@ export const authOptions: NextAuthOptions = {
       // console.log(`User: ${user} \nAccount: ${account} \nProfile: ${profile}`);
       return true;
     },
-    jwt: async ({ token, user, account, profile, isNewUser }) => {
-      if (!user) {
-        // throw new Error("Auth no user: JWT");
+    jwt: async ({ token, user, account, profile, isNewUser, trigger, session }) => {
+      if (trigger === "update" && session) {
+        // Handle session updates (like profile picture changes)
+        token.user = { ...(token.user || {}), ...session.user };
+        token.picture = session.user.profile_picture;
         return token;
       }
+      
+      if (!user) {
+        return token;
+      }
+      
       token.id = user.co_user_id;
       token.picture = user.profile_picture;
       token.isAdmin = user.role_id == 1;

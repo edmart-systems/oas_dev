@@ -1036,7 +1036,8 @@ export class QuotationsService {
 
       const isSaved = await this.quotationsRepo.recordQuotationDraft(
         quotationDraft,
-        userId
+        userId,
+        'manual'
       );
 
       if (!isSaved) {
@@ -1049,6 +1050,64 @@ export class QuotationsService {
       return Promise.resolve({
         status: true,
         message: "Quotation draft saved successfully",
+      });
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
+    }
+  };
+
+  saveAutoDraft = async (
+    quotationDraft: NewQuotation,
+    userId: number
+  ): Promise<ActionResponse> => {
+    try {
+      const isSaved = await this.quotationsRepo.recordAutoDraft(
+        quotationDraft,
+        userId
+      );
+
+      if (!isSaved) {
+        return Promise.resolve({
+          status: false,
+          message: "Failed to save auto-draft.",
+        });
+      }
+
+      return Promise.resolve({
+        status: true,
+        message: "Auto-draft saved successfully",
+      });
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
+    }
+  };
+
+  getLatestAutoDraft = async (
+    userId: number
+  ): Promise<ActionResponse<{ draft: NewQuotation; timestamp: Date } | null>> => {
+    try {
+      const autoDraft = await this.quotationsRepo.fetchLatestAutoDraft(userId);
+      
+      return Promise.resolve({
+        status: true,
+        message: "Success",
+        data: autoDraft,
+      });
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
+    }
+  };
+
+  deleteAutoDraft = async (userId: number): Promise<ActionResponse> => {
+    try {
+      const isDeleted = await this.quotationsRepo.deleteAutoDraft(userId);
+      
+      return Promise.resolve({
+        status: true,
+        message: "Auto-draft deleted successfully",
       });
     } catch (err) {
       logger.error(err);

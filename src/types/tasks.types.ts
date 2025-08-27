@@ -8,6 +8,7 @@ export type TaskUser = {
   firstName: string;
   lastName: string;
   email: string;
+  profile_picture?: string | null;
 };
 
 export type TaskStatus =
@@ -16,7 +17,9 @@ export type TaskStatus =
   | "Stalled"
   | "Failed"
   | "Done"
-  | "Completed";
+  | "Completed"
+  | "Pushed"
+  | "Cancelled";
 
 export type TaskPriority = "Urgent" | "High" | "Moderate" | "Low";
 
@@ -171,6 +174,7 @@ export interface ApiTask {
     firstName: string;
     lastName: string;
     email: string;
+    profile_picture?: string | null;
   };
 }
 
@@ -220,6 +224,7 @@ export interface TaskItem {
   priority: TaskPriority;
   startTime: number;
   endTime: number;
+  time: number;
   subTasks: SubTask[];
   completed: boolean;
   deleted: boolean;
@@ -231,6 +236,7 @@ export interface TaskItem {
     firstName: string;
     lastName: string;
     email: string;
+    profile_picture?: string | null;
   };
 }
 

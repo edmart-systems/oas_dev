@@ -1,3 +1,5 @@
+// src/components/dashboard/tasks/components/InlineStatusSelect.tsx  
+
 import { useState } from "react";
 import { Box, Chip, Menu, MenuItem } from "@mui/material";
 import {
@@ -8,6 +10,8 @@ import {
   PlayArrow,
   HighlightOff,
   PauseCircle,
+  Schedule,
+  Cancel,
 } from "@mui/icons-material";
 import { TaskStatus } from "@/types/tasks.types";
 
@@ -18,6 +22,7 @@ const TASK_STATUSES: TaskStatus[] = [
   "Failed",
   "Done",
   "Completed",
+  "Cancelled",
 ];
 
 interface InlineStatusSelectProps {
@@ -50,6 +55,14 @@ const statusConfig = {
   },
   'Stalled': {
     icon: <PauseCircle />,
+    color: 'error' as const,
+  },
+  'Pushed': {
+    icon: <Schedule />,
+    color: 'warning' as const,
+  },
+  'Cancelled': {
+    icon: <Cancel />,
     color: 'error' as const,
   },
 };

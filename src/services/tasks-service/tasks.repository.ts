@@ -496,6 +496,7 @@ export class TasksRepository {
   lockExpiredTasks = async (): Promise<string> => {
   try {
     const now = Date.now();
+    logger.info(`Lock expired tasks - Current time: ${now}`);
 
     const failedStatus = await this.prisma.task_status.findFirst({
       where: { status: "Failed" }
@@ -510,24 +511,28 @@ export class TasksRepository {
         endTime: { lt: BigInt(now) },
         taskStatus: {
           status: { in: ["Pending", "In-Progress"] }
-        }
-      }
+        },
+        deleted: 0,
+        taskLocked: 0
+      },
+      include: { taskStatus: true }
+    });
+
+    logger.info(`Found ${expiredTasks.length} expired tasks to mark as failed`);
+    expiredTasks.forEach(task => {
+      logger.info(`Expired task: ${task.taskName}, End: ${Number(task.endTime)}, Status: ${task.taskStatus.status}`);
     });
 
     let processedCount = 0;
 
     for (const task of expiredTasks) {
-      await this.prisma.$transaction(async (txn) => {
-        // ✅ Just mark original task as Failed and lock it
-        await txn.task.update({
-          where: { taskId: task.taskId },
-          data: { 
-            statusId: failedStatus.id,
-            taskLocked: 1
-          }
-        });
+      await this.prisma.task.update({
+        where: { taskId: task.taskId },
+        data: { 
+          statusId: failedStatus.id,
+          taskLocked: 1
+        }
       });
-
       processedCount++;
     }
 
@@ -541,81 +546,95 @@ export class TasksRepository {
 
   pushPendingTasks = async (): Promise<string> => {
     try {
-      const now = Date.now();
-      const utcTime = now + (new Date().getTimezoneOffset() * 60 * 1000);
-      const ugandaTime = utcTime + (3 * 60 * 60 * 1000);
-      const ugandaToday = new Date(ugandaTime);
+      const now = new Date();
+      const currentTime = now.getTime();
       
-      const today = new Date(ugandaToday);
-      today.setHours(8, 0, 0, 0); // Set to 8:00 AM Uganda time
-      const todayEnd = new Date(ugandaToday);
-      todayEnd.setHours(23, 59, 59, 999); // Set to 11:59 PM Uganda time
+      const today = new Date(now.toLocaleString("en-US", {timeZone: "Africa/Kampala"}));
+      today.setHours(8, 0, 0, 0);
+      const todayEnd = new Date(today);
+      todayEnd.setHours(23, 59, 59, 999);
       
-      logger.info(`Push pending tasks - Now: ${now}, Today 8AM: ${today.getTime()}`);
+      const todayStart = new Date(today);
+      todayStart.setHours(0, 0, 0, 0);
       
-      const pushedStatus = await this.prisma.task_status.findFirst({
-        where: { status: "Pushed" }
-      });
-
-      if (!pushedStatus) {
-        return Promise.resolve("Pushed status not found in database.");
+      logger.info(`Push pending tasks - Now: ${currentTime}, Today start: ${todayStart.getTime()}`);
+      
+      const [failedStatus, pushedStatus] = await Promise.all([
+        this.prisma.task_status.findFirst({ where: { status: "Failed" } }),
+        this.prisma.task_status.findFirst({ where: { status: "Pushed" } })
+      ]);
+      
+      if (!failedStatus) {
+        return Promise.resolve("Failed status not found in database.");
       }
-      
-      // Find pending/in-progress tasks from previous days (before today's start)
-      const todayStart = new Date(ugandaToday);
-      todayStart.setHours(0, 0, 0, 0); // Start of today in Uganda time
       
       const tasksToPush = await this.prisma.task.findMany({
         where: {
           taskStatus: {
-            status: { in: ["Pending", "In-Progress"] }
+            status: { in: ["Pending", "In-Progress", "Pushed"] }
           },
-          startTime: { lt: BigInt(todayStart.getTime()) }, // Tasks from before today
+          startTime: { lte: BigInt(todayEnd.getTime()) }, // Only tasks scheduled for today or before
           deleted: 0,
           taskLocked: 0
         },
         include: { subTasks: true, taskStatus: true }
       });
       
-      logger.info(`Found ${tasksToPush.length} tasks to push`);
-      tasksToPush.forEach(task => {
-        logger.info(`Task: ${task.taskName}, Status: ${task.taskStatus.status}, Start: ${Number(task.startTime)}, End: ${Number(task.endTime)}`);
-      });
-
-      let processedCount = 0;
+      logger.info(`Found ${tasksToPush.length} tasks to process`);
+      
+      if (tasksToPush.length === 0) {
+        return Promise.resolve("0 tasks processed.");
+      }
+      
+      let expiredCount = 0;
+      let pushedCount = 0;
       
       for (const task of tasksToPush) {
-        await this.prisma.$transaction(async (txn) => {
-          // Just update the existing task: increment push_count and move to today
-          const nextPushCount = (task.push_count || 0) + 1;
-          
-          await txn.task.update({
+        const isExpired = Number(task.endTime) < currentTime;
+        
+        if (isExpired) {
+          // Mark as Failed and lock
+          await this.prisma.task.update({
             where: { taskId: task.taskId },
             data: {
-              push_count: nextPushCount,
-              startTime: BigInt(today.getTime()),
-              endTime: BigInt(todayEnd.getTime()),
-              time: BigInt(Date.now())
+              statusId: failedStatus.id,
+              taskLocked: 1
             }
           });
-
-          // Update subtasks start/end times
-          if (task.subTasks.length > 0) {
-            await txn.sub_task.updateMany({
+          expiredCount++;
+          logger.info(`Expired task marked as Failed: ${task.taskName}`);
+        } else {
+          // Push to today with Pushed status
+          const nextPushCount = (task.push_count || 0) + 1;
+          
+          await this.prisma.$transaction(async (txn) => {
+            await txn.task.update({
               where: { taskId: task.taskId },
               data: {
+                push_count: nextPushCount,
                 startTime: BigInt(today.getTime()),
-                endTime: BigInt(todayEnd.getTime()),
-                time: BigInt(Date.now())
+                time: BigInt(currentTime),
+                statusId: pushedStatus?.id || task.statusId
               }
             });
-          }
-        });
-        
-        processedCount++;
+
+            if (task.subTasks.length > 0) {
+              await txn.sub_task.updateMany({
+                where: { taskId: task.taskId },
+                data: {
+                  startTime: BigInt(today.getTime()),
+                  time: BigInt(currentTime),
+                  statusId: pushedStatus?.id
+                }
+              });
+            }
+          });
+          pushedCount++;
+          logger.info(`Task pushed with Pushed status: ${task.taskName}`);
+        }
       }
 
-      return Promise.resolve(`${processedCount} pending/in-progress tasks pushed to current day.`);
+      return Promise.resolve(`${expiredCount} tasks marked as Failed, ${pushedCount} tasks pushed with Pushed status.`);
     } catch (err) {
       logger.error(err);
       return Promise.reject(err);
@@ -869,6 +888,7 @@ private formatTasksOut = (tasks: any): TaskOut[] => {
         firstName: task.user.firstName,
         lastName: task.user.lastName,
         email: task.user.email,
+        profile_picture: task.user.profile_picture,
       } : undefined,
     };
   });
@@ -1044,5 +1064,7 @@ restoreUserTask = async (
       return Promise.reject(err);
     }
   };
+
+
 
 }

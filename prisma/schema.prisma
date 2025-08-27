@@ -31,51 +31,48 @@ model Status {
 }
 
 model User {
-  userId                 Int                @id @default(autoincrement())
-  co_user_id             String             @unique @db.VarChar(20)
-  firstName              String             @db.VarChar(24)
-  lastName               String             @db.VarChar(24)
-  otherName              String?            @db.VarChar(24)
-  email                  String             @unique @db.VarChar(64)
-  email_verified         Int                @default(0)
-  phone_number           String             @unique @db.VarChar(16)
-  phone_verified         Int                @default(0)
-  hash                   String             @db.VarChar(244)
-  profile_picture        String?            @db.VarChar(120)
-  status_id              Int
-  status_reason          String?            @db.VarChar(260)
-  role_id                Int
-  signed                 Int                @default(0)
-  created_at             DateTime           @default(now())
-  updated_at             DateTime           @default(now())
-  createdCategories      Category[]         @relation("CategoryCreator")
-  updatedCategories      Category[]         @relation("CategoryUpdater")
-  Edited_quotation       Edited_quotation[]
-  createdInventoryPoints Inventory_point[]  @relation("InventoryPointCreator")
-  updatedInventoryPoints Inventory_point[]  @relation("InventoryPointUpdater")
-  passwordResets         PasswordReset[]
-  createdProducts        Product[]          @relation("ProductCreator")
-  updatedProducts        Product[]          @relation("ProductUpdater")
-  createdPurchases       Purchase[]         @relation("PurchaseCreator")
-  updatedPurchases       Purchase[]         @relation("PurchaseUpdater")
-  createdOrder           Order[]            @relation("OrderCreator")
-  updatedOrder           Order[]            @relation("OrderUpdater")
-  createdCustomer        Customer[]         @relation("CustomerCreator")
-  updatedCustomer        Customer[]         @relation("CustomerUpdater")
-  quotations             Quotation[]
-  quotation_drafts       Quotation_draft[]
-  sales                  Sale[]             @relation("SaleSeller")
-  createdSuppliers       Supplier[]         @relation("SupplierCreator")
-  updatedSuppliers       Supplier[]         @relation("SupplierUpdater")
-  createdTags            Tag[]              @relation("TagCreator")
-  updatedTags            Tag[]              @relation("TagUpdater")
-  tasks                  Task[]
-  role                   Role               @relation(fields: [role_id], references: [role_id])
-  status                 Status             @relation(fields: [status_id], references: [status_id])
-  signatures             User_signature?
+  userId          Int      @id @default(autoincrement())
+  co_user_id      String   @unique @db.VarChar(20)
+  firstName       String   @db.VarChar(24)
+  lastName        String   @db.VarChar(24)
+  otherName       String?  @db.VarChar(24)
+  email           String   @unique @db.VarChar(64)
+  email_verified  Int      @default(0)
+  phone_number    String   @unique @db.VarChar(16)
+  phone_verified  Int      @default(0)
+  hash            String   @db.VarChar(244)
+  profile_picture String?  @db.VarChar(120)
+  status_id       Int
+  status_reason   String?  @db.VarChar(260)
+  role_id         Int
+  signed          Int      @default(0)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
 
-  @@index([role_id], map: "user_role_id_fkey")
-  @@index([status_id], map: "user_status_id_fkey")
+  role             Role               @relation(fields: [role_id], references: [role_id])
+  status           Status             @relation(fields: [status_id], references: [status_id])
+  quotations       Quotation[]
+  signatures       User_signature[]
+  Edited_quotation Edited_quotation[]
+  quotation_drafts Quotation_draft[]
+  tasks            Task[]
+  passwordResets   PasswordReset[]
+  
+  // Inventory relations
+  createdTags         Tag[] @relation("TagCreator")
+  updatedTags         Tag[] @relation("TagUpdater")
+  createdCategories   Category[] @relation("CategoryCreator")
+  updatedCategories   Category[] @relation("CategoryUpdater")
+  createdSuppliers    Supplier[] @relation("SupplierCreator")
+  updatedSuppliers    Supplier[] @relation("SupplierUpdater")
+  createdInventoryPoints Inventory_point[] @relation("InventoryPointCreator")
+  updatedInventoryPoints Inventory_point[] @relation("InventoryPointUpdater")
+  createdProducts     Product[] @relation("ProductCreator")
+  updatedProducts     Product[] @relation("ProductUpdater")
+  createdPurchases    Purchase[] @relation("PurchaseCreator")
+  updatedPurchases    Purchase[] @relation("PurchaseUpdater")
+  sales               Sale[] @relation("SaleSeller")
+
   @@map("user")
 }
 
@@ -540,85 +537,71 @@ model Supplier {
   supplier_name       String     @unique(map: "Supplier_supplier_name_key")
   supplier_email      String?    @unique(map: "Supplier_supplier_email_key")
   supplier_phone      String?
-  supplier_address    String?
-  supplier_tinNumber  Int?       @unique(map: "Supplier_supplier_tinNumber_key")
-  supplier_created_at DateTime   @default(now())
-  supplier_updated_at DateTime   @default(now())
-  created_by          String?
-  updated_by          String?
-  Product             Product[]
-  Purchase            Purchase[]
-  creator             User?      @relation("SupplierCreator", fields: [created_by], references: [co_user_id])
-  updater             User?      @relation("SupplierUpdater", fields: [updated_by], references: [co_user_id])
-  Order               Order[]
+  supplier_address   String?
+  supplier_tinNumber Int?   @unique
+  created_by         String?
+  updated_by         String?
+  supplier_created_at DateTime @default(now())
+  supplier_updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
 
-  @@index([created_by], map: "supplier_created_by_fkey")
-  @@index([updated_by], map: "supplier_updated_by_fkey")
+  Product Product[]
+  Purchase Purchase[]
+  creator User? @relation("SupplierCreator", fields: [created_by], references: [co_user_id])
+  updater User? @relation("SupplierUpdater", fields: [updated_by], references: [co_user_id])
+
   @@map("supplier")
 }
 
-model Inventory_point {
-  inventory_point_id Int               @id @default(autoincrement())
-  inventory_point    String            @unique(map: "Inventory_point_inventory_point_key")
-  created_by         String?
-  updated_by         String?
-  created_at         DateTime          @default(now())
-  updated_at         DateTime          @default(now())
-  creator            User?             @relation("InventoryPointCreator", fields: [created_by], references: [co_user_id])
-  updater            User?             @relation("InventoryPointUpdater", fields: [updated_by], references: [co_user_id])
-  Purchase           Purchase[]
-  Stock              Stock[]
-  Inventory_stock    Inventory_stock[]
-  fromTransfer       Transfer[]        @relation("TransferFromPoint")
-  toTransfer         Transfer[]        @relation("TransferToPoint")
+model Inventory_point{
+  inventory_point_id Int @id @default(autoincrement())
+  inventory_point String @unique
+  created_by String?
+  updated_by String?
+  created_at DateTime @default(now())
+  updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
 
-  @@index([created_by], map: "inventory_point_created_by_fkey")
-  @@index([updated_by], map: "inventory_point_updated_by_fkey")
+  Purchase Purchase[]
+  Stock Stock[]
+  creator User? @relation("InventoryPointCreator", fields: [created_by], references: [co_user_id])
+  updater User? @relation("InventoryPointUpdater", fields: [updated_by], references: [co_user_id])
+
   @@map("inventory_point")
 }
 
 model Product {
-  product_id           Int               @id @default(autoincrement())
-  product_name         String            @unique(map: "Product_product_name_key")
-  product_barcode      Int               @unique(map: "Product_product_barcode_key")
-  product_description  String
-  product_quantity     Int               @default(0)
-  unit_id              Int
-  category_id          Int
-  tag_id               Int
-  buying_price         Int               @default(0)
-  selling_price        Int               @default(0)
-  vat_inclusive        Int               @default(0)
-  currency_id          Int
-  created_by           String?
-  updated_by           String?
-  product_status       Int?              @default(1)
-  product_created_at   DateTime          @default(now())
-  product_updated_at   DateTime          @default(now())
-  supplier_id          Int?
-  markup_percentage    Int               @default(0)
-  product_max_quantity Int?              @default(0)
-  product_min_quantity Int?              @default(0)
-  category             Category          @relation(fields: [category_id], references: [category_id])
-  creator              User?             @relation("ProductCreator", fields: [created_by], references: [co_user_id])
-  currency             Currency          @relation(fields: [currency_id], references: [currency_id])
-  supplier             Supplier?         @relation(fields: [supplier_id], references: [supplier_id])
-  tag                  Tag               @relation(fields: [tag_id], references: [tag_id])
-  unit                 Unit              @relation(fields: [unit_id], references: [unit_id])
-  updater              User?             @relation("ProductUpdater", fields: [updated_by], references: [co_user_id])
-  Purchase_items       Purchase_item[]
-  Stock                Stock[]
-  Inventory_stock      Inventory_stock[]
-  Transfer_item        Transfer_item[]
-  Order_item           Order_item[]
+  product_id          Int       @id @default(autoincrement())
+  supplier_id         Int?
+  product_name        String    @unique
+  product_barcode     Int       @unique
+  product_description String
+  unit_id             Int
+  category_id         Int
+  tag_id              Int
+  currency_id         Int
+  product_quantity    Int  @default(0)
+  product_max_quantity Int? @default(0)
+  product_min_quantity Int? @default(0)
+  product_status      Int? @default(1)
+  buying_price        Int @default(0)
+  selling_price       Int @default(0)
+  markup_percentage  Int @default(0)
+  vat_inclusive       Int      @default(0)
+  created_by               String?
+  updated_by              String?
+  product_created_at  DateTime @default(now())
+  product_updated_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+  
+  unit                Unit      @relation(fields: [unit_id], references: [unit_id])
+  category            Category  @relation(fields: [category_id], references: [category_id])
+  tag                 Tag       @relation(fields: [tag_id], references: [tag_id])
+  currency            Currency  @relation(fields: [currency_id], references: [currency_id])
+  supplier           Supplier? @relation(fields: [supplier_id], references: [supplier_id])
+  Purchase_items Purchase_item[]
+  Stock Stock[]
+  Sale_item Sale_item[]
+  creator User? @relation("ProductCreator", fields: [created_by], references: [co_user_id])
+  updater User? @relation("ProductUpdater", fields: [updated_by], references: [co_user_id])
 
-  @@index([category_id], map: "Product_category_id_fkey")
-  @@index([currency_id], map: "Product_currency_id_fkey")
-  @@index([supplier_id], map: "Product_supplier_id_fkey")
-  @@index([tag_id], map: "Product_tag_id_fkey")
-  @@index([unit_id], map: "Product_unit_id_fkey")
-  @@index([created_by], map: "product_created_by_fkey")
-  @@index([updated_by], map: "product_updated_by_fkey")
   @@map("product")
 }
 
@@ -662,159 +645,59 @@ model Purchase_item {
 }
 
 model Stock {
-  stock_id           Int             @id @default(autoincrement())
-  product_id         Int
+  stock_id         Int       @id @default(autoincrement())
+  product_id       Int
   inventory_point_id Int
-  change_type        String
-  quantity_change    Int
-  resulting_stock    Int
-  reference_id       Int?
-  created_at         DateTime        @default(now())
-  inventory_point    Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
-  product            Product         @relation(fields: [product_id], references: [product_id])
+  change_type      String     
+  quantity_change  Int        
+  resulting_stock  Int        
+  reference_id     Int?       
+  created_at       DateTime   @default(now())
 
-  @@index([inventory_point_id], map: "Stock_inventory_point_id_fkey")
-  @@index([product_id], map: "Stock_product_id_fkey")
+  product          Product    @relation(fields: [product_id], references: [product_id])
+  inventory_point Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
+
   @@map("stock")
 }
 
-model Inventory_stock {
-  inv_stock_id       Int @id @default(autoincrement())
-  product_id         Int
-  inventory_point_id Int
-  quantity           Int @default(0)
-
-  product         Product         @relation(fields: [product_id], references: [product_id])
-  inventory_point Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
-
-  @@unique([product_id, inventory_point_id], map: "ux_inv_stock_product_point")
-  @@map("inventory_stock")
-}
-
-model Transfer {
-  transfer_id             Int      @id @default(autoincrement())
-  from_inventory_point_id Int
-  to_inventory_point_id   Int
-  note                    String?  @db.VarChar(200)
-  created_at              DateTime @default(now())
-
-  from_point Inventory_point @relation("TransferFromPoint", fields: [from_inventory_point_id], references: [inventory_point_id])
-  to_point   Inventory_point @relation("TransferToPoint", fields: [to_inventory_point_id], references: [inventory_point_id])
-  items      Transfer_item[]
-
-  @@map("transfer")
-}
-
-model Transfer_item {
-  transfer_item_id Int @id @default(autoincrement())
-  transfer_id      Int
-  product_id       Int
-  quantity         Int
-
-  transfer Transfer @relation(fields: [transfer_id], references: [transfer_id])
-  product  Product  @relation(fields: [product_id], references: [product_id])
-
-  @@map("transfer_item")
-}
-model Sale {
-  sale_id             Int         @id @default(autoincrement())
-  sale_no             String      @unique(map: "Sale_sale_no_key") @db.VarChar(12)
+model Sale{
+  sale_id             Int      @id @default(autoincrement())
+  sale_no             String   @unique @db.VarChar(12)
   seller_id           Int
-  sale_total_quantity Int         @default(0)
+  sale_total_quantity Int@default(0)
   sale_total_amount   Int
-  sale_total_discount Int         @default(0)
-  sale_total_tax      Int         @default(0)
+  sale_total_discount Int @default(0)
+  sale_total_tax      Int @default(0)
+  sale_grand_total Int @default(0)
   currency_id         Int
-  sale_created_at     DateTime    @default(now())
-  sale_updated_at     DateTime    @default(now())
-  inventory_point_id  Int         @default(1)
-  sale_status         Int         @default(1)
-  sale_grand_total    Int         @default(0)
+  inventory_point_id  Int @default(1)
+  sale_status         Int @default(1)
+  sale_created_at     DateTime @default(now())
+  sale_updated_at     DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
 
-  currency            Currency    @relation(fields: [currency_id], references: [currency_id])
-  seller              User        @relation("SaleSeller", fields: [seller_id], references: [userId])
+  currency            Currency  @relation(fields: [currency_id], references: [currency_id])
+  Sale_items          Sale_item[]
+  seller User @relation("SaleSeller", fields: [seller_id], references: [userId])
 
-  Sale_items          Sale_item[] @relation("SaleToSaleItems") 
-
-  @@index([currency_id], map: "Sale_currency_id_fkey")
-  @@index([seller_id], map: "sale_seller_id_fkey")
   @@map("sale")
 }
 
 model Sale_item {
-  sale_item_id Int  @id @default(autoincrement())
-  sale_id      Int
-  product_id   Int
-  quantity     Int
-  unit_price   Int
-  total_price  Int
-  discount     Int @default(0)
-  tax          Int @default(0)
+  sale_item_id   Int    @id @default(autoincrement())
+  sale_id        Int
+  product_id     Int
+  quantity       Int
+  unit_price     Int
+  total_price    Int
+  discount       Int @default(0)
+  tax            Int @default(0)
 
-  sale         Sale @relation("SaleToSaleItems", fields: [sale_id], references: [sale_id]) // ✅ link back
+  sale           Sale    @relation(fields: [sale_id], references: [sale_id])
+  product        Product @relation(fields: [product_id], references: [product_id])
 
-  @@index([product_id], map: "Sale_item_product_id_fkey")
-  @@index([sale_id], map: "Sale_item_sale_id_fkey")
   @@map("sale_item")
 }
-
-
 enum DraftType {
   manual
   auto
-}
-
-model Order {
-  order_id      Int       @id @default(autoincrement())
-  order_number  String    @unique @db.VarChar(24)
-  supplier_id   Int
-  order_date    DateTime  @default(now())
-  delivery_date DateTime?
-  status        String    @default("Pending") @db.VarChar(18)
-  items_count   Int       @default(0)
-  total_amount  Int       @default(0)
-  created_by    String?
-  updated_by    String?
-  created_at    DateTime  @default(now())
-  updated_at    DateTime  @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
-
-  supplier Supplier     @relation(fields: [supplier_id], references: [supplier_id])
-  items    Order_item[]
-
-  creator User? @relation("OrderCreator", fields: [created_by], references: [co_user_id])
-  updater User? @relation("OrderUpdater", fields: [updated_by], references: [co_user_id])
-
-  @@map("inv_order")
-}
-
-model Order_item {
-  order_item_id Int @id @default(autoincrement())
-  order_id      Int
-  product_id    Int
-  quantity      Int
-  unit_price    Int
-  total_price   Int
-
-  order   Order   @relation(fields: [order_id], references: [order_id])
-  product Product @relation(fields: [product_id], references: [product_id])
-
-  @@map("order_item")
-}
-
-model Customer {
-  customer_id Int      @id @default(autoincrement())
-  name        String   @db.VarChar(120)
-  email       String?  @unique @db.VarChar(120)
-  phone       String?  @db.VarChar(24)
-  address     String?  @db.VarChar(200)
-  status      String   @default("Active") @db.VarChar(18)
-  created_by  String?
-  updated_by  String?
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
-
-  creator User? @relation("CustomerCreator", fields: [created_by], references: [co_user_id])
-  updater User? @relation("CustomerUpdater", fields: [updated_by], references: [co_user_id])
-
-  @@map("customer")
 }

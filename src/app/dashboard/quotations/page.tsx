@@ -17,6 +17,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import QuotationDraftsMenu from "@/components/dashboard/quotations/create-quotation/quotation-drafts-menu";
+import QuotationsAutoDraftChecker from "@/components/dashboard/quotations/quotations-auto-draft-checker";
 
 export const metadata: Metadata = {
   title: "Quotations | Office X",
@@ -51,6 +52,8 @@ const QuotationsPage = async () => {
   };
 
   return (
+    <>
+    <QuotationsAutoDraftChecker />
     <Stack spacing={3}>
       <Stack
         spacing={1}
@@ -127,6 +130,7 @@ const QuotationsPage = async () => {
         </Grid>
       </Grid>
     </Stack>
+    </>
   );
 };
 
