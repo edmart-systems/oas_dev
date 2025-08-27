@@ -71,9 +71,14 @@ export const GET = async (req: NextRequest): Promise<NextResponse> => {
 
     console.log(host);
 
-    const validHost = (host: string | null) =>
-      host === "dev.oas.edmartsystems.com" || 
-      host?.includes("localhost");
+    const validHost = (host: string | null) => {
+      if (!host) return false;
+      return (
+        host.includes("dev.oas.edmartsystems.com") || 
+        host.includes("localhost") ||
+        host.includes("127.0.0.1")
+      );
+    };
 
     if (!validHost(host)) {
       logger.info("Scheduler invalid host: " + host);

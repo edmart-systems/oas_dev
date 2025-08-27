@@ -12,15 +12,7 @@ import { deleteOldNotificationsJob } from "./jobs/notifications.jobs";
 import { LOCAL_TIMEZONE } from "@/utils/constants.utils";
 import { pushPendingTasksJob } from "./jobs/tasks.jobs";
 
-let schedulerStarted = false;
-
 const startScheduler = () => {
-  if (schedulerStarted) {
-    logger.info("Scheduler already running, skipping duplicate start");
-    return;
-  }
-  
-  schedulerStarted = true;
   logger.info("Scheduler instantiated!");
   console.log("Scheduler starting at:", new Date().toISOString());
   console.log("LOCAL_TIMEZONE:", LOCAL_TIMEZONE);
@@ -123,8 +115,8 @@ const startScheduler = () => {
 
 
   const dailyTaskProcessingRule = new schedule.RecurrenceRule();
-  dailyTaskProcessingRule.hour = 23; 
-  dailyTaskProcessingRule.minute = 59;
+  dailyTaskProcessingRule.hour = 6; 
+  dailyTaskProcessingRule.minute = 30;
   dailyTaskProcessingRule.second = 0;
   dailyTaskProcessingRule.tz = LOCAL_TIMEZONE;
 
@@ -140,9 +132,18 @@ const startScheduler = () => {
     }
   });
 
+  // IMMEDIATE TEST - Every minute
+  const everyMinuteRule = new schedule.RecurrenceRule();
+  everyMinuteRule.second = 0;
+  everyMinuteRule.tz = LOCAL_TIMEZONE;
+  
+  schedule.scheduleJob(everyMinuteRule, () => {
+    logger.info("⏰ MINUTE TEST JOB - " + new Date().toISOString());
+  });
+
   logger.info("Scheduler jobs configured:");
   logger.info("- Daily 00:00: Delete old notifications");
-  logger.info("- Daily 23:59: Push pending tasks");
+  logger.info("- Daily 06:30: Push pending tasks");
   logger.info("- Multiple times daily: Quotation Expiry (7,10,13,16,19 hrs)");
   logger.info("- Multiple times daily: Quotation Followup (6,12,18,0 hrs)");
   // const firstDayOfMonthJobs = schedule.scheduleJob("0 0 0 1 * *", () => {});
