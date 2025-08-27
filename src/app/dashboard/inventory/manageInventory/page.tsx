@@ -13,8 +13,10 @@ import { Stack as PhosphorStack, Tag as TagIcon, StackSimple as CategoryIcon ,Wa
 import InventoryPointMain from "@/components/dashboard/inventory/inventoryPoint/inventoryPointMain";
 import StockMain from "@/components/dashboard/inventory/stock/stockMain";
 import { CurrencyEthIcon } from "@phosphor-icons/react/dist/ssr";
-
-
+import UnitMain from "@/components/dashboard/inventory/units/UnitMain";
+import CurrencyMain from "@/components/dashboard/inventory/units/CurrencyMain";
+import TransfersMain from "@/components/dashboard/inventory/transfers/TransfersMain";
+import InventoryStockMain from "@/components/dashboard/inventory/inventoryStock/InventoryStockMain";
 
 
 const CategoriesPage = () => {
@@ -81,6 +83,14 @@ const CategoriesPage = () => {
                   Stock
                 </Button>
                 <Button
+                  variant={tabValue === 8 ? "contained" : "outlined"}
+                  startIcon={<PackageIcon size={20} />}
+                  onClick={() => setTabValue(8)}
+                  color="primary"
+                >
+                  Inventory Stock
+                </Button>
+                <Button
                   variant={tabValue === 5 ? "contained" : "outlined"}
                   startIcon={<ArrowsClockwiseIcon size={20} />}
                   onClick={() => setTabValue(5)}
@@ -109,13 +119,16 @@ const CategoriesPage = () => {
         <StockMain/>
       )} 
       {(tabValue == 5) && (
-        <h1>Transfers</h1>
+        <TransfersMain/>
+      )}
+      {(tabValue == 8) && (
+        <InventoryStockMain/>
       )}
       {(tabValue == 6) && (
-        <h1>Tags</h1>
+        <UnitMain/>
       )}
       {(tabValue == 7) && (
-        <h1>Currencies</h1>
+        <CurrencyMain/>
       )}  
 
     </Stack>
