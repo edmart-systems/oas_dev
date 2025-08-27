@@ -155,6 +155,7 @@ const CreateQuotation = ({ baseData }: Props) => {
   const [autoDraftData, setAutoDraftData] = useState<{ draft: NewQuotation; timestamp: Date } | null>(null);
   const [showAutoDraftDialog, setShowAutoDraftDialog] = useState<boolean>(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
+  const [isRestoringAutoDraft, setIsRestoringAutoDraft] = useState<boolean>(false);
 
   const debouncedCalculatePrices = useMemo(
     () => debounce(() => {
@@ -256,6 +257,7 @@ const CreateQuotation = ({ baseData }: Props) => {
     
     if (autoRestore === 'true') {
       // Auto-restore from quotations page
+      setIsRestoringAutoDraft(true);
       const autoDraft = await getLatestAutoDraftHandler(user.userId);
       if (autoDraft) {
         const draft = autoDraft.draft;
@@ -271,6 +273,7 @@ const CreateQuotation = ({ baseData }: Props) => {
         
         // Auto-draft restored silently
       }
+      setIsRestoringAutoDraft(false);
     } else {
       // Normal check for auto-draft dialog
       const autoDraft = await getLatestAutoDraftHandler(user.userId);
@@ -300,9 +303,7 @@ const CreateQuotation = ({ baseData }: Props) => {
     setShowAutoDraftDialog(false);
     setAutoDraftData(null);
     
-    toast("Auto-draft restored successfully", {
-      type: "success",
-    });
+    // Auto-draft restored silently
   };
 
   const handleDiscardAutoDraft = async () => {
@@ -771,7 +772,7 @@ const CreateQuotation = ({ baseData }: Props) => {
           isResetFields
         />
       )}
-      <LoadingBackdrop open={isFetching || isCreated} />
+      <LoadingBackdrop open={isFetching || isCreated || isRestoringAutoDraft} />
       {openDraftPreview && (
         <QuotationDraftDialog
           open={openDraftPreview}

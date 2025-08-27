@@ -39,13 +39,14 @@ const AutoDraftRecoveryDialog = ({
 
   const formatTimestamp = (timestamp: Date) => {
     const date = new Date(timestamp);
-    const day = date.getUTCDate();
-    const month = date.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' });
-    const year = date.getUTCFullYear();
-    const hours = String(date.getUTCHours()).padStart(2, '0');
-    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-    const seconds = String(date.getUTCSeconds()).padStart(2, '0');
-    return `${day} ${month}, ${year} at ${hours}:${minutes}:${seconds}`;
+    const day = date.getDate();
+    const month = date.toLocaleDateString('en-US', { month: 'short' });
+    const year = date.getFullYear();
+    const hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const displayHours = hours % 12 || 12;
+    return `${day} ${month}, ${year} at ${displayHours}:${minutes} ${ampm}`;
   };
 
   const handleDiscard = () => {
