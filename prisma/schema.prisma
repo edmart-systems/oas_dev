@@ -792,3 +792,8 @@ model Order_item {
 
   @@map("order_item")
 }
+
+enum DraftType {
+  manual
+  auto
+}
