@@ -3,11 +3,59 @@
 import { Card, CardContent, CardHeader, Grid, Box, Typography } from "@mui/material";
 import { useAppSelector } from "@/redux/store";
 import dynamic from "next/dynamic";
+import { useEffect, useMemo, useState } from "react";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const InventoryCharts = () => {
   const { mode } = useAppSelector((state) => state.theme);
+
+  // Live Sales Trend state (last 6 months, grouped by month)
+  const [salesCats, setSalesCats] = useState<string[]>(["Jan", "Feb", "Mar", "Apr", "May", "Jun"]);
+  const [salesVals, setSalesVals] = useState<number[]>([45000, 52000, 48000, 61000, 55000, 67000]);
+  const [salesLoading, setSalesLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setSalesLoading(true);
+        const today = new Date();
+        const from = new Date(today);
+        from.setMonth(from.getMonth() - 5); // include this month and previous 5
+        from.setDate(1);
+        const to = new Date(today);
+        const params = new URLSearchParams({
+          from: from.toISOString().slice(0, 10),
+          to: to.toISOString().slice(0, 10),
+          groupBy: "month",
+        });
+        const res = await fetch(`/api/inventory/analytics/sales-trend?${params.toString()}`, { credentials: "include" });
+        if (!res.ok) throw new Error("Failed to fetch sales trend");
+        const rows: { period: string; total_amount: number }[] = await res.json();
+        // Ensure months are continuous across the 6-month window
+        const months: string[] = [];
+        const values: number[] = [];
+        const idx: Record<string, number> = {};
+        for (const r of rows) idx[r.period] = r.total_amount ?? 0;
+        const cursor = new Date(from);
+        for (let i = 0; i < 6; i++) {
+          const y = cursor.getFullYear();
+          const m = String(cursor.getMonth() + 1).padStart(2, "0");
+          const key = `${y}-${m}`;
+          months.push(key);
+          values.push(idx[key] ?? 0);
+          cursor.setMonth(cursor.getMonth() + 1);
+        }
+        setSalesCats(months);
+        setSalesVals(values);
+      } catch (e) {
+        // keep defaults on error
+      } finally {
+        setSalesLoading(false);
+      }
+    };
+    load();
+  }, []);
 
   const stockLevelsOptions = {
     chart: {
@@ -42,7 +90,7 @@ const InventoryCharts = () => {
     colors: [mode === "dark" ? "#FFB84D" : "#D98219"],
     stroke: { curve: "smooth" as "smooth", width: 4 },
     xaxis: {
-      categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+      categories: salesCats,
       labels: { style: { colors: mode === "dark" ? "#ffffff" : "#000000" } },
     },
     yaxis: {
@@ -57,7 +105,7 @@ const InventoryCharts = () => {
   };
 
   const salesTrendSeries = [
-    { name: "Sales", data: [45000, 52000, 48000, 61000, 55000, 67000] },
+    { name: salesLoading ? "Sales (Loading)" : "Sales", data: salesVals },
   ];
 
   const purchaseTrendOptions = {
