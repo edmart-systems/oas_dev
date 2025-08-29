@@ -139,7 +139,8 @@ const processPurchase = async () => {
     purchase_items: cart.map(item => ({
       product_id: item.product_id,
       quantity: item.quantity,
-      unit_cost: item.unit_cost
+      unit_cost: item.unit_cost,
+      total_cost: item.quantity * item.unit_cost
     }))
   };
 

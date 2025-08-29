@@ -2,10 +2,10 @@
 import { Purchase } from "@prisma/client";
 
 export class PurchaseRepository {
-    constructor(private prisma: any) {} // Accepts both PrismaClient and transaction client
+    constructor(private prisma: any) {} 
 
     async create(data: CreatePurchaseInput): Promise<Purchase> {
-        // Only keep allowed fields for nested creation
+        
         const purchaseItems = data.purchase_items.map(item => ({
             product_id: item.product_id,
             quantity: item.quantity,
