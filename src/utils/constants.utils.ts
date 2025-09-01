@@ -51,7 +51,7 @@ export const MAXIMUM_QUOTATION_DRAFTS: number = 5;
 export const SESSION_CHECK_HEARTBEAT_INTERVAL_MINUTES: number = 0.5;
 
 export const MAXIMUM_UI_INACTIVITY_MINUTES: number =
-  process.env.NODE_ENV === "production" ? 10 : 5;
+  process.env.NODE_ENV === "production" ? 10 : 15;
 
 export const UI_ACTIVITY_HEARTBEAT_INTERVAL_MINUTES: number = 0.1; // 6 seconds
 
