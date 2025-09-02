@@ -31,13 +31,15 @@ export async function POST(req: NextRequest) {
 
   if (!parsed.success) {
     const fieldErrors = parsed.error.flatten().fieldErrors;
-      const errorMessages = Object.values(fieldErrors)
-        .flat()
-        .join(", ");
-      return NextResponse.json(
-        { message: errorMessages || "Invalid input" },
-        { status: 400 }
-      );
+    console.log('Validation errors:', fieldErrors); // Debug log
+    return NextResponse.json(
+      { 
+        message: "Validation failed",
+        fieldErrors: fieldErrors,
+        error: "Invalid input" 
+      },
+      { status: 400 }
+    );
   }
 
   try {

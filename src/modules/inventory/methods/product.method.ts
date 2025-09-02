@@ -7,18 +7,17 @@ import z from "zod";
 const productSchema = z.object({
     product_name: z.string().min(6, "Product name too short."),
     product_barcode: z.number(),
+    sku_code: z.string().optional(),
     product_description: z.string(),
     unit_id: z.number(),
     category_id: z.number(),
     tag_id: z.number(),
     buying_price: z.number(),
     selling_price: z.number(),
-    currency_id: z.number(),
     created_by: z.string().optional(),
     updated_by: z.string().optional(),
-    supplier_id: z.number().optional(),
-    product_max_quantity: z.number().optional(),
-    product_min_quantity: z.number().optional(),
+    supplier_id: z.number().nullable().optional(),
+    reorder_level: z.number().nullable().optional(),
     update_at: z.date().optional()
 })  
 

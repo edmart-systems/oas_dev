@@ -17,6 +17,18 @@ import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { toast } from "react-toastify";
 import MyCircularProgress from "@/components/common/my-circular-progress";
 
+// Configuration constants
+const LOW_STOCK_THRESHOLD = 5;
+
+// Move color mapping outside component to avoid recreation on every render
+const getChipColor = (status: string): "default" | "error" | "warning" | "success" => {
+  switch (status) {
+    case "Empty": return "error";
+    case "Low": return "warning";
+    default: return "success";
+  }
+};
+
 interface ProductStockDto {
   product_id: number;
   product_name: string;
@@ -52,7 +64,10 @@ const InventoryStockMain: React.FC = () => {
     setLoading(true);
     try {
       const res = await fetch("/api/inventory/inventory_stock"); 
-      if (!res.ok) throw new Error("Failed to fetch inventory stock");
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`HTTP ${res.status}: ${errorText || 'Failed to fetch inventory stock'}`);
+      }
 
       const data: InventoryStockDto[] = await res.json();
 
@@ -62,15 +77,15 @@ const InventoryStockMain: React.FC = () => {
           product_id: s.product_id,
           product_name: s.product_name,
           inventory_point_id: inv.inventory_point_id,
-          inventory_point: inv.inventory_point,
-          quantity: s.quantity,
+          inventory_point: inv.inventory_point ? inv.inventory_point : '',
+          quantity: s.quantity ? s.quantity : 0,
         }))
       );
 
       setRows(flatRows);
-    } catch (e) {
-      console.error(e);
-      toast.error("Failed to fetch inventory stock");
+    } catch (e: any) {
+      console.error('Inventory stock fetch error:', e);
+      toast.error(e.message || "Failed to fetch inventory stock");
     } finally {
       setLoading(false);
     }
@@ -89,6 +104,15 @@ const InventoryStockMain: React.FC = () => {
         r.inventory_point.toLowerCase().includes(term)
     );
   }, [rows, search]);
+  const getStatus = (qty: number) => {
+  if (qty <= 0) return "Empty";
+  if (qty < LOW_STOCK_THRESHOLD) return "Low";
+  return "OK";
+};
+
+const getTableRowKey = (r: any, idx: number) => {
+  return `${r.product_id}-${r.inventory_point_id}-${idx}`;
+};
 
   return (
     <Card>
@@ -129,29 +153,16 @@ const InventoryStockMain: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filtered.map((r, idx) => {
-                const qty = r.quantity ?? 0;
-                const status = qty <= 0 ? "Empty" : qty < 5 ? "Low" : "OK";
-                const color: "default" | "error" | "warning" | "success" =
-                  status === "Empty"
-                    ? "error"
-                    : status === "Low"
-                    ? "warning"
-                    : "success";
-
-                return (
-                  <TableRow
-                    key={`${r.product_id}-${r.inventory_point_id}-${idx}`}
-                  >
-                    <TableCell>{r.product_name}</TableCell>
-                    <TableCell>{r.inventory_point}</TableCell>
-                    <TableCell align="right">{qty}</TableCell>
-                    <TableCell>
-                      <Chip label={status} color={color as any} size="small" />
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+                      {filtered.map((r, idx) => (
+              <TableRow key={getTableRowKey(r, idx)}>
+                <TableCell>{r.product_name}</TableCell>
+                <TableCell>{r.inventory_point}</TableCell>
+                <TableCell align="right">{r.quantity ?? 0}</TableCell>
+                <TableCell>
+                  <Chip label={getStatus(r.quantity)} color={getChipColor(getStatus(r.quantity))} size="small" />
+                </TableCell>
+              </TableRow>
+            ))}
             </TableBody>
           </Table>
         )}

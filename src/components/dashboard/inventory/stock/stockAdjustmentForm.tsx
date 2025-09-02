@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useCallback } from "react"
 import {
   Button,
   TextField,
@@ -43,6 +43,7 @@ const StockAdjustmentForm: React.FC<Props> = ({ open, onClose, onSuccess, initia
   const [inventoryPointId, setInventoryPointId] = useState<number | null>(null)
   const [products, setProducts] = useState<Product[]>([])
   const [inventoryPoints, setInventoryPoints] = useState<InventoryPoint[]>([])
+  const [dataLoaded, setDataLoaded] = useState(false)
 
   useEffect(() => {
     if (initialData) {
@@ -56,11 +57,13 @@ const StockAdjustmentForm: React.FC<Props> = ({ open, onClose, onSuccess, initia
       setInventoryPointId(null)
       setQuantity(0)
     }
-    fetchProducts()
-    fetchInventoryPoints()
-  }, [initialData, open])
+    if (open && !dataLoaded) {
+      fetchProducts()
+      fetchInventoryPoints()
+    }
+  }, [initialData, open, dataLoaded])
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       const res = await fetch("/api/inventory/product")
       if (!res.ok) throw new Error("Failed to fetch products")
@@ -70,19 +73,20 @@ const StockAdjustmentForm: React.FC<Props> = ({ open, onClose, onSuccess, initia
       console.error(err)
       toast.error("Failed to load products")
     }
-  }
+  }, [])
 
-  const fetchInventoryPoints = async () => {
+  const fetchInventoryPoints = useCallback(async () => {
     try {
       const res = await fetch("/api/inventory/inventory_point")
       if (!res.ok) throw new Error("Failed to fetch inventory points")
       const data: InventoryPoint[] = await res.json()
       setInventoryPoints(data)
+      setDataLoaded(true)
     } catch (err) {
       console.error(err)
       toast.error("Failed to load inventory points")
     }
-  }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -145,7 +149,10 @@ const StockAdjustmentForm: React.FC<Props> = ({ open, onClose, onSuccess, initia
           select
           label="Product"
           value={productId ?? ""}
-          onChange={(e) => setProductId(Number(e.target.value))}
+          onChange={(e) => {
+            const value = Number(e.target.value)
+            if (!isNaN(value)) setProductId(value)
+          }}
           required
         >
           {products.map((p) => (
@@ -159,7 +166,10 @@ const StockAdjustmentForm: React.FC<Props> = ({ open, onClose, onSuccess, initia
           select
           label="Inventory Point"
           value={inventoryPointId ?? ""}
-          onChange={(e) => setInventoryPointId(Number(e.target.value))}
+          onChange={(e) => {
+            const value = Number(e.target.value)
+            if (!isNaN(value)) setInventoryPointId(value)
+          }}
           required
         >
           {inventoryPoints.map((ip) => (
@@ -173,7 +183,10 @@ const StockAdjustmentForm: React.FC<Props> = ({ open, onClose, onSuccess, initia
           select
           label="Adjustment Type"
           value={adjustmentType}
-          onChange={(e) => setAdjustmentType(e.target.value as any)}
+          onChange={(e) => {
+            const value = e.target.value as typeof adjustmentTypes[number]
+            setAdjustmentType(value)
+          }}
         >
           {adjustmentTypes.map((type) => (
             <MenuItem key={type} value={type}>
@@ -186,7 +199,10 @@ const StockAdjustmentForm: React.FC<Props> = ({ open, onClose, onSuccess, initia
           label="Quantity"
           type="number"
           value={quantity}
-          onChange={(e) => setQuantity(Number(e.target.value))}
+          onChange={(e) => {
+            const value = Number(e.target.value)
+            if (!isNaN(value)) setQuantity(value)
+          }}
         />
       </Stack>
         </DialogContent>

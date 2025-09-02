@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import {
   Card,
   CardHeader,
@@ -19,6 +19,15 @@ import { toast } from "react-toastify";
 import MyCircularProgress from "@/components/common/my-circular-progress";
 import TransferForm from "./TransferForm";
 
+// Simple debounce utility
+const debounce = (func: Function, delay: number) => {
+  let timeoutId: NodeJS.Timeout;
+  return (...args: any[]) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func.apply(null, args), delay);
+  };
+};
+
 interface TransferItem {
   product: { product_id: number; product_name: string } | null;
   product_id: number;
@@ -38,7 +47,18 @@ const TransfersMain: React.FC = () => {
   const [rows, setRows] = useState<TransferRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [openForm, setOpenForm] = useState(false);
+
+  // Debounce search to improve performance
+  const debouncedSetSearch = useCallback(
+    debounce((value: string) => setDebouncedSearch(value), 300),
+    []
+  );
+
+  useEffect(() => {
+    debouncedSetSearch(search);
+  }, [search, debouncedSetSearch]);
 
   const fetchRows = async () => {
     setLoading(true);
@@ -60,7 +80,7 @@ const TransfersMain: React.FC = () => {
   }, []);
 
   const filtered = useMemo(() => {
-    const term = search.toLowerCase();
+    const term = debouncedSearch.toLowerCase();
     if (!term) return rows;
     return rows.filter((r) => {
       const products = r.items.map((i) => i.product?.product_name || "").join(" ").toLowerCase();
@@ -71,7 +91,7 @@ const TransfersMain: React.FC = () => {
         (r.note || "").toLowerCase().includes(term)
       );
     });
-  }, [rows, search]);
+  }, [rows, debouncedSearch]);
 
   return (
     <Card>
@@ -121,7 +141,11 @@ const TransfersMain: React.FC = () => {
                   <TableCell>
                     <Stack direction="row" spacing={1} flexWrap="wrap">
                       {t.items.map((i, idx) => (
-                        <Chip key={idx} label={`${i.product?.product_name || "#"} × ${i.quantity}`} size="small" />
+                        <Chip 
+                          key={`${i.product_id}-${idx}`} 
+                          label={`${i.product?.product_name || "#"} × ${i.quantity}`} 
+                          size="small" 
+                        />
                       ))}
                     </Stack>
                   </TableCell>

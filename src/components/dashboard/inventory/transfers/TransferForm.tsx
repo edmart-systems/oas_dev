@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -30,6 +30,7 @@ const TransferForm: React.FC<TransferFormProps> = ({ open, onClose, onSuccess })
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<ProductOption[]>([]);
   const [points, setPoints] = useState<InventoryPointOption[]>([]);
+  const [dataLoaded, setDataLoaded] = useState(false);
 
   const [fromPoint, setFromPoint] = useState<number | "">("");
   const [toPoint, setToPoint] = useState<number | "">("");
@@ -38,25 +39,27 @@ const TransferForm: React.FC<TransferFormProps> = ({ open, onClose, onSuccess })
     { product_id: "", quantity: "" },
   ]);
 
+  const loadOptions = useCallback(async () => {
+    try {
+      const [prodRes, pointRes] = await Promise.all([
+        fetch("/api/inventory/product"),
+        fetch("/api/inventory/inventory_point"),
+      ]);
+      const prodData = await prodRes.json();
+      const pointData = await pointRes.json();
+      setProducts(prodData || []);
+      setPoints(pointData || []);
+      setDataLoaded(true);
+    } catch (e) {
+      toast.error("Failed to load options");
+    }
+  }, []);
+
   useEffect(() => {
-    if (!open) return;
-    // Load options
-    const loadOptions = async () => {
-      try {
-        const [prodRes, pointRes] = await Promise.all([
-          fetch("/api/inventory/product"),
-          fetch("/api/inventory/inventory_point"),
-        ]);
-        const prodData = await prodRes.json();
-        const pointData = await pointRes.json();
-        setProducts(prodData || []);
-        setPoints(pointData || []);
-      } catch (e) {
-        toast.error("Failed to load options");
-      }
-    };
-    loadOptions();
-  }, [open]);
+    if (open && !dataLoaded) {
+      loadOptions();
+    }
+  }, [open, dataLoaded, loadOptions]);
 
   const addItem = () => setItems((prev) => [...prev, { product_id: "", quantity: "" }]);
   const removeItem = (idx: number) => setItems((prev) => prev.filter((_, i) => i !== idx));
@@ -90,8 +93,20 @@ const TransferForm: React.FC<TransferFormProps> = ({ open, onClose, onSuccess })
         }),
       });
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data?.message || data?.error || "Failed to create transfer");
+        let errorMessage = "Failed to create transfer";
+        try {
+          const data = await res.json();
+          errorMessage = data?.message || data?.error || errorMessage;
+        } catch {
+          // If JSON parsing fails, try to get text response
+          try {
+            const text = await res.text();
+            errorMessage = text || errorMessage;
+          } catch {
+            // Use default error message if both JSON and text parsing fail
+          }
+        }
+        throw new Error(errorMessage);
       }
       toast.success("Transfer created");
       onSuccess();
@@ -113,7 +128,10 @@ const TransferForm: React.FC<TransferFormProps> = ({ open, onClose, onSuccess })
               <Select
                 label="From Inventory Point"
                 value={fromPoint}
-                onChange={(e) => setFromPoint(e.target.value as number)}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  if (!isNaN(value)) setFromPoint(value);
+                }}
               >
                 {points.map((p) => (
                   <MenuItem key={p.inventory_point_id} value={p.inventory_point_id}>
@@ -127,7 +145,10 @@ const TransferForm: React.FC<TransferFormProps> = ({ open, onClose, onSuccess })
               <Select
                 label="To Inventory Point"
                 value={toPoint}
-                onChange={(e) => setToPoint(e.target.value as number)}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  if (!isNaN(value)) setToPoint(value);
+                }}
               >
                 {points.map((p) => (
                   <MenuItem key={p.inventory_point_id} value={p.inventory_point_id}>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   IconButton,
   Table,
@@ -13,20 +13,25 @@ import { PencilSimple } from "@phosphor-icons/react";
 import { Stock } from "@/modules/inventory/types/stock.types";
 
 interface Props {
-  Stock: Stock[];
+  stock: Stock[];
   onEdit: (stock: Stock) => void;
 }
 
-const StockTable = ({ Stock, onEdit }: Props) => {
+const StockTable = ({ stock, onEdit }: Props) => {
   // Pagination state
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   // Slice data for current page
-  const paginatedStock = Stock.slice(
+  const paginatedStock = stock.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
+
+  // Memoize date formatting to avoid repeated Date object creation
+  const formatDate = useMemo(() => (dateString: string) => {
+    return new Date(dateString).toLocaleDateString();
+  }, []);
 
   return (
     <TableContainer>
@@ -57,7 +62,7 @@ const StockTable = ({ Stock, onEdit }: Props) => {
               <TableCell>{stock.resulting_stock}</TableCell>
               <TableCell>
                 {stock.created_at
-                  ? new Date(stock.created_at).toLocaleDateString()
+                  ? formatDate(stock.created_at)
                   : "N/A"}
               </TableCell>
               <TableCell>
@@ -73,7 +78,7 @@ const StockTable = ({ Stock, onEdit }: Props) => {
       {/* Pagination Controls */}
       <TablePagination
         component="div"
-        count={Stock.length}
+        count={stock.length}
         page={page}
         onPageChange={(_, newPage) => setPage(newPage)}
         rowsPerPage={rowsPerPage}

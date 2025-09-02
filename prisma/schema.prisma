@@ -113,7 +113,6 @@ model Currency {
   created_at       DateTime           @default(now())
   updated_at       DateTime           @default(now())
   Edited_quotation Edited_quotation[]
-  Product          Product[]
   quotations       Quotation[]
   Sale             Sale[]
 
@@ -580,14 +579,13 @@ model Product {
   supplier_id         Int?
   product_name        String    @unique()
   product_barcode     Int       @unique()
+  sku_code            String?   @unique()
   product_description String
   unit_id             Int
   category_id         Int
   tag_id              Int
-  currency_id         Int
-  product_quantity    Int  @default(0)
-  product_max_quantity Int? @default(0)
-  product_min_quantity Int? @default(0)
+  stock_quantity      Int  @default(0)
+  reorder_level       Int? @default(0)
   product_status      Int? @default(1)
   buying_price        Int @default(0)
   selling_price       Int @default(0)
@@ -601,7 +599,6 @@ model Product {
   unit                Unit      @relation(fields: [unit_id], references: [unit_id])
   category            Category  @relation(fields: [category_id], references: [category_id])
   tag                 Tag       @relation(fields: [tag_id], references: [tag_id])
-  currency            Currency  @relation(fields: [currency_id], references: [currency_id])
   supplier           Supplier? @relation(fields: [supplier_id], references: [supplier_id])
   creator User? @relation("ProductCreator", fields: [created_by], references: [co_user_id])
   updater User? @relation("ProductUpdater", fields: [updated_by], references: [co_user_id])

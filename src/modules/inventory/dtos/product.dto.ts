@@ -3,19 +3,19 @@ import { z } from "zod";
 export const ProductDto = z.object({
   product_name:        z.string(),
   product_barcode:     z.number(),
+  sku_code:            z.string().optional(),
   product_description: z.string(),
-  product_quantity:    z.number().default(0),
   unit_id:             z.number(),
   category_id:         z.number(),
   tag_id:              z.number(),
   buying_price:        z.number(),
   selling_price:       z.number(),
   vat_inclusive:       z.number().default(0),
-  currency_id:         z.number(),
   created_by:          z.string(),
   updated_by:          z.string(),
   product_status:      z.number(),
-  supplier_id:         z.number().optional(),
+  supplier_id:         z.number().nullable().optional(),
+  reorder_level:       z.number().nullable().optional(),
   inventory_point_id:  z.number().default(1), 
   update_at: z.date().optional()
 
@@ -24,18 +24,17 @@ export const ProductDto = z.object({
 export const CreateProductDto = z.object({
   product_name:        z.string(),
   product_barcode:     z.number(),
+  sku_code:            z.string().optional(),
   product_description: z.string(),
   unit_id:             z.number(),
   category_id:         z.number(),
   tag_id:              z.number(),
   buying_price:        z.number(),
   selling_price:       z.number(),
-  currency_id:         z.number(),
   created_by:          z.string().optional(),
   updated_by:          z.string().optional(),
-  supplier_id:         z.number().optional(),
-  product_max_quantity: z.number().optional(),
-  product_min_quantity: z.number().optional(),
+  supplier_id:         z.number().nullable().optional(),
+  reorder_level:       z.number().nullable().optional(),
   update_at: z.date().optional()
 });
 

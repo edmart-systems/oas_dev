@@ -3,17 +3,20 @@ export const calculateProductStatus = (
   minQuantity: number | null,
   maxQuantity: number | null
 ): number => {
-  if (!minQuantity) return 1;
+  // If no stock, always low status
+  if (currentQuantity === 0) return 1; // Low
   
+  // If no reorder level set, consider normal stock
+  if (!minQuantity) return 2; // Normal
+  
+  // If stock is at or below reorder level, it's low
   if (currentQuantity <= minQuantity) return 1; // Low
   
-  if (!maxQuantity) {
-    // If only minQuantity is provided, use it as threshold
-    return currentQuantity > minQuantity * 2 ? 3 : 2; // High if > 2x min, else Moderate
-  }
+  // If stock is significantly above reorder level, it's high
+  if (currentQuantity > minQuantity * 2) return 3; // High
   
-  if (currentQuantity >= maxQuantity) return 3; // High
-  return 2; // Moderate
+  // Otherwise it's normal
+  return 2; // Normal
 };
 
 export const calculateMarkupPercentage = (
