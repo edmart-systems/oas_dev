@@ -398,36 +398,39 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
             <CategoryForm
               open={openForm === 'category'}
               onClose={() => setOpenForm(null)}
-              onSuccess={(newCategory) => {
-                const categoryOption = { id: newCategory.category_id, name: newCategory.category };
-                setCategories([...categories, categoryOption]);
-                // setFormData(prev => ({ ...prev, category_id: categoryOption.id }));
-                setOpenForm(null)
+              onSuccess={async (newCategory) => {
+                const categoriesRes = await fetch('/api/inventory/category');
+                const categoriesData = await categoriesRes.json();
+                setCategories(categoriesData.map((cat: any) => ({ id: cat.category_id, name: cat.category })));
+                setOpenForm(null);
                 toast.success('Category added successfully');
               }}
             />
             <TagForm
-              open={openForm === 'tag'}
-              onClose={() => setOpenForm(null)}
-              onSuccess={(newTag) => {
-                const tagOption = { id: newTag.tag_id, name: newTag.tag };
-                setTags([...tags, tagOption]);
-                // setFormData(prev => ({ ...prev, tag_id: tagOption.id }));
-                setOpenForm(null)
-                toast.success('Tag added successfully');
-              }}
-            />
+          open={openForm === 'tag'}
+          onClose={() => setOpenForm(null)}
+          onSuccess={async (newTag) => {
+            const tagsRes = await fetch('/api/inventory/tag');
+            const tagsData = await tagsRes.json();
+            setTags(tagsData.map((tag: any) => ({ id: tag.tag_id, name: tag.tag })));        
+            setOpenForm(null);
+            toast.success('Tag added successfully');
+          }}
+        />
+
+
 
 
             {/* Supplier Dialog  */}
             <SupplierForm
               open={openForm === 'supplier'}
               onClose={() => setOpenForm(null)}
-              onSuccess={(newSupplier) => {
-                const supplierOption = { id: newSupplier.supplier_id, name: newSupplier.supplier_name };
-                setSuppliers([...suppliers, supplierOption]);;
-                // setFormData(prev => ({ ...prev, supplier_id: supplierOption.id })); // auto select
+              onSuccess={async (newSupplier) => {
+                const suppliersRes = await fetch('/api/inventory/supplier');
+                const suppliersData = await suppliersRes.json();
+                setSuppliers(suppliersData.map((sup: any) => ({ id: sup.supplier_id, name: sup.supplier_name })));
                 setOpenForm(null);
+                toast.success('Supplier added successfully');
               }}
             />
 
@@ -436,14 +439,9 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
               open={openForm === 'unit'}
               onClose={() => setOpenForm(null)}
               onSuccess={async () => {
-                const unitOption ={}
-                // try {
-                //   const unitsData = await getUnits();
-                //   setUnits(unitsData);
-                //   toast.success('Unit added successfully');
-                // } finally {
-                //   setOpenForm(null);
-                // }
+                const unitsData = await getUnits();
+                setUnits(unitsData);
+                setOpenForm(null);
               }}
             />
           </Card>
@@ -459,3 +457,5 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
     </Dialog>
   );
 }
+
+
