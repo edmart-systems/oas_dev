@@ -2,9 +2,22 @@ import { ProductRepository } from "../repositories/product.repository";
 import { CreateProductInput } from "../dtos/product.dto";
 import { Product } from "@prisma/client";
 import { calculateProductStatus, calculateMarkupPercentage } from "../methods/purchase.method";
+import prisma from "../../../../db/db";
 
 export class ProductService {
   constructor(private productRepo: ProductRepository) {}
+
+  private async generateSKU(categoryId: number): Promise<string> {
+    const category = await prisma.category.findUnique({
+      where: { category_id: categoryId }
+    });
+    
+    const categoryCode = category?.category.substring(0, 3).toUpperCase() || 'GEN';
+    const timestamp = Date.now().toString().slice(-6);
+    const randomNum = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+    
+    return `${categoryCode}-${timestamp}-${randomNum}`;
+  }
 
   async createProduct(data: CreateProductInput): Promise<Product> {
     const existingBarcode = await this.productRepo.findByBarcode(data.product_barcode);
@@ -17,9 +30,12 @@ export class ProductService {
       throw new Error("Product with this name already exists.");
     }
 
+    const sku_code = await this.generateSKU(data.category_id);
+    
     const productData = {
       ...data,
-      product_status: calculateProductStatus(0, data.product_min_quantity || null, data.product_max_quantity || null),
+      sku_code,
+      product_status: calculateProductStatus(0, data.reorder_level || null, null),
       markup_percentage: calculateMarkupPercentage(data.buying_price, data.selling_price)
     };
 
@@ -56,11 +72,10 @@ export class ProductService {
 
   const updateData = { ...data };
   
-  if (data.product_quantity !== undefined || data.product_min_quantity !== undefined || data.product_max_quantity !== undefined) {
-    const quantity = data.product_quantity ?? existing.product_quantity;
-    const minQty = data.product_min_quantity ?? existing.product_min_quantity;
-    const maxQty = data.product_max_quantity ?? existing.product_max_quantity;
-    updateData.product_status = calculateProductStatus(quantity, minQty, maxQty);
+  if (data.reorder_level !== undefined) {
+    const quantity = existing.stock_quantity;
+    const minQty = data.reorder_level ?? existing.reorder_level;
+    updateData.product_status = calculateProductStatus(quantity, minQty, null);
   }
   
   if (data.buying_price !== undefined || data.selling_price !== undefined) {
@@ -84,12 +99,12 @@ export class ProductService {
     
     const newStatus = calculateProductStatus(
       newQuantity, 
-      existing.product_min_quantity, 
-      existing.product_max_quantity
+      existing.reorder_level, 
+      null
     );
     
     return this.productRepo.update(id, {
-      product_quantity: newQuantity,
+      stock_quantity: newQuantity,
       product_status: newStatus
     });
   }

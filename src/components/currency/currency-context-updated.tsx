@@ -29,7 +29,7 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
 useEffect(() => {
   const fetchCurrencies = async () => {
     try {
-      const currencyData = await getCurrencies();
+      const currencyData = await getCurrencies(); // <-- call it
       const formatted = currencyData.map((c: any) => ({
         code: c.currency_code,
         symbol: symbols[c.currency_code] || c.currency_code,

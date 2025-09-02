@@ -39,10 +39,10 @@ export class PurchaseService {
 
             const product = await tx.product.findUnique({
             where: { product_id: item.product_id },
-            select: { product_quantity: true },
+            select: { stock_quantity: true },
             });
             
-            const currentQty = product?.product_quantity ?? 0;
+            const currentQty = product?.stock_quantity ?? 0;
             const resulting_stock = currentQty + item.quantity;
 
             await tx.stock.create({
@@ -59,18 +59,17 @@ export class PurchaseService {
             const updatedProduct = await tx.product.findUnique({
                 where: { product_id: item.product_id },
                 select: { 
-                    product_quantity: true, 
-                    product_min_quantity: true, 
-                    product_max_quantity: true,
+                    stock_quantity: true, 
+                    reorder_level: true,
                     selling_price: true 
                 },
             });
             
-            const newQuantity = (updatedProduct?.product_quantity ?? 0) + item.quantity;
+            const newQuantity = (updatedProduct?.stock_quantity ?? 0) + item.quantity;
             const newStatus = calculateProductStatus(
                 newQuantity,
-                updatedProduct?.product_min_quantity ?? null,
-                updatedProduct?.product_max_quantity ?? null
+                updatedProduct?.reorder_level ?? null,
+                null
             );
             const newMarkup = calculateMarkupPercentage(
                 item.unit_cost,
@@ -80,7 +79,7 @@ export class PurchaseService {
             await tx.product.update({
                 where: { product_id: item.product_id },
                 data: { 
-                    product_quantity: newQuantity,
+                    stock_quantity: newQuantity,
                     buying_price: item.unit_cost,
                     product_status: newStatus,
                     markup_percentage: newMarkup

@@ -13,17 +13,19 @@ import {
   DialogContent,
   DialogTitle,
   DialogActions,
+  Autocomplete,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import AddIcon from '@mui/icons-material/Add';
 import { useState, useEffect } from 'react';
-import { getUnits, getCurrencies } from '@/server-actions/user-actions/inventory.actions';
+import { getUnits } from '@/server-actions/user-actions/inventory.actions';
 import { toast } from 'react-toastify';
 import SupplierForm from '../supplier/SupplierForm';
 import CategoryForm from '../category/CategoryForm';
 import TagForm from '../tag/tagForm';
 import UnitForm from '../units/UnitForm';
 import CurrencyForm from '../units/CurrencyForm';
+
 
 interface ProductFormProps {
   open: boolean;
@@ -42,9 +44,7 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
     tag_id: '',
     buying_price: '',
     selling_price: '',
-    currency_id: '',
-    product_max_quantity: '',
-    product_min_quantity: '',
+    reorder_level: '',
     product_status: 1,
     supplier_id: '',
   });
@@ -53,10 +53,10 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
   const [units, setUnits] = useState<{ id: number, name: string }[]>([]);
   const [categories, setCategories] = useState<{ id: number, name: string }[]>([]);
   const [tags, setTags] = useState<{ id: number, name: string }[]>([]);
-  const [currencies, setCurrencies] = useState<{ currency_id: number, currency_code: string, currency_name: string }[]>([]);
+
   const [suppliers, setSuppliers] = useState<{ id: number, name: string }[]>([]);
   const [loading, setLoading] = useState(true);
-  const [openForm, setOpenForm] = useState<null | 'category' | 'tag' | 'supplier' | 'currency' | 'unit'>(null);
+  const [openForm, setOpenForm] = useState<null | 'category' | 'tag' | 'supplier' | 'unit'>(null);
 
   useEffect(() => {
     if (initialData) {
@@ -69,9 +69,7 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
         tag_id: initialData?.tag_id?.toString() || '',
         buying_price: initialData?.buying_price?.toString() || '',
         selling_price: initialData?.selling_price?.toString() || '',
-        currency_id: initialData?.currency_id?.toString() || '',
-        product_max_quantity: initialData?.product_max_quantity?.toString() || '',
-        product_min_quantity: initialData?.product_min_quantity?.toString() || '',
+        reorder_level: initialData?.reorder_level?.toString() || '',
         product_status: initialData?.product_status || 1,
         supplier_id: initialData?.supplier_id?.toString() || '',
       })
@@ -86,9 +84,7 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
         tag_id: '',
         buying_price: '',
         selling_price: '',
-        currency_id: '',
-        product_max_quantity: '',
-        product_min_quantity: '',
+        reorder_level: '',
         product_status: 1,
         supplier_id: '',
       })
@@ -116,14 +112,9 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
       setTags(tagsData.map((tag: any) => ({ id: tag.tag_id, name: tag.tag })));
       setSuppliers(suppliersData.map((sup: any) => ({ id: sup.supplier_id, name: sup.supplier_name })));
 
-      // Fetch units and currencies from database using server actions
-      const [unitsData, currenciesData] = await Promise.all([
-        getUnits(),
-        getCurrencies()
-      ]);
-
+      // Fetch units from database using server actions
+      const unitsData = await getUnits();
       setUnits(unitsData);
-      setCurrencies(currenciesData);
     } catch (error) {
       console.error('Failed to fetch options:', error);
     }
@@ -142,7 +133,7 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
     if (!formData.tag_id) errors.tag_id = "Tag is required";
     if (!formData.buying_price) errors.buying_price = "Buying price is required";
     if (!formData.selling_price) errors.selling_price = "Selling price is required";
-    if (!formData.currency_id) errors.currency_id = "Currency is required";
+
 
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
@@ -156,15 +147,13 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
       tag_id: Number(formData.tag_id),
       buying_price: Number(formData.buying_price),
       selling_price: Number(formData.selling_price),
-      currency_id: Number(formData.currency_id),
-      product_max_quantity: formData.product_max_quantity ? Number(formData.product_max_quantity) : null,
-      product_min_quantity: formData.product_min_quantity ? Number(formData.product_min_quantity) : null,
-      supplier_id: formData.supplier_id ? Number(formData.supplier_id) : null,
+      reorder_level: formData.reorder_level ? Number(formData.reorder_level) : null,
+      supplier_id: formData.supplier_id && formData.supplier_id !== '' ? Number(formData.supplier_id) : null,
     };
 
     try {
-      const isUpdate = initialData?.supplier_id;
-      const url = isUpdate ? `/api/inventory/product/${initialData.supplier_id}` : '/api/inventory/product';
+      const isUpdate = initialData?.product_id;
+      const url = isUpdate ? `/api/inventory/product/${initialData.product_id}` : '/api/inventory/product';
       const method = isUpdate ? 'PATCH' : 'POST';
 
       const res = await fetch(url, {
@@ -175,6 +164,7 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
+        console.log('API Error:', errorData); // Debug log
         if (errorData?.fieldErrors) {
           setFieldErrors(errorData.fieldErrors);
         } else {
@@ -191,9 +181,20 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
     }
   };
 
-  const handleAdd = (type: 'category' | 'tag' | 'supplier' | 'currency' | 'unit') => {
+  const handleAdd = (type: 'category' | 'tag' | 'supplier' | 'unit') => {
     setOpenForm(type)
   };
+
+  const calculateMarkup = () => {
+    const buying = Number(formData.buying_price) || 0;
+    const selling = Number(formData.selling_price) || 0;
+    if (buying === 0) return 0;
+    return Math.round(((selling - buying) / buying) * 100);
+  };
+
+  
+
+
 
   return (
     <Dialog open={open} onClose={onCancel} maxWidth="md" fullWidth>
@@ -234,6 +235,8 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
                   />
                 </Grid>
 
+
+
                 <Grid size={{ xs: 12, md: 12 }}>
                   <TextField
                     label="Description"
@@ -270,20 +273,35 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
                 </Grid>
 
                 <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    label="Markup Percentage"
+                    value={`${calculateMarkup()}%`}
+                    fullWidth
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    variant="filled"
+                  />
+                </Grid>
+
+                <Grid size={{ xs: 12, md: 6 }}>
                   <Stack direction="row" alignItems="center">
-                    <TextField
-                      label="Unit"
-                      select
+                    <Autocomplete
                       fullWidth
-                      value={formData.unit_id}
-                      onChange={(e) => setFormData({ ...formData, unit_id: e.target.value })}
-                    >
-                      {units.map((unit) => (
-                        <MenuItem key={unit.id} value={unit.id}>
-                          {unit.name}
-                        </MenuItem>
-                      ))}
-                    </TextField>
+                      options={units}
+                      getOptionLabel={(option) => option.name}
+                      value={units.find(unit => unit.id?.toString() === formData.unit_id) || null}
+                      onChange={(_, newValue) => setFormData({ ...formData, unit_id: newValue?.id.toString() || '' })}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Unit"
+                          required
+                          error={!!fieldErrors.unit_id}
+                          helperText={fieldErrors.unit_id}
+                        />
+                      )}
+                    />
                     <IconButton onClick={() => handleAdd('unit')}>
                       <AddIcon />
                     </IconButton>
@@ -292,20 +310,22 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
 
                 <Grid size={{ xs: 12, md: 6 }}>
                   <Stack direction="row" alignItems="center">
-                    <TextField
-                      label="Category"
-                      select
+                    <Autocomplete
                       fullWidth
-                      value={formData.category_id}
-                      onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-
-                    >
-                      {categories.map((cat) => (
-                        <MenuItem key={cat.id} value={cat.id}>
-                          {cat.name}
-                        </MenuItem>
-                      ))}
-                    </TextField>
+                      options={categories}
+                      getOptionLabel={(option) => option.name}
+                      value={categories.find(cat => cat.id?.toString() === formData.category_id) || null}
+                      onChange={(_, newValue) => setFormData({ ...formData, category_id: newValue?.id.toString() || '' })}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Category"
+                          required
+                          error={!!fieldErrors.category_id}
+                          helperText={fieldErrors.category_id}
+                        />
+                      )}
+                    />
                     <IconButton onClick={() => handleAdd('category')}>
                       <AddIcon />
                     </IconButton>
@@ -314,95 +334,63 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
 
                 <Grid size={{ xs: 12, md: 6 }}>
                   <Stack direction="row" alignItems="center">
-                    <TextField
-                      label="Tag"
-                      select
+                    <Autocomplete
                       fullWidth
-                      value={formData.tag_id}
-                      onChange={(e) => setFormData({ ...formData, tag_id: e.target.value })}
-
-                    >
-                      {tags.map((tag) => (
-                        <MenuItem key={tag.id} value={tag.id}>
-                          {tag.name}
-                        </MenuItem>
-                      ))}
-                    </TextField>
+                      options={tags}
+                      getOptionLabel={(option) => option.name}
+                      value={tags.find(tag => tag.id?.toString() === formData.tag_id) || null}
+                      onChange={(_, newValue) => setFormData({ ...formData, tag_id: newValue?.id.toString() || '' })}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Tag"
+                          required
+                          error={!!fieldErrors.tag_id}
+                          helperText={fieldErrors.tag_id}
+                        />
+                      )}
+                    />
                     <IconButton onClick={() => handleAdd('tag')}>
                       <AddIcon />
                     </IconButton>
                   </Stack>
                 </Grid>
 
-                <Grid size={{ xs: 12, md: 6 }}>
-                  <Stack direction="row" alignItems="center">
-                    <TextField
-                      label="Currency"
-                      select
-                      fullWidth
-                      value={formData.currency_id}
-                      onChange={(e) => setFormData({ ...formData, currency_id: e.target.value })}
 
-                    >
-                      {currencies.map((cur) => (
-                        <MenuItem key={cur.currency_id} value={cur.currency_id}>
-                          {cur.currency_code} - {cur.currency_name}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                    <IconButton onClick={() => handleAdd('currency')}>
-                      <AddIcon />
-                    </IconButton>
-                  </Stack>
-                </Grid>
 
                 <Grid size={{ xs: 12, md: 6 }}>
                   <Stack direction="row" alignItems="center">
-                    <TextField
-                      label="Supplier"
-                      select
+                    <Autocomplete
                       fullWidth
-                      value={formData.supplier_id}
-                      onChange={(e) => setFormData({ ...formData, supplier_id: e.target.value })}
-
-                    >
-                      {suppliers.map((sup) => (
-                        <MenuItem key={sup.id} value={sup.id}>
-                          {sup.name}
-                        </MenuItem>
-                      ))}
-                    </TextField>
+                      options={suppliers}
+                      getOptionLabel={(option) => option.name}
+                      value={suppliers.find(sup => sup.id?.toString() === formData.supplier_id) || null}
+                      onChange={(_, newValue) => setFormData({ ...formData, supplier_id: newValue?.id.toString() || '' })}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Supplier (Optional)"
+                        />
+                      )}
+                    />
                     <IconButton onClick={() => handleAdd('supplier')}>
                       <AddIcon />
                     </IconButton>
                   </Stack>
                 </Grid>
 
-                <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
-                    label="Max Quantity"
-                    type="number"
-                    fullWidth
-                    value={formData.product_max_quantity}
-                    onChange={(e) =>
-                      setFormData({ ...formData, product_max_quantity: e.target.value })
 
-                    }
-                    error={!!fieldErrors.product_max_quantity}
-                    helperText={fieldErrors.product_max_quantity}
-                  />
-                </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
                   <TextField
-                    label="Min Quantity"
+                    label="Reorder Level"
                     type="number"
                     fullWidth
-                    value={formData.product_min_quantity}
+                    value={formData.reorder_level}
                     onChange={(e) =>
-                      setFormData({ ...formData, product_min_quantity: e.target.value })
+                      setFormData({ ...formData, reorder_level: e.target.value })
                     }
-                    error={!!fieldErrors.product_min_quantity}
-                    helperText={fieldErrors.product_min_quantity}
+                    error={!!fieldErrors.reorder_level}
+                    helperText={fieldErrors.reorder_level}
                   />
                 </Grid>
               </Grid>
@@ -412,8 +400,8 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
               onClose={() => setOpenForm(null)}
               onSuccess={(newCategory) => {
                 const categoryOption = { id: newCategory.category_id, name: newCategory.category };
-                setCategories(prev => [...prev, categoryOption]);
-                setFormData(prev => ({ ...prev, category_id: categoryOption.id }));
+                setCategories([...categories, categoryOption]);
+                // setFormData(prev => ({ ...prev, category_id: categoryOption.id }));
                 setOpenForm(null)
                 toast.success('Category added successfully');
               }}
@@ -423,25 +411,13 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
               onClose={() => setOpenForm(null)}
               onSuccess={(newTag) => {
                 const tagOption = { id: newTag.tag_id, name: newTag.tag };
-                setTags(prev => [...prev, tagOption]);
-                setFormData(prev => ({ ...prev, tag_id: tagOption.id }));
+                setTags([...tags, tagOption]);
+                // setFormData(prev => ({ ...prev, tag_id: tagOption.id }));
                 setOpenForm(null)
                 toast.success('Tag added successfully');
               }}
             />
-            <CurrencyForm
-              open={openForm === 'currency'}
-              onClose={() => setOpenForm(null)}
-              onSuccess={async () => {
-                try {
-                  const currenciesData = await getCurrencies();
-                  setCurrencies(currenciesData);
-                  toast.success('Currency added successfully');
-                } finally {
-                  setOpenForm(null);
-                }
-              }}
-            />
+
 
             {/* Supplier Dialog  */}
             <SupplierForm
@@ -449,8 +425,8 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
               onClose={() => setOpenForm(null)}
               onSuccess={(newSupplier) => {
                 const supplierOption = { id: newSupplier.supplier_id, name: newSupplier.supplier_name };
-                setSuppliers(prev => [...prev, supplierOption]);
-                setFormData(prev => ({ ...prev, supplier_id: supplierOption.id })); // auto select
+                setSuppliers([...suppliers, supplierOption]);;
+                // setFormData(prev => ({ ...prev, supplier_id: supplierOption.id })); // auto select
                 setOpenForm(null);
               }}
             />
@@ -460,13 +436,14 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
               open={openForm === 'unit'}
               onClose={() => setOpenForm(null)}
               onSuccess={async () => {
-                try {
-                  const unitsData = await getUnits();
-                  setUnits(unitsData);
-                  toast.success('Unit added successfully');
-                } finally {
-                  setOpenForm(null);
-                }
+                const unitOption ={}
+                // try {
+                //   const unitsData = await getUnits();
+                //   setUnits(unitsData);
+                //   toast.success('Unit added successfully');
+                // } finally {
+                //   setOpenForm(null);
+                // }
               }}
             />
           </Card>

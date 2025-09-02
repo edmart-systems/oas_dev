@@ -35,6 +35,28 @@ export class ProductRepository {
   async getAll(): Promise<Product[]> {
     return this.prisma.product.findMany({
       orderBy: { product_created_at: "desc" },
+      include: {
+        unit: {
+          select: {
+            name: true,
+          },
+        },
+        category: {
+          select: {
+            category: true,
+          },
+        },
+        tag: {
+          select: {
+            tag: true,
+          },
+        },
+        supplier: {
+          select: {
+            supplier_name: true,
+          },
+        },
+      },
     });
   }
 

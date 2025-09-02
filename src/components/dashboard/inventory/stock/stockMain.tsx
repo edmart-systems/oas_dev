@@ -1,5 +1,5 @@
 import { Stack, TextField, Card, CardHeader, Button, CardContent, Box } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import StockTable from './stockTable'
 import { Stock } from '@/modules/inventory/types/stock.types'
 import { toast } from 'react-toastify'
@@ -34,10 +34,12 @@ const StockMain = () => {
     }
   }
 
-  const filteredStock = stock.filter(item =>
-    (item.product?.product_name || "")
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
+  const filteredStock = useMemo(() => 
+    stock.filter(item =>
+      (item.product?.product_name || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    ), [stock, searchTerm]
   )
 
   const handleEdit = (stock: Stock) => {
@@ -90,7 +92,7 @@ const StockMain = () => {
             <MyCircularProgress />
           </Box>
         ) : (
-          <StockTable Stock={filteredStock} onEdit={handleEdit} />
+          <StockTable stock={filteredStock} onEdit={handleEdit} />
         )}
 
         {/* Stock Adjustment Form Modal */}
