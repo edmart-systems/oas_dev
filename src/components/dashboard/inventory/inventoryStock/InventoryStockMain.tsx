@@ -76,8 +76,10 @@ const InventoryStockMain: React.FC = () => {
         inv.stock.map((s) => ({
           product_id: s.product_id,
           product_name: s.product_name,
+
           location_id: inv.location_id,
           location_name: inv.location_name ? inv.location_name : '',
+
           quantity: s.quantity ? s.quantity : 0,
         }))
       );
@@ -111,7 +113,9 @@ const InventoryStockMain: React.FC = () => {
 };
 
 const getTableRowKey = (r: any, idx: number) => {
+
   return `${r.product_id}-${r.location_id}-${idx}`;
+
 };
 
   return (
@@ -156,7 +160,9 @@ const getTableRowKey = (r: any, idx: number) => {
                       {filtered.map((r, idx) => (
               <TableRow key={getTableRowKey(r, idx)}>
                 <TableCell>{r.product_name}</TableCell>
+
                 <TableCell>{r.location_name}</TableCell>
+
                 <TableCell align="right">{r.quantity ?? 0}</TableCell>
                 <TableCell>
                   <Chip label={getStatus(r.quantity)} color={getChipColor(getStatus(r.quantity))} size="small" />

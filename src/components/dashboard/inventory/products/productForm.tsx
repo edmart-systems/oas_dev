@@ -398,15 +398,18 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
             <CategoryForm
               open={openForm === 'category'}
               onClose={() => setOpenForm(null)}
+
               onSuccess={async (newCategory) => {
                 const categoriesRes = await fetch('/api/inventory/category');
                 const categoriesData = await categoriesRes.json();
                 setCategories(categoriesData.map((cat: any) => ({ id: cat.category_id, name: cat.category })));
                 setOpenForm(null);
+
                 toast.success('Category added successfully');
               }}
             />
             <TagForm
+
           open={openForm === 'tag'}
           onClose={() => setOpenForm(null)}
           onSuccess={async (newTag) => {
@@ -421,10 +424,12 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
 
 
 
+
             {/* Supplier Dialog  */}
             <SupplierForm
               open={openForm === 'supplier'}
               onClose={() => setOpenForm(null)}
+
               onSuccess={async (newSupplier) => {
                 const suppliersRes = await fetch('/api/inventory/supplier');
                 const suppliersData = await suppliersRes.json();
@@ -439,9 +444,11 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
               open={openForm === 'unit'}
               onClose={() => setOpenForm(null)}
               onSuccess={async () => {
+
                 const unitsData = await getUnits();
                 setUnits(unitsData);
                 setOpenForm(null);
+
               }}
             />
           </Card>
