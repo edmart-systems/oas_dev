@@ -16,7 +16,7 @@ export interface PurchaseDownloadButtonsProps {
   purchase: Purchase;
   company: CompanyDto;
   supplierName: string;
-  inventoryPointName: string;
+  locationName: string;
   productNames: Record<number, string>;
 }
 
@@ -24,7 +24,7 @@ const PurchaseDownloadButtons = ({
   purchase,
   company,
   supplierName,
-  inventoryPointName,
+  locationName,
   productNames,
 }: PurchaseDownloadButtonsProps) => {
   const [viewOpen, setViewOpen] = useState(false);
@@ -53,7 +53,7 @@ const PurchaseDownloadButtons = ({
         company={company}
         formatCurrency={formatCurrency}
         supplierName={supplierName}
-        inventoryPointName={inventoryPointName}
+        locationName={locationName}
         productNames={productNames}
         qrDataUrl={qrDataUrl}
       />
@@ -99,7 +99,7 @@ const PurchaseDownloadButtons = ({
         company={company}
         formatCurrency={formatCurrency}
         supplierName={supplierName}
-        inventoryPointName={inventoryPointName}
+        locationName={locationName}
         productNames={productNames}
         qrDataUrl={qrDataUrl}
       />

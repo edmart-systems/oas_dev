@@ -17,6 +17,7 @@ import UnitMain from "@/components/dashboard/inventory/units/UnitMain";
 import CurrencyMain from "@/components/dashboard/inventory/units/CurrencyMain";
 import TransfersMain from "@/components/dashboard/inventory/transfers/TransfersMain";
 import InventoryStockMain from "@/components/dashboard/inventory/inventoryStock/InventoryStockMain";
+import LocationMain from "@/components/dashboard/common/settings/location/LocationMain";
 
 
 const CategoriesPage = () => {
@@ -113,7 +114,7 @@ const CategoriesPage = () => {
         <ProductsMain/>
       )}
       {(tabValue == 3) && (
-        <InventoryPointMain/>
+        <LocationMain />
       )} 
       {(tabValue == 4) && (
         <StockMain/>

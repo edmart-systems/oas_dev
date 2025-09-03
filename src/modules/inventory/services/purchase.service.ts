@@ -48,7 +48,7 @@ export class PurchaseService {
             await tx.stock.create({
                 data: {
                     product_id: item.product_id,
-                    inventory_point_id: purchase.inventory_point_id,
+                    location_id: purchase.location_id,
                     change_type: "PURCHASE",
                     quantity_change: item.quantity,
                     resulting_stock, 

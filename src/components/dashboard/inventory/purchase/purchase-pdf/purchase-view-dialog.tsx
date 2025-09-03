@@ -40,10 +40,10 @@ const PaperComponent = (props: PaperProps) => {
 };
 
 
-const PurchaseViewDialog = ({ open, setOpen, company, purchase, formatCurrency, supplierName, inventoryPointName, productNames, qrDataUrl }: PurchaseViewDialogProps & { 
+const PurchaseViewDialog = ({ open, setOpen, company, purchase, formatCurrency, supplierName, locationName, productNames, qrDataUrl }: PurchaseViewDialogProps & { 
   formatCurrency: (amount: number) => string;
   supplierName: string;
-  inventoryPointName: string;
+  locationName: string;
   productNames: Record<number, string>;
   qrDataUrl?: string;
 }) => {
@@ -83,7 +83,7 @@ const PurchaseViewDialog = ({ open, setOpen, company, purchase, formatCurrency, 
               company={company} 
               formatCurrency={formatCurrency}
               supplierName={supplierName}
-              inventoryPointName={inventoryPointName}
+              locationName={locationName}
               productNames={productNames}
               qrDataUrl={qrDataUrl}
             />

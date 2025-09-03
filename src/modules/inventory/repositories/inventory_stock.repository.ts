@@ -5,9 +5,9 @@ export class InventoryStockRepository {
   constructor(private prisma: PrismaClient) {}
 
   async getAll(): Promise<InventoryStockDto[]> {
-    const inventoryStocks = await this.prisma.inventory_point.findMany({
+    const inventoryStocks = await this.prisma.location.findMany({
       include: {
-        inventory_stock: {
+        location_stock: {
           include: {
             product: {
               select: {
@@ -26,9 +26,9 @@ export class InventoryStockRepository {
     });
 
     return inventoryStocks.map((inv) => ({
-      inventory_point_id: inv.inventory_point_id,
-      inventory_point: inv.inventory_point,
-      stock: inv.inventory_stock.map((s) => ({
+      location_id: inv.location_id,
+      location_name: inv.location_name,
+      stock: inv.location_stock.map((s) => ({
         product_id: s.product_id,
         product_name: s.product.product_name,
         barcode: s.product.product_barcode,

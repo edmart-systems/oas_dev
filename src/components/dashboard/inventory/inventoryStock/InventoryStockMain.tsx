@@ -41,8 +41,8 @@ interface ProductStockDto {
 }
 
 interface InventoryStockDto {
-  inventory_point_id: number;
-  inventory_point: string;
+  location_id: number;
+  location_name: string;
   stock: ProductStockDto[];
 }
 
@@ -50,8 +50,8 @@ interface InventoryStockDto {
 interface InventoryStockRow {
   product_id: number;
   product_name: string;
-  inventory_point_id: number;
-  inventory_point: string;
+  location_id: number;
+  location_name: string;
   quantity: number;
 }
 
@@ -76,8 +76,10 @@ const InventoryStockMain: React.FC = () => {
         inv.stock.map((s) => ({
           product_id: s.product_id,
           product_name: s.product_name,
-          inventory_point_id: inv.inventory_point_id,
-          inventory_point: inv.inventory_point ? inv.inventory_point : '',
+
+          location_id: inv.location_id,
+          location_name: inv.location_name ? inv.location_name : '',
+
           quantity: s.quantity ? s.quantity : 0,
         }))
       );
@@ -101,7 +103,7 @@ const InventoryStockMain: React.FC = () => {
     return rows.filter(
       (r) =>
         r.product_name.toLowerCase().includes(term) ||
-        r.inventory_point.toLowerCase().includes(term)
+        r.location_name.toLowerCase().includes(term)
     );
   }, [rows, search]);
   const getStatus = (qty: number) => {
@@ -111,7 +113,9 @@ const InventoryStockMain: React.FC = () => {
 };
 
 const getTableRowKey = (r: any, idx: number) => {
-  return `${r.product_id}-${r.inventory_point_id}-${idx}`;
+
+  return `${r.product_id}-${r.location_id}-${idx}`;
+
 };
 
   return (
@@ -122,7 +126,7 @@ const getTableRowKey = (r: any, idx: number) => {
           <Stack direction="row" spacing={2}>
             <TextField
               size="small"
-              placeholder="Search by product or inventory point..."
+              placeholder="Search by product or location..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               InputProps={{
@@ -147,7 +151,7 @@ const getTableRowKey = (r: any, idx: number) => {
             <TableHead>
               <TableRow>
                 <TableCell>Product</TableCell>
-                <TableCell>Inventory Point</TableCell>
+                <TableCell>Location</TableCell>
                 <TableCell align="right">Quantity</TableCell>
                 <TableCell>Status</TableCell>
               </TableRow>
@@ -156,7 +160,9 @@ const getTableRowKey = (r: any, idx: number) => {
                       {filtered.map((r, idx) => (
               <TableRow key={getTableRowKey(r, idx)}>
                 <TableCell>{r.product_name}</TableCell>
-                <TableCell>{r.inventory_point}</TableCell>
+
+                <TableCell>{r.location_name}</TableCell>
+
                 <TableCell align="right">{r.quantity ?? 0}</TableCell>
                 <TableCell>
                   <Chip label={getStatus(r.quantity)} color={getChipColor(getStatus(r.quantity))} size="small" />

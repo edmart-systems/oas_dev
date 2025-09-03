@@ -18,7 +18,7 @@ export class PurchaseRepository {
                 purchase_quantity: data.purchase_quantity,
                 purchase_unit_cost: data.purchase_unit_cost,
                 purchase_total_cost: data.purchase_total_cost ?? 0,
-                inventory_point_id: data.inventory_point_id,
+                location_id: data.location_id,
                 supplier_id: data.supplier_id,
                 purchase_created_by: data.purchase_created_by,
                 purchase_updated_by: data.purchase_updated_by,

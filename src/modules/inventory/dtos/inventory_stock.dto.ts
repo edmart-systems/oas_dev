@@ -1,4 +1,3 @@
-// src/dtos/inventoryStock.dto.ts
 
 export interface ProductStockDto {
   product_id: number;
@@ -12,7 +11,7 @@ export interface ProductStockDto {
 }
 
 export interface InventoryStockDto {
-  inventory_point_id: number;
-  inventory_point: string;
+  location_id: number;
+  location_name: string;
   stock: ProductStockDto[];
 }

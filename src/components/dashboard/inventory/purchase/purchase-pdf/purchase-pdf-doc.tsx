@@ -23,10 +23,10 @@ interface Props{
 }
 
 
-const PurchasePdfDoc = ({ company, purchase, formatCurrency, supplierName, inventoryPointName, productNames, qrDataUrl }: Props & { 
+const PurchasePdfDoc = ({ company, purchase, formatCurrency, supplierName, locationName, productNames, qrDataUrl }: Props & { 
   formatCurrency: (amount: number) => string;
   supplierName: string;
-  inventoryPointName: string;
+  locationName: string;
   productNames: Record<number, string>;
   qrDataUrl?: string;
 }) => {
@@ -70,8 +70,8 @@ const PurchasePdfDoc = ({ company, purchase, formatCurrency, supplierName, inven
             <View style={styles.detailsRight}>
               <Text style={styles.detailLabel}>Supplier:</Text>
               <Text style={styles.detailValue}>{supplierName}</Text>
-              <Text style={styles.detailLabel}>Inventory Point:</Text>
-              <Text style={styles.detailValue}>{inventoryPointName}</Text>
+              <Text style={styles.detailLabel}>Location:</Text>
+              <Text style={styles.detailValue}>{locationName}</Text>
               <Text style={styles.detailLabel}>By:</Text>
               <Text style={styles.detailValue}>{purchase.creator
     ? `${purchase.creator.firstName} ${purchase.creator.lastName}`

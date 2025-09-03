@@ -25,9 +25,17 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    // Inject logged-in user's co_user_id here
+    // Get current location from system settings
+    const currentLocationSetting = await prisma.systemSetting.findUnique({
+      where: { setting_key: "current_location_id" }
+    });
+    
+    const currentLocationId = currentLocationSetting?.setting_value ? 
+      parseInt(currentLocationSetting.setting_value) : 1;
+
     const tagData = {
       ...body,
+      location_id: currentLocationId,
       purchase_created_by: session.user?.co_user_id || "unknown",
     };
 
