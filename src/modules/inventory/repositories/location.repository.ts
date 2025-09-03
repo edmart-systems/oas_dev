@@ -5,14 +5,13 @@ const prisma = new PrismaClient();
 
 export class LocationRepository {
   async findAll() {
-    return await prisma.location.findMany({
-      include: {
-        parent: true,
-        children: true,
-      },
-      orderBy: { location_name: 'asc' }
-    });
-  }
+  return await prisma.location.findMany({
+    where: { is_active: true },
+    include: { parent: true, children: true },
+    orderBy: { location_name: 'asc' }
+  });
+}
+
 
   async findById(location_id: number) {
     return await prisma.location.findUnique({

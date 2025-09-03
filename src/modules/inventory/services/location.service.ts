@@ -1,6 +1,7 @@
 import { LocationRepository } from '../repositories/location.repository';
 import { CreateLocationDto, UpdateLocationDto } from '../dtos/location.dto';
 import { getAllowedLocationTypes, canSelectParent, UserRoleId } from '@/utils/location-role.utils';
+import { LocationType } from '@prisma/client';
 
 export class LocationService {
   private locationRepository: LocationRepository;
@@ -21,74 +22,64 @@ export class LocationService {
     return location;
   }
 
-  async createLocation(data: CreateLocationDto, userRoleId: UserRoleId = 2) {
-    // Check role permissions
-    const allowedTypes = getAllowedLocationTypes(userRoleId);
-    if (!allowedTypes.includes(data.location_type)) {
-      throw new Error(`You don't have permission to create ${data.location_type} locations`);
-    }
-
-    // Handle MAIN_STORE logic
-    if (data.location_type === 'MAIN_STORE') {
-      const existingMainStore = await this.locationRepository.findByType('MAIN_STORE');
-      if (existingMainStore.length > 0) {
-        throw new Error('Only one MAIN_STORE location is allowed');
-      }
-      data.location_parent_id = undefined;
-    }
-
-    // Handle BRANCH logic
-    if (data.location_type === 'BRANCH') {
-      if (!canSelectParent(userRoleId, data.location_type)) {
-        throw new Error('You don\'t have permission to select parent for BRANCH locations');
-      }
-      const mainStore = await this.locationRepository.findByType('MAIN_STORE');
-      if (mainStore.length === 0) {
-        throw new Error('MAIN_STORE must exist before creating BRANCH');
-      }
-      data.location_parent_id = mainStore[0].location_id;
-    }
-
-    // Handle INVENTORY_POINT logic
-    if (data.location_type === 'INVENTORY_POINT') {
-      if (data.location_parent_id && !canSelectParent(userRoleId, data.location_type)) {
-        throw new Error('You don\'t have permission to select parent for INVENTORY_POINT locations');
-      }
-      if (!data.location_parent_id) {
-        throw new Error('INVENTORY_POINT must have a BRANCH parent');
-      }
-      const parent = await this.locationRepository.findById(data.location_parent_id);
-      if (!parent || parent.location_type !== 'BRANCH') {
-        throw new Error('INVENTORY_POINT parent must be a BRANCH');
-      }
-    }
-
-    return await this.locationRepository.create(data);
+ async createLocation(data: CreateLocationDto, userRoleId: UserRoleId = 2) {
+  const allowedTypes = getAllowedLocationTypes(userRoleId);
+  if (!allowedTypes.includes(data.location_type)) {
+    throw new Error(`You don't have permission to create ${data.location_type}`);
   }
+
+  if (data.location_type === LocationType.MAIN_STORE) {
+    const existing = await this.locationRepository.findByType(LocationType.MAIN_STORE);
+    if (existing.length > 0) throw new Error('Only one MAIN_STORE allowed');
+    data.location_parent_id = undefined;
+  }
+
+  if (data.location_type === LocationType.BRANCH) {
+    const parent = await this.locationRepository.findById(data.location_parent_id ?? 0);
+    if (!parent || parent.location_type !== LocationType.MAIN_STORE) {
+      throw new Error('BRANCH must belong to MAIN_STORE');
+    }
+  }
+
+  if (data.location_type === LocationType.INVENTORY_POINT) {
+    const parent = await this.locationRepository.findById(data.location_parent_id ?? 0);
+    if (!parent || parent.location_type !== LocationType.BRANCH) {
+      throw new Error('INVENTORY_POINT must belong to a BRANCH');
+    }
+  }
+
+  return await this.locationRepository.create(data);
+}
+
 
   async updateLocation(location_id: number, data: UpdateLocationDto) {
     // Check if location exists
     await this.getLocationById(location_id);
 
-    // Validate parent exists if provided
-    if (data.location_parent_id) {
-      const parent = await this.locationRepository.findById(data.location_parent_id);
-      if (!parent) {
-        throw new Error('Parent location not found');
-      }
-    }
+   if (data.location_type === LocationType.BRANCH && data.location_parent_id) {
+  const parent = await this.locationRepository.findById(data.location_parent_id);
+  if (!parent || parent.location_type !== LocationType.MAIN_STORE) {
+    throw new Error('BRANCH must belong to MAIN_STORE');
+  }
+}
+
+if (data.location_type === LocationType.INVENTORY_POINT && data.location_parent_id) {
+  const parent = await this.locationRepository.findById(data.location_parent_id);
+  if (!parent || parent.location_type !== LocationType.BRANCH) {
+    throw new Error('INVENTORY_POINT must belong to a BRANCH');
+  }
+}
 
     return await this.locationRepository.update(location_id, data);
   }
 
   async deleteLocation(location_id: number) {
-    // Check if location exists
-    await this.getLocationById(location_id);
+  const location = await this.getLocationById(location_id);
 
-    return await this.locationRepository.delete(location_id);
+  if (location.children && location.children.length > 0) {
+    throw new Error("Cannot delete location with children");
   }
 
-  async getLocationsByType(location_type: string) {
-    return await this.locationRepository.findByType(location_type);
-  }
+  return await this.locationRepository.delete(location_id);
+}
 }

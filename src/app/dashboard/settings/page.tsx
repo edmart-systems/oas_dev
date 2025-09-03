@@ -25,6 +25,7 @@ import {
 import { PhotoCamera } from "@mui/icons-material";
 import Image from "next/image";
 import LoadingBackdrop from "@/components/common/loading-backdrop";
+import LocationManagement from "@/components/settings/location-setting";
 
 const SettingsPage = () => {
   const { currency, setCurrency, currencies } = useCurrency();
@@ -213,9 +214,9 @@ const SettingsPage = () => {
       </Card>
 
       {session?.user?.role_id === 1 && (
-        <Card sx={{ maxWidth: 400 }}>
+        <Card sx={{  }}>
           <CardContent>
-            <LocationSetting />
+            <LocationManagement />
           </CardContent>
         </Card>
       )}
