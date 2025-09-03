@@ -1,5 +1,25 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid2 } from '@mui/material';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  Stack,
+  Typography,
+  Paper,
+  Box,
+  Fade,
+  InputAdornment,
+  useTheme,
+  alpha,
+} from '@mui/material';
+import Grid from '@mui/material/Grid2';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import LabelIcon from '@mui/icons-material/Label';
 
 interface Props {
   open: boolean;
@@ -14,6 +34,18 @@ const TagForm: React.FC<Props> = ({ open, onClose, onSuccess, initialData }) => 
   });
   const [formError, setFormError] = useState<string | null>(null);
 
+  const muiTheme = useTheme();
+
+  const colors = {
+    primary: "#D98219",
+    secondary: muiTheme.palette.info.main,
+    success: muiTheme.palette.success.main,
+    warning: muiTheme.palette.primary.main,
+    error: muiTheme.palette.error.main,
+    background: muiTheme.palette.mode === "dark" ? muiTheme.palette.background.default : "#fafafa",
+    surface: muiTheme.palette.background.paper,
+  };
+
   useEffect(() => {
     if (initialData) {
       setFormData({
@@ -24,7 +56,7 @@ const TagForm: React.FC<Props> = ({ open, onClose, onSuccess, initialData }) => 
         tag: ''
       });
     }
-    setFormError(null); 
+    setFormError(null);
   }, [initialData, open]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,35 +87,130 @@ const TagForm: React.FC<Props> = ({ open, onClose, onSuccess, initialData }) => 
       onClose();
     } catch (error: any) {
       setFormError(error.message || error?.error || "An unexpected error occurred.");
-      console.error(`Error ${initialData ? 'updating' : 'adding'}tag:`, error);
     }
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth key={initialData?.tag_id || 'new'}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      TransitionComponent={Fade}
+      PaperProps={{
+        sx: {
+          borderRadius: 3,
+          boxShadow: '0 24px 38px 3px rgba(0,0,0,0.14)',
+        }
+      }}
+    >
       <form onSubmit={handleSubmit}>
-        <DialogTitle>
-          {initialData?.tag ? 'Edit Tag' : 'Add Tag'}
+        <DialogTitle
+          sx={{
+            background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.primary}dd 100%)`,
+            color: 'white',
+            textAlign: 'center',
+            py: 3,
+          }}
+        >
+          <Stack direction="row" alignItems="center" justifyContent="center" spacing={2}>
+            <LocalOfferIcon sx={{ fontSize: 32 }} />
+            <Typography variant="h5" component="div" fontWeight="600">
+              {initialData?.tag ? 'Edit Tag' : 'Add New Tag'}
+            </Typography>
+          </Stack>
         </DialogTitle>
-        <DialogContent>
-          <Grid2 container spacing={2} sx={{ mt: 1 }}>
-            <Grid2 size={12}>
-              <TextField
-                fullWidth
-                label="Tag"
-                value={formData.tag}
-                onChange={(e) => setFormData({ ...formData, tag: e.target.value })}
-                required
-                error={!!formError}
-                helperText={formError}
-              />
-            </Grid2>
-          </Grid2>
+
+        <DialogContent sx={{ p: 0, backgroundColor: colors.background }}>
+          {formError && (
+            <Paper
+              elevation={0}
+              sx={{
+                p: 2,
+                m: 3,
+                backgroundColor: colors.error + '10',
+                border: `1px solid ${colors.error}40`,
+                borderRadius: 2
+              }}
+            >
+              <Typography color="error" variant="body2" sx={{ fontWeight: 500 }}>
+                {formError}
+              </Typography>
+            </Paper>
+          )}
+
+          <Box sx={{ p: 3 }}>
+            <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid #e0e0e0' }}>
+              <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
+                <LabelIcon sx={{ color: colors.primary }} />
+                <Typography variant="h6" fontWeight="600" color={colors.primary}>
+                  Tag Information
+                </Typography>
+              </Stack>
+
+              <Grid container spacing={3}>
+                <Grid size={12}>
+                  <TextField
+                    fullWidth
+                    label="Tag Name"
+                    value={formData.tag}
+                    onChange={(e) => setFormData({ ...formData, tag: e.target.value })}
+                    required
+                    error={!!formError}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <LocalOfferIcon sx={{ color: colors.primary }} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        '&:hover fieldset': { borderColor: colors.primary },
+                      }
+                    }}
+                  />
+                </Grid>
+              </Grid>
+            </Paper>
+          </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose}>Cancel</Button>
-          <Button type="submit" variant="contained">
-            {initialData?.tag ? 'Update' : 'Add'} Tag
+
+        <DialogActions sx={{ p: 3 }}>
+          <Button
+            onClick={onClose}
+            variant="outlined"
+            size="large"
+            sx={{
+              borderRadius: 2,
+              px: 4,
+              borderColor: colors.primary + '40',
+              color: colors.primary,
+              '&:hover': {
+                borderColor: colors.primary,
+                backgroundColor: colors.primary + '05'
+              }
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            size="large"
+            sx={{
+              borderRadius: 2,
+              px: 4,
+              background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.primary}dd 100%)`,
+              boxShadow: `0 4px 12px ${colors.primary}40`,
+              '&:hover': {
+                background: `linear-gradient(135deg, ${colors.primary}dd 0%, ${colors.primary}bb 100%)`,
+                boxShadow: `0 6px 16px ${colors.primary}50`,
+              }
+            }}
+          >
+            {initialData?.tag ? 'Update Tag' : 'Create Tag'}
           </Button>
         </DialogActions>
       </form>

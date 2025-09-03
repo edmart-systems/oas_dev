@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useState } from 'react'
 import {
   Box,
@@ -7,6 +9,8 @@ import {
   CardHeader,
   Stack,
   TextField,
+  alpha,
+  useTheme,
 } from "@mui/material";
 import { PlusIcon as Plus, MagnifyingGlassIcon as MagnifyingGlass } from "@phosphor-icons/react";
 import { Tag } from '@/modules/inventory/types/tag.types';
@@ -15,8 +19,18 @@ import { toast } from 'react-toastify';
 import TagForm from './tagForm';
 import MyCircularProgress from '@/components/common/my-circular-progress';
 
-
 const TagMain = () => {
+  const theme = useTheme();
+
+  const colors = {
+    primary: "#D98219",
+    warning: theme.palette.warning.main,
+    error: theme.palette.error.main,
+    surface: theme.palette.background.paper,
+    surfaceVariant: theme.palette.mode === "dark" ? alpha(theme.palette.grey[800], 0.7) : "#ffffff",
+    border: theme.palette.divider,
+  };
+
   const [tags, setTags] = useState<Tag[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [openForm, setOpenForm] = useState(false);
@@ -36,7 +50,8 @@ const TagMain = () => {
       setTags(data);
     } catch (error) {
       console.error(error);
-    } finally{
+      toast.error("Failed to fetch tags");
+    } finally {
       setLoading(false);
     }
   };
@@ -56,36 +71,58 @@ const TagMain = () => {
   };
 
   return (
-    <Card>
-      <CardHeader
-        title="Tags"
-        action={
-          <Stack direction="row" spacing={2}>
-            <TextField
-              size="small"
-              placeholder="Search tags..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <Button variant="contained" disabled={loading} startIcon={<Plus />} onClick={handleAdd}>
-              Add Tag
-            </Button>
-          </Stack>
-        }
-      />
-      <CardContent>
-        { loading ? (
-                <Box display="flex" justifyContent="center" alignItems="center" height={200}>
-                  <MyCircularProgress />
-                </Box>
-
-           ):(
-                <TagTable tags={filteredTags} onEdit={handleEdit} />
-         )}
-                
-
-        
-      </CardContent>
+    <Stack spacing={3}>
+      <Card
+        sx={{
+          borderRadius: 3,
+          backgroundColor: colors.surface,
+          boxShadow: `0 4px 16px ${alpha(colors.warning, 0.08)}`,
+        }}
+      >
+        <CardHeader
+          title="Tags"
+          action={
+            <Stack direction="row" spacing={2}>
+              <TextField
+                size="small"
+                placeholder="Search tags..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                InputProps={{
+                  startAdornment: <MagnifyingGlass size={20} />,
+                }}
+              />
+              <Button 
+                variant="contained" 
+                disabled={loading} 
+                startIcon={<Plus />} 
+                onClick={handleAdd}
+                sx={{
+                  backgroundColor: colors.primary,
+                  "&:hover": {
+                    backgroundColor: alpha(colors.primary, 0.9),
+                  },
+                }}
+              >
+                Add Tag
+              </Button>
+            </Stack>
+          }
+          sx={{
+            borderBottom: `1px solid ${colors.border}`,
+            backgroundColor: colors.surfaceVariant,
+          }}
+        />
+        <CardContent>
+          {loading ? (
+            <Box display="flex" justifyContent="center" alignItems="center" height={200}>
+              <MyCircularProgress />
+            </Box>
+          ) : (
+            <TagTable tags={filteredTags} onEdit={handleEdit} />
+          )}
+        </CardContent>
+      </Card>
 
       <TagForm
         open={openForm}
@@ -97,8 +134,8 @@ const TagMain = () => {
           toast.success(selectedTag ? "Tag updated successfully" : "Tag added successfully");
         }}
       />
-    </Card>
+    </Stack>
   );
 };
 
-export default TagMain
+export default TagMain;
