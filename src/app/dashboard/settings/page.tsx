@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import PageTitle from "@/components/dashboard/common/page-title";
 import { useCurrency } from "@/components/currency/currency-context";
 import UserAvatar from "@/components/dashboard/nav-bar/user-avatar";
+import LocationSetting from "@/components/settings/location-setting";
 
 
 
@@ -211,8 +212,15 @@ const SettingsPage = () => {
         </CardContent>
       </Card>
 
+      {session?.user?.role_id === 1 && (
+        <Card sx={{ maxWidth: 400 }}>
+          <CardContent>
+            <LocationSetting />
+          </CardContent>
+        </Card>
+      )}
 
-      <Stack width="100%" justifyContent="center" alignItems="center">
+      {/* <Stack width="100%" justifyContent="center" alignItems="center">
         <Box
           component="img"
           alt="Dash"
@@ -226,7 +234,7 @@ const SettingsPage = () => {
             opacity: 0.4,
           }}
         />
-      </Stack>
+      </Stack> */}
       
       <LoadingBackdrop open={isUploading || isDeleting} />
     </Stack>

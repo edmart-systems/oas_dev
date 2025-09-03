@@ -18,7 +18,7 @@ import { useCurrency } from "@/components/currency/currency-context";
 import PurchaseDownloadButtons from "../purchase-pdf/purchase-download-buttons";
 import { Purchase } from "@/modules/inventory/types/purchase.types";
 import { Supplier } from "@/modules/inventory/types/supplier.types";
-import { InventoryPoint } from "@/modules/inventory/types/inventoryPoint.types";
+import { Location } from "@/modules/inventory/types/location.types";
 import { Product } from "@/types/product.types";
 import { useEffect, useState } from "react";
 import { getCompany } from "@/server-actions/user-actions/inventory.actions";
@@ -34,7 +34,7 @@ export default function PurchaseHistoryTable({ purchases }: Props) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [company, setCompany] = useState<CompanyDto | null>(null);
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
-  const [inventoryPoints, setInventoryPoints] = useState<InventoryPoint[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -51,23 +51,23 @@ export default function PurchaseHistoryTable({ purchases }: Props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [productsRes, suppliersRes, inventoryPointsRes] = await Promise.all([
+        const [productsRes, suppliersRes, locationsRes] = await Promise.all([
           fetch("/api/inventory/product"),
           fetch("/api/inventory/supplier"),
-          fetch("/api/inventory/inventory_point"),
+          fetch("/api/inventory/location"),
         ]);
 
-        const [productsData, suppliersData, inventoryPointsData] = await Promise.all([
+        const [productsData, suppliersData, locationsData] = await Promise.all([
           productsRes.json(),
           suppliersRes.json(),
-          inventoryPointsRes.json(),
+          locationsRes.json(),
         ]);
 
         const companyData = await getCompany();
         setCompany(companyData);
         setProducts(productsData);
         setSuppliers(suppliersData);
-        setInventoryPoints(inventoryPointsData);
+        setLocations(locationsData);
       } catch (error) {
         console.error("Failed to fetch data:", error);
         toast.error("Failed to load purchase history data");
@@ -111,8 +111,8 @@ export default function PurchaseHistoryTable({ purchases }: Props) {
                   const supplier = suppliers.find(
                     (s) => s.supplier_id === purchase.supplier_id
                   );
-                  const inventoryPoint = inventoryPoints.find(
-                    (ip) => ip.inventory_point_id === purchase.inventory_point_id
+                  const location = locations.find(
+                    (l) => l.location_id === purchase.location_id
                   );
 
                   const productNameMap = products.reduce((acc, p) => {
@@ -141,8 +141,8 @@ export default function PurchaseHistoryTable({ purchases }: Props) {
                             purchase={purchase}
                             company={company}
                             supplierName={supplier?.supplier_name || "Unknown Supplier"}
-                            inventoryPointName={
-                              inventoryPoint?.inventory_point || "Unknown Location"
+                            locationName={
+                              location?.location_name || "Unknown Location"
                             }
                             productNames={
                               purchase.Purchase_items?.reduce((acc, item) => {

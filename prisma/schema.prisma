@@ -65,8 +65,8 @@ model User {
   updatedCategories   Category[] @relation("CategoryUpdater")
   createdSuppliers    Supplier[] @relation("SupplierCreator")
   updatedSuppliers    Supplier[] @relation("SupplierUpdater")
-  createdInventoryPoints Inventory_point[] @relation("InventoryPointCreator")
-  updatedInventoryPoints Inventory_point[] @relation("InventoryPointUpdater")
+  createdLocation     Location[] @relation("LocationCreator")
+  updatedLocation     Location[] @relation("LocationUpdater")
   createdProducts     Product[] @relation("ProductCreator")
   updatedProducts     Product[] @relation("ProductUpdater")
   createdPurchases    Purchase[] @relation("PurchaseCreator")
@@ -76,6 +76,7 @@ model User {
   sales               Sale[] @relation("SaleSeller")
   createdOrder       Order[]@relation("OrderCreator")
   updatedOrder       Order[]@relation("OrderUpdater")
+  systemSettings     SystemSetting[] @relation("SystemSettingUpdater")
 
   @@map("user")
 }
@@ -190,7 +191,10 @@ model Bank {
   @@index([co_id], map: "bank_co_id_fkey")
   @@map("bank")
 }
-
+enum DraftType {
+  manual
+  auto
+}
 model Quotation_type {
   type_id          Int                @id @default(autoincrement())
   name             String             @db.VarChar(60)
@@ -503,6 +507,46 @@ model Sub_task {
   @@map("sub_task")
 }
 
+
+enum LocationType {
+  MAIN_STORE
+  BRANCH
+  INVENTORY_POINT
+}
+
+//  Eg parent_id: branch_id is the parent_id, if LocationType is inventory_point
+
+model Location {
+  location_id   Int          @id @default(autoincrement())
+  location_name          String       @unique
+  location_type          LocationType
+  location_parent_id     Int?         // For hierarchy: branch -> main_store, inventory_point -> branch
+  location_address       String?
+  is_active     Boolean      @default(true)
+  created_by    String?
+  updated_by    String?
+  created_at    DateTime     @default(now())
+  updated_at    DateTime     @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+
+  // Self-referencing relationship for hierarchy
+  parent        Location?    @relation("LocationHierarchy", fields: [location_parent_id], references: [location_id])
+  children      Location[]   @relation("LocationHierarchy")
+  
+  // Relations
+  purchases     Purchase[]
+  sales         Sale[]
+  stock         Stock[]
+  location_stock Location_stock[]
+  transfersFrom Transfer[]   @relation("TransferFrom")
+  transfersTo   Transfer[]   @relation("TransferTo")
+  
+  
+  creator       User?        @relation("LocationCreator", fields: [created_by], references: [co_user_id])
+  updater       User?        @relation("LocationUpdater", fields: [updated_by], references: [co_user_id])
+
+  @@map("location")
+}
+
 model Tag {
   tag_id     Int       @id @default(autoincrement())
   tag        String    @unique()
@@ -513,8 +557,6 @@ model Tag {
   Product    Product[]
   creator    User?     @relation("TagCreator", fields: [created_by], references: [co_user_id])
   updater    User?     @relation("TagUpdater", fields: [updated_by], references: [co_user_id])
-
-  
   @@map("tag")
 }
 
@@ -554,25 +596,7 @@ model Supplier {
   @@map("supplier")
 }
 
-model Inventory_point{
-  inventory_point_id Int @id @default(autoincrement())
-  inventory_point String @unique()
-  created_by String?
-  updated_by String?
-  created_at DateTime @default(now())
-  updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
 
-  Purchase Purchase[]
-  Stock Stock[]
-  creator User? @relation("InventoryPointCreator", fields: [created_by], references: [co_user_id])
-  updater User? @relation("InventoryPointUpdater", fields: [updated_by], references: [co_user_id])
-  inventory_stock  Inventory_stock[]
-  transfersTo Transfer[] @relation("TransferTo")
-  trabsferfrom Transfer[] @relation("TransferFrom")
-
-
-  @@map("inventory_point")
-}
 
 model Product {
   product_id          Int       @id @default(autoincrement())
@@ -607,7 +631,7 @@ model Product {
   Purchase_items Purchase_item[]
   Stock Stock[]
   Sale_item Sale_item[]
-  inventory_stock Inventory_stock[]
+  location_stock Location_stock[]
   transfer_item Transfer_item[]
   order_item OrderItem[]
 
@@ -617,25 +641,26 @@ model Product {
 }
 
 model Purchase {
-  purchase_id         Int             @id @default(autoincrement())
+  purchase_id         Int      @id @default(autoincrement())
   purchase_quantity   Int
   purchase_unit_cost  Int
   purchase_total_cost Int
   purchase_created_by String?
   purchase_updated_by String?
-  inventory_point_id  Int             @default(1)
+  location_id         Int      // Only MAIN_STORE or BRANCH can make purchases
   supplier_id         Int
-  purchase_created_at DateTime        @default(now())
-  purchase_updated_at DateTime        @default(now())
-  inventory_point     Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
-  creator             User?           @relation("PurchaseCreator", fields: [purchase_created_by], references: [co_user_id])
-  updater             User?           @relation("PurchaseUpdater", fields: [purchase_updated_by], references: [co_user_id])
-  supplier            Supplier        @relation(fields: [supplier_id], references: [supplier_id])
+  purchase_created_at DateTime @default(now())
+  purchase_updated_at DateTime @default(now())
+  
+  location            Location @relation(fields: [location_id], references: [location_id])
+  creator             User?    @relation("PurchaseCreator", fields: [purchase_created_by], references: [co_user_id])
+  updater             User?    @relation("PurchaseUpdater", fields: [purchase_updated_by], references: [co_user_id])
+  supplier            Supplier @relation(fields: [supplier_id], references: [supplier_id])
   Purchase_items      Purchase_item[]
-
 
   @@map("purchase")
 }
+
 
 model Purchase_item {
   purchase_item_id Int      @id @default(autoincrement())
@@ -652,39 +677,40 @@ model Purchase_item {
 }
 
 model Stock {
-  stock_id         Int       @id @default(autoincrement())
+  stock_id         Int      @id @default(autoincrement())
   product_id       Int
-  inventory_point_id Int
+  location_id      Int
   change_type      String     
   quantity_change  Int        
   resulting_stock  Int        
   reference_id     Int?       
-  created_at       DateTime   @default(now())
+  created_at       DateTime @default(now())
 
-  product          Product    @relation(fields: [product_id], references: [product_id])
-  inventory_point Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
+  product          Product  @relation(fields: [product_id], references: [product_id])
+  location         Location @relation(fields: [location_id], references: [location_id])
 
   @@map("stock")
 }
 
-model Sale{
+model Sale {
   sale_id             Int      @id @default(autoincrement())
   sale_no             String   @unique @db.VarChar(12)
   seller_id           Int
-  sale_total_quantity Int@default(0)
+  sale_total_quantity Int      @default(0)
   sale_total_amount   Int
-  sale_total_discount Int @default(0)
-  sale_total_tax      Int @default(0)
-  sale_grand_total Int @default(0)
+  sale_total_discount Int      @default(0)
+  sale_total_tax      Int      @default(0)
+  sale_grand_total    Int      @default(0)
   currency_id         Int
-  inventory_point_id  Int @default(1)
-  sale_status         Int @default(1)
+  location_id         Int      // Only BRANCH or INVENTORY_POINT can make sales
+  sale_status         Int      @default(1)
   sale_created_at     DateTime @default(now())
   sale_updated_at     DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
 
+  location            Location  @relation(fields: [location_id], references: [location_id])
   currency            Currency  @relation(fields: [currency_id], references: [currency_id])
   Sale_items          Sale_item[]
-  seller User @relation("SaleSeller", fields: [seller_id], references: [userId])
+  seller              User      @relation("SaleSeller", fields: [seller_id], references: [userId])
 
   @@map("sale")
 }
@@ -704,10 +730,7 @@ model Sale_item {
 
   @@map("sale_item")
 }
-enum DraftType {
-  manual
-  auto
-}
+
 model Customer {
   customer_id Int      @id @default(autoincrement())
   name        String   @db.VarChar(120)
@@ -762,28 +785,28 @@ model OrderItem {
   @@map("order_item")
 }
 
-model Inventory_stock {
-  inv_stock_id       Int  @id @default(autoincrement())
-  product_id         Int
-  inventory_point_id Int
-  quantity           Int  @default(0)
+model Location_stock {
+  location_stock_id Int @id @default(autoincrement())
+  product_id        Int
+  location_id       Int
+  quantity          Int @default(0)
 
-  product        Product        @relation(fields: [product_id], references: [product_id])
-  inventory_point Inventory_point @relation(fields: [inventory_point_id], references: [inventory_point_id])
+  product           Product  @relation(fields: [product_id], references: [product_id])
+  location          Location @relation(fields: [location_id], references: [location_id])
 
-  @@map("inventory_stock")
+  @@map("location_stock")
 }
 
 model Transfer {
-  transfer_id            Int      @id @default(autoincrement())
-  from_inventory_point_id Int
-  to_inventory_point_id   Int
-  note                   String?  @db.VarChar(200)
-  created_at             DateTime @default(now()) @db.DateTime(3)
+  transfer_id      Int      @id @default(autoincrement())
+  from_location_id Int
+  to_location_id   Int
+  note             String?  @db.VarChar(200)
+  created_at       DateTime @default(now()) @db.DateTime(3)
 
-  from_point Inventory_point @relation("TransferFrom", fields: [from_inventory_point_id], references: [inventory_point_id])
-  to_point   Inventory_point @relation("TransferTo", fields: [to_inventory_point_id], references: [inventory_point_id])
-  items     Transfer_item[]
+  from_location    Location @relation("TransferFrom", fields: [from_location_id], references: [location_id])
+  to_location      Location @relation("TransferTo", fields: [to_location_id], references: [location_id])
+  items            Transfer_item[]
 
   @@map("transfer")
 }
@@ -798,4 +821,17 @@ model Transfer_item {
   product  Product  @relation(fields: [product_id], references: [product_id])
 
   @@map("transfer_item")
+}
+
+model SystemSetting {
+  setting_id    Int      @id @default(autoincrement())
+  setting_key   String   @unique @db.VarChar(50)
+  setting_value String?  @db.VarChar(255)
+  updated_by    String?
+  updated_at    DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+  created_at    DateTime @default(now())
+
+  updater User? @relation("SystemSettingUpdater", fields: [updated_by], references: [co_user_id])
+
+  @@map("system_setting")
 }

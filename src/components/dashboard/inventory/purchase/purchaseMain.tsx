@@ -21,10 +21,8 @@ import PurchaseCart from "./purchaseCart";
 import { CartItem } from "@/modules/inventory/types/purchase.types";
 import { Product } from "@/types/product.types";
 import { Supplier } from "@/modules/inventory/types/supplier.types";
-import { InventoryPoint } from "@/modules/inventory/types/inventoryPoint.types";
 import { toast } from "react-toastify";
 import SupplierForm from "../supplier/SupplierForm";
-import Inventory_pointForm from "../inventoryPoint/inventoryPointForm";
 import ProductForm from "../products/productForm";
 import { useEffect, useState } from "react";
 import MyCircularProgress from "@/components/common/my-circular-progress";
@@ -35,13 +33,11 @@ import MyCircularProgress from "@/components/common/my-circular-progress";
 export default function PurchaseMain() {
   const [products, setProducts] = useState<Product[]>([]);
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
-  const [inventoryPoints, setInventoryPoints] = useState<InventoryPoint[]>([]);
   const [loading, setLoading] = useState(true);
   const[processing, setProcessing]= useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [supplierId, setSupplierId] = useState<number>(1);
-  const [inventoryPointId, setInventoryPointId] = useState<number>(1);
-  const [openForm, setOpenForm] = useState<null | 'product' | 'inventoryPoint' | 'supplier'>(null);
+  const [openForm, setOpenForm] = useState<null | 'product' | 'supplier'>(null);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
   useEffect(() => {
@@ -51,16 +47,14 @@ export default function PurchaseMain() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [productsRes, suppliersRes, inventoryPointsRes] = await Promise.all([
+      const [productsRes, suppliersRes] = await Promise.all([
         fetch('/api/inventory/product'),
-        fetch('/api/inventory/supplier'),
-        fetch('/api/inventory/inventory_point')
+        fetch('/api/inventory/supplier')
       ]);
       
-      const [productsData, suppliersData, inventoryPointsData] = await Promise.all([
+      const [productsData, suppliersData] = await Promise.all([
         productsRes.json(),
-        suppliersRes.json(),
-        inventoryPointsRes.json()
+        suppliersRes.json()
       ]);
 
       setProducts(productsData);
@@ -69,11 +63,6 @@ export default function PurchaseMain() {
         name: sup.supplier_name,
         supplier_name: sup.supplier_name,
         supplier_email: sup.supplier_email || ''
-      })));
-      setInventoryPoints(inventoryPointsData.map((ip: any) => ({ 
-        id: ip.inventory_point_id, 
-        name: ip.inventory_point,
-        inventory_point: ip.inventory_point
       })));
     } catch (error) {
       console.error('Failed to fetch data:', error);
@@ -127,14 +116,13 @@ export default function PurchaseMain() {
   const clearCart = () => setCart([]);
 
 const processPurchase = async () => {
-  if (!supplierId || !inventoryPointId || cart.length === 0) {
-    toast.error("Please select supplier, inventory point, and add products");
+  if (!supplierId || cart.length === 0) {
+    toast.error("Please select supplier and add products");
     return;
   }
 
   setProcessing(true);
   const purchaseData = {
-    inventory_point_id: inventoryPointId,
     supplier_id: supplierId,
     purchase_items: cart.map(item => ({
       product_id: item.product_id,
@@ -168,7 +156,7 @@ const processPurchase = async () => {
 };
 
 
-  const handleAddForm = (type: 'product' | 'inventoryPoint' | 'supplier') => {
+  const handleAddForm = (type: 'product' | 'supplier') => {
     setOpenForm(type);
   };
 
@@ -176,9 +164,6 @@ const processPurchase = async () => {
   
 
     <Stack spacing={3}>
-        {/* {loading ? (
-    
-    ) : ()} */}
     <Card>
         <CardHeader
           title="Purchase Order"
@@ -195,7 +180,7 @@ const processPurchase = async () => {
           }
         />
         <CardContent>
-          {/* Inventory Point and Supplier Inputs */}
+          {/* Supplier Input */}
           <Grid container spacing={3} sx={{ mb: 3 }}>
             <Grid size={{ xs: 12, md: 6 }}>
               <Stack direction="row" spacing={2}>
@@ -213,27 +198,6 @@ const processPurchase = async () => {
                   </Select>
                 </FormControl>
                 <IconButton onClick={() => handleAddForm('supplier')}>
-                  <Plus size={20} />
-                </IconButton>
-              </Stack>
-            </Grid>
-
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Stack direction="row" spacing={2}>
-                <FormControl fullWidth size="small">
-                  <InputLabel>Inventory Point</InputLabel>
-                  <Select
-                    value={inventoryPointId}
-                    onChange={(e) => setInventoryPointId(Number(e.target.value))}
-                    label="Inventory Point"
-                    disabled={loading}
-                  >
-                    {inventoryPoints.map((ip) => (
-                      <MenuItem key={ip.id} value={ip.id}>{ip.name}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <IconButton onClick={() => handleAddForm('inventoryPoint')}>
                   <Plus size={20} />
                 </IconButton>
               </Stack>
@@ -271,17 +235,6 @@ const processPurchase = async () => {
           setSuppliers(prev => [...prev, newSupplier]);
           setOpenForm(null);
           toast.success("Supplier Added Successfully");
-        }}
-      />
-
-      {/* Inventory Point Form */}
-      <Inventory_pointForm
-        open={openForm === 'inventoryPoint'}
-        onClose={() => setOpenForm(null)}
-        onSuccess={(newPoint) => {
-          setInventoryPoints(prev => [...prev, newPoint]);
-          setOpenForm(null);
-          toast.success("Inventory Point Added Successfully");
         }}
       />
 
