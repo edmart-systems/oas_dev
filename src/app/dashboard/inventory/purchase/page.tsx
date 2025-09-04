@@ -5,38 +5,48 @@ import { toast } from "react-toastify";
 import {
   Button,
   Stack,
-  TablePagination,
   TextField,
   Box,
   Chip,
   Typography,
+  Paper,
+  Card,
+  CardContent,
+  Divider,
+  alpha,
+  useTheme,
+  Avatar,
+  CircularProgress,
 } from "@mui/material";
-import {ShoppingCart, List as ListIcon } from "@phosphor-icons/react";
+import { ShoppingCart, History, TrendingUp, Inventory } from "@mui/icons-material";
 import PurchaseMain from "@/components/dashboard/inventory/purchase/purchaseMain";
-import PurchaseHistoryMain from "@/components/dashboard/inventory/purchase/purchaseHistory/purchaseHistoryMain";
 import { Purchase } from "@/modules/inventory/types/purchase.types";
-import { CompanyDto } from "@/types/company.types";
-import { InventoryPoint } from "@/modules/inventory/types/inventoryPoint.types";
 import { Product } from "@/types/product.types";
 import { Supplier } from "@/modules/inventory/types/supplier.types";
+import PurchaseCart from "@/components/dashboard/inventory/purchase/purchaseCart";
 import PurchaseHistoryTable from "@/components/dashboard/inventory/purchase/purchaseHistory/purchaseHistoryTable";
-
-
-
-
-
+import { useCurrency } from "@/components/currency/currency-context";
 
 const PurchasePage = () => {
-const [tabValue, setTabValue] = useState(0);
-const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
-const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
-const [dateError, setDateError] = useState('');
-const [purchases, setPurchases] = useState<Purchase[]>([]);
-const [suppliers, setSuppliers] = useState<Supplier[]>([]);
-const [inventoryPoints, setInventoryPoints] = useState<InventoryPoint[]>([]);
-const [company, setCompany] = useState<CompanyDto | null>(null);
-const [products, setProducts] = useState<Product[]>([]);
-const [loading, setLoading] = useState(true);
+  const theme = useTheme();
+  const { formatCurrency } = useCurrency();
+  const colors = {
+    primary: "#D98219",
+    warning: theme.palette.warning.main,
+    error: theme.palette.error.main,
+    surface: theme.palette.background.paper,
+    surfaceVariant: theme.palette.mode === "dark" ? alpha(theme.palette.grey[800], 0.7) : "#ffffff",
+    border: theme.palette.divider,
+  };
+
+  const [tabValue, setTabValue] = useState(0);
+  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+  const [dateError, setDateError] = useState('');
+  const [purchases, setPurchases] = useState<Purchase[]>([]);
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
 const handleEndDateChange = (value: string) => {
     if (value && startDate && new Date(value) < new Date(startDate)) {
@@ -123,53 +133,156 @@ useEffect(() => {
 const fetchData = async () => {
   setLoading(true);
   try {
-    // fetch purchases
-    const purchaseRes = await fetch("/api/inventory/purchase");
-    if (!purchaseRes.ok) throw new Error("Failed to fetch purchases");
-    const purchaseData = await purchaseRes.json();
+    const [purchaseRes, supplierRes, productRes] = await Promise.all([
+      fetch("/api/inventory/purchase"),
+      fetch("/api/inventory/supplier"),
+      fetch("/api/inventory/product")
+    ]);
 
-    // 👇 ensure correct structure
-    setPurchases(Array.isArray(purchaseData) ? purchaseData : purchaseData.purchases || []);
+    // Handle purchases
+    if (purchaseRes.ok) {
+      const purchaseData = await purchaseRes.json();
+      setPurchases(Array.isArray(purchaseData) ? purchaseData : purchaseData.purchases || []);
+    } else {
+      console.error("Failed to fetch purchases:", purchaseRes.statusText);
+    }
 
-    // TODO: fetch suppliers, company, products, inventory points here
+    // Handle suppliers
+    if (supplierRes.ok) {
+      const supplierData = await supplierRes.json();
+      setSuppliers(Array.isArray(supplierData) ? supplierData : supplierData.suppliers || []);
+    } else {
+      console.error("Failed to fetch suppliers:", supplierRes.statusText);
+    }
+
+    // Handle products
+    if (productRes.ok) {
+      const productData = await productRes.json();
+      setProducts(Array.isArray(productData) ? productData : productData.products || []);
+    } else {
+      console.error("Failed to fetch products:", productRes.statusText);
+    }
+
   } catch (error) {
     console.error("Error fetching data:", error);
-    toast.error("Failed to fetch data");
+    toast.error("Failed to fetch data. Please refresh the page.");
   } finally {
     setLoading(false);
+  }
+};
+
+const handleProcessPurchase = async (purchaseData: any) => {
+  try {
+    const response = await fetch("/api/inventory/purchase", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        supplier_id: purchaseData.supplierId,
+        purchase_items: purchaseData.items.map((item: any) => ({
+          product_id: item.product_id,
+          quantity: item.quantity,
+          unit_cost: item.unit_cost,
+          total_cost: item.quantity * item.unit_cost
+        }))
+      }),
+    });
+
+    if (response.ok) {
+      await fetchData(); // Refresh all data
+      toast.success("Purchase created successfully!");
+      return true;
+    } else {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to create purchase");
+    }
+  } catch (error: any) {
+    console.error("Purchase processing failed:", error);
+    toast.error(error.message || "Failed to create purchase. Please try again.");
+    return false;
   }
 };
 
 
 
   return (
-    <Stack>
-      <Stack direction="row" spacing={2} alignItems="center">
+    <Box sx={{ 
+      minHeight: '100vh', 
+      background: `linear-gradient(135deg, ${alpha(colors.primary, 0.02)}, ${alpha(colors.surfaceVariant, 0.5)})`,
+      
+    }}>
+      <Stack spacing={4}>
+        {/* Header Navigation */}
+        <Paper sx={{ 
+          p: 2, 
+          borderRadius: 4,
+          backgroundColor: alpha(colors.surface, 0.9),
+          backdropFilter: 'blur(20px)',
+          boxShadow: `0 8px 32px ${alpha(theme.palette.common.black, 0.08)}`,
+          border: `1px solid ${alpha(colors.border, 0.1)}`,
+        }}>
+          <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
+            <Button
+              variant={tabValue === 0 ? "contained" : "outlined"}
+              startIcon={<ShoppingCart />}
+              onClick={() => setTabValue(0)}
+              sx={{
+                borderRadius: 3,
+                px: 3,
+                py: 1,
+                fontWeight: 600,
+                ...(tabValue === 0 ? {
+                  backgroundColor: colors.primary,
+                  boxShadow: `0 8px 20px ${alpha(colors.primary, 0.3)}`,
+                  '&:hover': {
+                    backgroundColor: alpha(colors.primary, 0.9),
+                  }
+                } : {
+                  borderColor: alpha(colors.primary, 0.3),
+                  color: colors.primary,
+                  '&:hover': {
+                    borderColor: colors.primary,
+                    backgroundColor: alpha(colors.primary, 0.05),
+                  }
+                })
+              }}
+            >
+              Create Purchase
+            </Button>
 
-        {/* Purchase  */}
-        <Button
-          variant={tabValue === 0 ? "contained" : "outlined"}
-          startIcon={<ShoppingCart size={20} />}
-          onClick={() => setTabValue(0)}
-          color="primary"
-        >
-          Create Purchase
-        </Button>
+            <Button
+              variant={tabValue === 1 ? "contained" : "outlined"}
+              startIcon={<History />}
+              onClick={() => setTabValue(1)}
+              sx={{
+                borderRadius: 3,
+                px: 3,
+                py: 1,
+                fontWeight: 600,
+                ...(tabValue === 1 ? {
+                  backgroundColor: colors.primary,
+                  boxShadow: `0 8px 20px ${alpha(colors.primary, 0.3)}`,
+                  '&:hover': {
+                    backgroundColor: alpha(colors.primary, 0.9),
+                  }
+                } : {
+                  borderColor: alpha(colors.primary, 0.3),
+                  color: colors.primary,
+                  '&:hover': {
+                    borderColor: colors.primary,
+                    backgroundColor: alpha(colors.primary, 0.05),
+                  }
+                })
+              }}
+            >
+              Purchase History
+            </Button>
 
-        {/* Purchase History  */}
-        <Button
-          variant={tabValue === 1 ? "contained" : "outlined"}
-          startIcon={<ListIcon size={20} />}
-          onClick={() => setTabValue(1)}
-          color="primary"
-        >
-          Purchase History
-        </Button>
-
-        {tabValue === 1 && (
-          // Purchase History filters 
-          <>
-          <Box display="flex" gap={2}>
+            {tabValue === 1 && (
+              <>
+                <Divider orientation="vertical" flexItem />
+                <Box display="flex" gap={2} alignItems="center">
                   <TextField
                     type="date"
                     label="Start Date"
@@ -177,7 +290,11 @@ const fetchData = async () => {
                     onChange={(e) => setStartDate(e.target.value)}
                     slotProps={{ inputLabel: { shrink: true } }}
                     size="small"
-                    color="primary"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                      }
+                    }}
                   />
                   <TextField
                     type="date"
@@ -188,42 +305,198 @@ const fetchData = async () => {
                     size="small"
                     error={!!dateError}
                     helperText={dateError}
-                    color="primary"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                      }
+                    }}
                   />
                 </Box>
                 <Box display="flex" gap={1}>
-                  <Chip label="Today" onClick={() => handleQuickFilter('today')} clickable size="small" color="primary" />
-                  <Chip label="Yesterday" onClick={() => handleQuickFilter('yesterday')} clickable size="small" color="primary" />
-                  <Chip label="Last Week" onClick={() => handleQuickFilter('week')} clickable size="small" color="primary" />
-                  <Chip label="Last Month" onClick={() => handleQuickFilter('month')} clickable size="small" color="primary" />
-                </Box></>
-          
+                  <Chip 
+                    label="Today" 
+                    onClick={() => handleQuickFilter('today')} 
+                    clickable 
+                    size="small"
+                    sx={{ 
+                      backgroundColor: alpha(colors.primary, 0.1),
+                      color: colors.primary,
+                      '&:hover': {
+                        backgroundColor: alpha(colors.primary, 0.2),
+                      }
+                    }}
+                  />
+                  <Chip 
+                    label="Yesterday" 
+                    onClick={() => handleQuickFilter('yesterday')} 
+                    clickable 
+                    size="small"
+                    sx={{ 
+                      backgroundColor: alpha(colors.primary, 0.1),
+                      color: colors.primary,
+                      '&:hover': {
+                        backgroundColor: alpha(colors.primary, 0.2),
+                      }
+                    }}
+                  />
+                  <Chip 
+                    label="Last Week" 
+                    onClick={() => handleQuickFilter('week')} 
+                    clickable 
+                    size="small"
+                    sx={{ 
+                      backgroundColor: alpha(colors.primary, 0.1),
+                      color: colors.primary,
+                      '&:hover': {
+                        backgroundColor: alpha(colors.primary, 0.2),
+                      }
+                    }}
+                  />
+                  <Chip 
+                    label="Last Month" 
+                    onClick={() => handleQuickFilter('month')} 
+                    clickable 
+                    size="small"
+                    sx={{ 
+                      backgroundColor: alpha(colors.primary, 0.1),
+                      color: colors.primary,
+                      '&:hover': {
+                        backgroundColor: alpha(colors.primary, 0.2),
+                      }
+                    }}
+                  />
+                </Box>
+              </>
+            )}
+          </Stack>
+        </Paper>
+
+        {/* Content */}
+        {tabValue === 0 ? (
+          <PurchaseMain 
+            products={products}
+            suppliers={suppliers}
+            onProcessPurchase={handleProcessPurchase}
+            onDataRefresh={fetchData}
+            loading={loading}
+          />
+        ) : (
+          <Card sx={{ 
+            borderRadius: 4,
+            boxShadow: `0 20px 40px ${alpha(theme.palette.common.black, 0.1)}`,
+            border: `1px solid ${alpha(colors.border, 0.1)}`,
+          }}>
+            <CardContent sx={{ p: 4 }}>
+              <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box>
+                  <Typography variant="h4" fontWeight={700} gutterBottom color={colors.primary}>
+                    Purchase History
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    View and manage your purchase records
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', gap: 2 }}>
+                  <Card sx={{ 
+                    p: 2, 
+                    borderRadius: 3,
+                    background: `linear-gradient(135deg, ${alpha(colors.primary, 0.1)}, ${alpha(colors.primary, 0.05)})`,
+                    border: `1px solid ${alpha(colors.primary, 0.2)}`
+                  }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Avatar sx={{ 
+                        backgroundColor: alpha(colors.primary, 0.2),
+                        color: colors.primary 
+                      }}>
+                        <TrendingUp />
+                      </Avatar>
+                      <Box>
+                        <Typography variant="caption" color="text.secondary">
+                          Total Purchases
+                        </Typography>
+                        <Typography variant="h6" fontWeight={600} color={colors.primary}>
+                          {formatCurrency(totalPurchases)}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Card>
+                  <Card sx={{ 
+                    p: 2, 
+                    borderRadius: 3,
+                    background: `linear-gradient(135deg, ${alpha(colors.warning, 0.1)}, ${alpha(colors.warning, 0.05)})`,
+                    border: `1px solid ${alpha(colors.warning, 0.2)}`
+                  }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Avatar sx={{ 
+                        backgroundColor: alpha(colors.warning, 0.2),
+                        color: colors.warning 
+                      }}>
+                        <Inventory/>
+                      </Avatar>
+                      <Box>
+                        <Typography variant="caption" color="text.secondary">
+                          Total Items
+                        </Typography>
+                        <Typography variant="h6" fontWeight={600} color={colors.warning}>
+                          {totalItems}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Card>
+                </Box>
+              </Box>
+
+              {/* Purchase History Table */}
+              {loading ? (
+                <Box sx={{ textAlign: 'center', py: 4 }}>
+                  <CircularProgress sx={{ color: colors.primary }} />
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                    Loading purchases...
+                  </Typography>
+                </Box>
+              ) : filteredPurchases.length === 0 ? (
+                <Box sx={{ textAlign: 'center', py: 6 }}>
+                  <History sx={{ fontSize: 64, color: alpha(theme.palette.text.primary, 0.3), mb: 2 }} />
+                  <Typography variant="h6" color="text.secondary" gutterBottom>
+                    No purchases found
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    No purchases found for the selected date range
+                  </Typography>
+                </Box>
+              ) : (
+                <PurchaseHistoryTable purchases={filteredPurchases} loading={loading} />
+              )}
+
+              {/* Summary Footer */}
+              {filteredPurchases.length > 0 && (
+                <Box sx={{ 
+                  mt: 3, 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center',
+                  p: 2,
+                  backgroundColor: alpha(colors.surfaceVariant, 0.3),
+                  borderRadius: 3
+                }}>
+                  <Typography variant="body1" fontWeight={600} color={colors.primary}>
+                    Showing {filteredPurchases.length} purchases from {startDate} to {endDate}
+                  </Typography>
+                  <Box sx={{ display: 'flex', gap: 3 }}>
+                    <Typography variant="body1" fontWeight={600} color="text.secondary">
+                      Total Items: <span style={{ color: colors.warning }}>{totalItems}</span>
+                    </Typography>
+                    <Typography variant="body1" fontWeight={600} color="text.secondary">
+                      Total Value: <span style={{ color: colors.primary }}>{formatCurrency(totalPurchases)}</span>
+                    </Typography>
+                  </Box>
+                </Box>
+              )}
+            </CardContent>
+          </Card>
         )}
       </Stack>
-      
-      {tabValue === 0 ? (
-  <PurchaseMain />
-) : loading ? (
-  <Typography>Loading purchases...</Typography>
-) : filteredPurchases.length === 0 ? (
-  <Typography>No purchases found for the selected date range.</Typography>
-) : (
-  <>
-    <PurchaseHistoryTable purchases={filteredPurchases} />
-    <Box display="flex" alignItems="center" justifyContent="space-between">
-      <Typography variant="body2" color="primary" fontWeight={600}>
-        Total Purchase: {totalPurchases}
-      </Typography>
-      <Typography variant="body2" color="primary" fontWeight={600}>
-        Purchase Items: {totalItems}
-      </Typography>
     </Box>
-  </>
-)}
-
-      
-      
-        </Stack>
   );
 };
 

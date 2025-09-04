@@ -13,6 +13,8 @@ import {
   TableRow,
   CircularProgress,
   Box,
+  alpha,
+  useTheme,
 } from "@mui/material";
 import { useCurrency } from "@/components/currency/currency-context";
 import PurchaseDownloadButtons from "../purchase-pdf/purchase-download-buttons";
@@ -27,9 +29,15 @@ import { CompanyDto } from "@/types/company.types";
 
 interface Props {
   purchases: Purchase[];
+  loading?: boolean;
 }
 
-export default function PurchaseHistoryTable({ purchases }: Props) {
+export default function PurchaseHistoryTable({ purchases, loading: externalLoading }: Props) {
+  const theme = useTheme();
+  const colors = {
+    primary: "#D98219",
+  };
+  
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [company, setCompany] = useState<CompanyDto | null>(null);
@@ -89,19 +97,19 @@ export default function PurchaseHistoryTable({ purchases }: Props) {
 
   return (
     <Card>
-      <CardHeader title="Purchases" />
+      <CardHeader/>
       <CardContent>
         <TableContainer>
           <Table>
             <TableHead>
-              <TableRow>
-                <TableCell>Purchase ID</TableCell>
-                <TableCell>Supplier</TableCell>
-                <TableCell>Date</TableCell>
-                <TableCell>Quantity</TableCell>
-                <TableCell>Unit Cost</TableCell>
-                <TableCell>Total Cost</TableCell>
-                <TableCell>Actions</TableCell>
+              <TableRow sx={{ backgroundColor: alpha(colors.primary, 0.05) }}>
+                <TableCell sx={{ fontWeight: 600 }}>Purchase ID</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Supplier</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Date</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 600 }}>Quantity</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 600 }}>Unit Cost</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 600 }}>Total Cost</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 600 }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -132,10 +140,10 @@ export default function PurchaseHistoryTable({ purchases }: Props) {
                           ? new Date(purchase.purchase_created_at).toLocaleDateString()
                           : "N/A"}
                       </TableCell>
-                      <TableCell>{purchase.purchase_quantity || 0}</TableCell>
-                      <TableCell>{safeCurrency(purchase.purchase_unit_cost || 0)}</TableCell>
-                      <TableCell>{safeCurrency(purchase.purchase_total_cost || 0)}</TableCell>
-                      <TableCell>
+                      <TableCell align="center">{purchase.purchase_quantity || 0}</TableCell>
+                      <TableCell align="center">{safeCurrency(purchase.purchase_unit_cost || 0)}</TableCell>
+                      <TableCell align="center">{safeCurrency(purchase.purchase_total_cost || 0)}</TableCell>
+                      <TableCell align="center">
                         {company && (
                           <PurchaseDownloadButtons
                             purchase={purchase}
