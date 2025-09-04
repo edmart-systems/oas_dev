@@ -1,12 +1,34 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Card, CardContent, CardHeader, Stack, TextField } from '@mui/material';
-import { PlusIcon as Plus } from '@phosphor-icons/react';
+import { 
+  Box, 
+  Button, 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  Stack, 
+  TextField,
+  alpha,
+  useTheme,
+} from '@mui/material';
+import { PlusIcon as Plus, MagnifyingGlass } from '@phosphor-icons/react';
 import { toast } from 'react-toastify';
 import MyCircularProgress from '@/components/common/my-circular-progress';
 import CurrencyForm from './CurrencyForm';
 import CurrencyTable, { CurrencyRow } from './CurrencyTable';
 
 const CurrencyMain: React.FC = () => {
+  const theme = useTheme();
+
+  const colors = {
+    primary: "#D98219",
+    error: theme.palette.error.main,
+    surface: theme.palette.background.paper,
+    surfaceVariant: theme.palette.mode === "dark" ? alpha(theme.palette.grey[800], 0.7) : "#ffffff",
+    border: theme.palette.divider,
+  };
+
   const [currencies, setCurrencies] = useState<CurrencyRow[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [openForm, setOpenForm] = useState(false);
@@ -47,32 +69,58 @@ const CurrencyMain: React.FC = () => {
   };
 
   return (
-    <Card>
-      <CardHeader
-        title="Currencies"
-        action={
-          <Stack direction="row" spacing={2}>
-            <TextField
-              size="small"
-              placeholder="Search currencies..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <Button variant="contained" disabled={loading} startIcon={<Plus />} onClick={handleAdd}>
-              Add Currency
-            </Button>
-          </Stack>
-        }
-      />
-      <CardContent>
-        {loading ? (
-          <Box display="flex" justifyContent="center" alignItems="center" height={200}>
-            <MyCircularProgress />
-          </Box>
-        ) : (
-          <CurrencyTable currencies={filtered} onEdit={handleEdit} />
-        )}
-      </CardContent>
+    <Stack spacing={3}>
+      <Card
+        sx={{
+          borderRadius: 3,
+          backgroundColor: colors.surface,
+          boxShadow: `0 4px 16px ${alpha(colors.primary, 0.08)}`,
+        }}
+      >
+        <CardHeader
+          title="Currencies"
+          action={
+            <Stack direction="row" spacing={2}>
+              <TextField
+                size="small"
+                placeholder="Search currencies..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                InputProps={{
+                  startAdornment: <MagnifyingGlass size={20} />,
+                }}
+              />
+              <Button 
+                variant="contained" 
+                disabled={loading} 
+                startIcon={<Plus />} 
+                onClick={handleAdd}
+                sx={{
+                  backgroundColor: colors.primary,
+                  "&:hover": {
+                    backgroundColor: alpha(colors.primary, 0.9),
+                  },
+                }}
+              >
+                Add Currency
+              </Button>
+            </Stack>
+          }
+          sx={{
+            borderBottom: `1px solid ${colors.border}`,
+            backgroundColor: colors.surfaceVariant,
+          }}
+        />
+        <CardContent>
+          {loading ? (
+            <Box display="flex" justifyContent="center" alignItems="center" height={200}>
+              <MyCircularProgress />
+            </Box>
+          ) : (
+            <CurrencyTable currencies={filtered} onEdit={handleEdit} />
+          )}
+        </CardContent>
+      </Card>
 
       <CurrencyForm
         open={openForm}
@@ -84,7 +132,7 @@ const CurrencyMain: React.FC = () => {
           toast.success(selected ? 'Currency updated successfully' : 'Currency added successfully');
         }}
       />
-    </Card>
+    </Stack>
   );
 };
 
