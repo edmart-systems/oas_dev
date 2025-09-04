@@ -74,8 +74,9 @@ model User {
   createdCustomer    Customer[] @relation("CustomerCreator")
   updatedCustomer    Customer[] @relation("CustomerUpdater")
   sales               Sale[] @relation("SaleSeller")
-  createdOrder       Order[]@relation("OrderCreator")
-  updatedOrder       Order[]@relation("OrderUpdater")
+  purchaseOrders      PurchaseOrder[]    @relation("PORequester") // POs this user requested
+  poApprovals         POApproval[]       @relation("POApprover")  // Approvals this user is responsible for
+  purchaseOrderDrafts PurchaseOrderDraft[] @relation("PODraftCreator") // PO drafts created by this user
   systemSettings     SystemSetting[] @relation("SystemSettingUpdater")
 
   @@map("user")
@@ -116,6 +117,7 @@ model Currency {
   Edited_quotation Edited_quotation[]
   quotations       Quotation[]
   Sale             Sale[]
+  PurchaseOrder    PurchaseOrder[]
 
   @@map("currency")
 }
@@ -591,7 +593,8 @@ model Supplier {
   Purchase Purchase[]
   creator User? @relation("SupplierCreator", fields: [created_by], references: [co_user_id])
   updater User? @relation("SupplierUpdater", fields: [updated_by], references: [co_user_id])
-  order Order[]
+  purchase_order PurchaseOrder[]
+  purchaseOrderDrafts PurchaseOrderDraft[]
 
   @@map("supplier")
 }
@@ -633,7 +636,7 @@ model Product {
   Sale_item Sale_item[]
   location_stock Location_stock[]
   transfer_item Transfer_item[]
-  order_item OrderItem[]
+  purchase_order_item PurchaseOrderItem[]
 
 
 
@@ -749,41 +752,105 @@ model Customer {
   @@map("customer")
 }
 
-model Order {
-  order_id     Int      @id @default(autoincrement())
-  order_number String   @unique @db.VarChar(24)
-  supplier_id  Int
-  order_date   DateTime @default(now()) @db.DateTime(3)
-  delivery_date DateTime? @db.DateTime(3)
-  status       String   @default("Pending") @db.VarChar(18)
-  items_count  Int      @default(0)
-  total_amount Int      @default(0)
-  created_by   String?  @db.VarChar(191)
-  updated_by   String?  @db.VarChar(191)
-  created_at   DateTime @default(now()) @db.DateTime(3)
-  updated_at   DateTime @default(now()) @updatedAt @db.DateTime(3)
+model PurchaseOrder {
+  po_id            Int                @id @default(autoincrement())
+  po_number        String             @unique @db.VarChar(24)
+  supplier_id      Int
+  requester_id     Int                // user who created the PO
+  status           String             @default("Pending") @db.VarChar(24) // Pending, Approved, Rejected, Issued, Cancelled
+  total_amount     Float              @default(0)
+  currency_id                Int
+  expected_delivery DateTime?         @db.DateTime(3)
+  issued_date      DateTime?          @db.DateTime(3)
+  approval_date    DateTime?          @db.DateTime(3)
+  remarks          String?            @db.Text
+  created_at       DateTime           @default(now()) @db.DateTime(3)
+  updated_at       DateTime           @default(now()) @updatedAt @db.DateTime(3)
 
-  supplier   Supplier @relation(fields: [supplier_id], references: [supplier_id])
-  creator  User?    @relation("OrderCreator", fields: [created_by], references: [co_user_id])
-  updater  User?    @relation("OrderUpdater", fields: [updated_by], references: [co_user_id])
-  items      OrderItem[]
 
-  @@map("inv_order")
+  currency         Currency  @relation(fields: [currency_id], references: [currency_id])
+  supplier         Supplier           @relation(fields: [supplier_id], references: [supplier_id])
+  requester        User               @relation("PORequester", fields: [requester_id], references: [userId])
+  items            PurchaseOrderItem[]
+  approvals        POApproval[]
+  termsConditions  PurchaseOrderTC[]
+
+  @@map("purchase_order")
 }
 
-model OrderItem {
-  order_item_id Int  @id @default(autoincrement())
-  order_id      Int
-  product_id    Int
-  quantity      Int
-  unit_price    Int
-  total_price   Int
+model PurchaseOrderItem {
+  po_item_id       Int                @id @default(autoincrement())
+  po_id            Int
+  product_id       Int
+  description      String?            @db.Text
+  quantity_ordered Float
+  unit_price       Float
+  total_price      Float
+  received_qty     Float              @default(0)
+  status           String             @default("Pending") @db.VarChar(24) // Pending, Partially Received, Fully Received
+  created_at       DateTime           @default(now()) @db.DateTime(3)
+  updated_at       DateTime           @default(now()) @updatedAt @db.DateTime(3)
 
-  order   Order @relation(fields: [order_id], references: [order_id])
-  product Product  @relation(fields: [product_id], references: [product_id])
+  po               PurchaseOrder      @relation(fields: [po_id], references: [po_id])
+  product          Product            @relation(fields: [product_id], references: [product_id])
 
-  @@map("order_item")
+  @@map("purchase_order_item")
 }
+
+model POApproval {
+  approval_id      Int                @id @default(autoincrement())
+  po_id            Int
+  approver_id      Int
+  level         Int      // e.g., 1 = first approver, 2 = next approver
+  status           String             @default("Pending") @db.VarChar(24) // Pending, Approved, Rejected
+  remarks          String?            @db.Text
+  approved_at      DateTime?          @db.DateTime(3)
+  created_at       DateTime           @default(now()) @db.DateTime(3)
+  updated_at       DateTime           @default(now()) @updatedAt @db.DateTime(3)
+
+  po               PurchaseOrder      @relation(fields: [po_id], references: [po_id])
+  approver         User               @relation("POApprover", fields: [approver_id], references: [userId])
+
+  @@map("po_approval")
+}
+
+model PurchaseOrderDraft {
+  draft_id         Int       @id @default(autoincrement())
+  creator_id       Int
+  draft_data       String    @db.LongText // JSON string containing PO draft data
+  draft_type       DraftType @default(manual) // manual or auto
+  supplier_id      Int?
+  total_amount     Float?    @default(0)
+  currency         String?   @db.VarChar(8)
+  expected_delivery DateTime? @db.DateTime(3)
+  remarks          String?   @db.Text
+  created_at       DateTime  @default(now()) @db.DateTime(3)
+  updated_at       DateTime  @default(now()) @updatedAt @db.DateTime(3)
+
+  creator          User      @relation("PODraftCreator", fields: [creator_id], references: [userId])
+  supplier         Supplier? @relation(fields: [supplier_id], references: [supplier_id])
+
+  @@index([creator_id, draft_type, updated_at], map: "idx_creator_draft_type")
+  @@map("purchase_order_draft")
+}
+
+model PurchaseOrderTC {
+  po_tc_id            Int            @id @default(autoincrement())
+  po_id               Int            // FK → PurchaseOrder
+  validity_days       Int
+  validity_words      String?        @db.VarChar(120)
+  payment_grace_days  Int?
+  payment_words       String?        @db.VarChar(160)
+  vat_percentage      Int            @default(18)
+  created_at          DateTime       @default(now())
+  updated_at          DateTime       @default(now()) @updatedAt
+
+  purchaseOrder       PurchaseOrder  @relation(fields: [po_id], references: [po_id])
+
+  @@index([po_id], map: "purchase_order_tcs_po_id_fkey")
+  @@map("purchase_order_tcs")
+}
+
 
 model Location_stock {
   location_stock_id Int @id @default(autoincrement())
