@@ -5,13 +5,20 @@ import { TransferRepository } from "@/modules/inventory/repositories/transfer.re
 import { StockRepository } from "@/modules/inventory/repositories/stock.repository";
 import { StockService } from "@/modules/inventory/services/stock.service";
 import { TransferService } from "@/modules/inventory/services/transfer.service";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/server-actions/auth-actions/auth.actions";
 
 const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.co_user_id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await req.json();
-    const parsed = TransferDto.safeParse(body);
+    const parsed = await TransferDto.safeParseAsync(body);
     if (!parsed.success) {
       return NextResponse.json(
         { error: "Invalid input", details: parsed.error.format() },
@@ -24,7 +31,10 @@ export async function POST(req: NextRequest) {
     const stockService = new StockService(prisma, stockRepo);
     const transferService = new TransferService(prisma, transferRepo, stockService);
 
-    const result = await transferService.createTransfer(parsed.data);
+    const result = await transferService.createTransfer({
+      ...parsed.data,
+      created_by: session.user.co_user_id,
+    });
     return NextResponse.json(result, { status: 201 });
   } catch (err: any) {
     console.error("Create transfer failed:", err);

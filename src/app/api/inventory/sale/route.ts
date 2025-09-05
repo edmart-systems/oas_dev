@@ -71,7 +71,12 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const sales = await service.getAllSales();
+    const session = await getServerSession(authOptions);
+    if (!session || !(await sessionService.checkIsUserSessionOk(session))) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const sales = await service.getSalesByUser(session.user.userId);
     return NextResponse.json(sales);
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

@@ -97,7 +97,7 @@ const OrderMain = () => {
       <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)}>
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
-          Are you sure you want to delete "{toDelete?.order_number}"? This action cannot be undone.
+          Are you sure you want to delete &quot;{toDelete?.order_number}&quot;? This action cannot be undone.
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDeleteOpen(false)}>Cancel</Button>

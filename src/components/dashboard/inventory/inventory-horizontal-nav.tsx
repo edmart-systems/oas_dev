@@ -3,6 +3,7 @@
 import { Box, Stack, Typography } from "@mui/material";
 import RouterLink from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useAppSelector } from "@/redux/store";
 import { inventoryIcons } from "./inventory-icons";
 import { paths } from "@/utils/paths.utils";
@@ -12,6 +13,7 @@ interface InventoryNavItem {
   title: string;
   href: string;
   icon: keyof typeof inventoryIcons;
+  roles?: number[]; // allowed roles, if not specified, all roles can access
 }
 
 const inventoryNavItems: InventoryNavItem[] = [
@@ -20,6 +22,7 @@ const inventoryNavItems: InventoryNavItem[] = [
     title: "Dashboard",
     href: paths.dashboard.inventory.main,
     icon: "dashboard",
+    roles: [1], // Only role 1
   },
   {
     key: "sales",
@@ -32,6 +35,7 @@ const inventoryNavItems: InventoryNavItem[] = [
     title: "Manage Inventory",
     href: `${paths.dashboard.inventory.main}/manageInventory`,
     icon: "manage",
+    roles: [1], // Only role 1
   },
   // {
   //   key: "products",
@@ -39,35 +43,40 @@ const inventoryNavItems: InventoryNavItem[] = [
   //   href: `${paths.dashboard.inventory.main}/products`,
   //   icon: "products",
   // },
-  // {
-  //   key: "stock",
-  //   title: "Stock",
-  //   href: `${paths.dashboard.inventory.main}/stock`,
-  //   icon: "stock",
-  // },
+  {
+    key: "stock",
+    title: "Stock",
+    href: `${paths.dashboard.inventory.main}/stock`,
+    icon: "stock",
+    roles: [1], // Only role 1
+  },
   {
     key: "purchase",
     title: "Purchase",
     href: `${paths.dashboard.inventory.main}/purchase`,
     icon: "purchase",
+    roles: [1], // Only role 1
   },
   {
     key: "orders",
     title: "Orders",
     href: `${paths.dashboard.inventory.main}/orders`,
     icon: "orders",
+    roles: [1], // Only role 1
   },
   {
     key: "suppliers",
     title: "Suppliers",
     href: `${paths.dashboard.inventory.main}/suppliers`,
     icon: "suppliers",
+    roles: [1], // Only role 1
   },
   {
     key: "customers",
     title: "Customers",
     href: `${paths.dashboard.inventory.main}/customers`,
     icon: "customers",
+    roles: [1], // Only role 1
   },
   // {
   //   key: "warehouse",
@@ -75,12 +84,13 @@ const inventoryNavItems: InventoryNavItem[] = [
   //   href: `${paths.dashboard.inventory.main}/warehouse`,
   //   icon: "warehouse",
   // },
-  // {
-  //   key: "transfers",
-  //   title: "Transfers",
-  //   href: `${paths.dashboard.inventory.main}/transfers`,
-  //   icon: "transfers",
-  // },
+  {
+    key: "transfers",
+    title: "Transfers",
+    href: `${paths.dashboard.inventory.main}/transfers`,
+    icon: "transfers",
+    roles: [1], // Only role 1
+  },
   // {
   //   key: "categories",
   //   title: "Categories",
@@ -92,25 +102,36 @@ const inventoryNavItems: InventoryNavItem[] = [
     title: "Analytics",
     href: `${paths.dashboard.inventory.main}/analytics`,
     icon: "analytics",
+    roles: [1], // Only role 1
   },
   {
     key: "alerts",
     title: "Alerts",
     href: `${paths.dashboard.inventory.main}/alerts`,
     icon: "alerts",
+    roles: [1], // Only role 1
   },
   {
     key: "reports",
     title: "Reports",
     href: `${paths.dashboard.inventory.main}/reports`,
     icon: "reports",
+    roles: [1], // Only role 1
   },
   
 ];
 
 const InventoryHorizontalNav = () => {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const { mode: themeMode } = useAppSelector((state) => state.theme);
+  
+  const userRole = session?.user?.role_id;
+  
+  // Filter nav items based on user role
+  const filteredNavItems = inventoryNavItems.filter(item => 
+    !item.roles || item.roles.includes(userRole || 0)
+  );
 
   return (
     <Box
@@ -134,7 +155,7 @@ const InventoryHorizontalNav = () => {
           },
         }}
       >
-        {inventoryNavItems.map((item) => {
+        {filteredNavItems.map((item) => {
           const Icon = inventoryIcons[item.icon];
           const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
 

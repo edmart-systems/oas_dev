@@ -1,110 +1,113 @@
-import React, { useEffect, useState } from 'react'
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Stack,
-  TextField,
-} from "@mui/material";
-import { Plus, MagnifyingGlass } from "@phosphor-icons/react";
-import InventoryPointTable from './inventoryPointTable';
-import { toast } from 'react-toastify';
-import InventoryPointForm from './inventoryPointForm';
-import { InventoryPoint } from '@/modules/inventory/types/inventoryPoint.types';
-import MyCircularProgress from '@/components/common/my-circular-progress';
-
-
+import { Stack, TextField, Card, CardHeader, Button, CardContent, Box } from '@mui/material'
+import React, { useEffect, useState, useMemo } from 'react'
+import InventoryPointTable from './inventoryPointTable'
+import { toast } from 'react-toastify'
+import { MagnifyingGlassIcon, PlusIcon } from '@phosphor-icons/react'
+import MyCircularProgress from '@/components/common/my-circular-progress'
+import InventoryPointForm from './inventoryPointForm'
+import { Location } from '@/modules/inventory/types/location.types'
 
 const InventoryPointMain = () => {
-  const [inventoryPoints, setInventoryPoints] = useState<InventoryPoint[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [openForm, setOpenForm] = useState(false);
-  const [selectedInventoryPoint, setSelectedInventoryPoint] = useState<InventoryPoint | null>(null);
-  
-   
-  useEffect(() => {
-      fetchData();
-    }, []);
+  const [inventoryPoints, setInventoryPoints] = useState<Location[]>([])
+  const [searchTerm, setSearchTerm] = useState("")
+  const [loading, setLoading] = useState(true)
+  const [openForm, setOpenForm] = useState(false)
+  const [selectedInventoryPoint, setSelectedInventoryPoint] = useState<Location | null>(null)
 
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   const fetchData = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
-      const res = await fetch("/api/inventory/inventory_point");
-      if (!res.ok) throw new Error("Failed to fetch Inventory Points");
+      console.log('Calling API: /api/inventory/inventory_point')
+      const res = await fetch("/api/inventory/inventory_point")
+      console.log('API Response status:', res.status)
+      
+      if (!res.ok) {
+        const errorText = await res.text()
+        console.error('API Error:', errorText)
+        throw new Error(`Failed to fetch Inventory Points: ${res.status}`)
+      }
 
-      const data: InventoryPoint[] = await res.json();
-      setInventoryPoints(data);
+      const data: Location[] = await res.json()
+      console.log('Inventory Points data:', data)
+      setInventoryPoints(data)
     } catch (error) {
-      console.error("Failed to fetch inventory Points:", error);
-      toast.error("Failed to fetch inventory Points");
+      console.error("Failed to fetch inventory Points:", error)
+      toast.error("Failed to fetch inventory Points")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
+
   const filteredInventoryPoints = inventoryPoints.filter(inventoryPoint =>
-    (inventoryPoint.inventory_point || "").toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    (inventoryPoint.location_name || "").toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   const handleAdd = () => {
-      setSelectedInventoryPoint(null); 
-      setOpenForm(true);
-    };
-  
-    const handleEdit = (inventory_point: InventoryPoint) => {
-      setSelectedInventoryPoint(inventory_point); 
-      setOpenForm(true);
-    };
+    setSelectedInventoryPoint(null)
+    setOpenForm(true)
+  }
+
+  const handleEdit = (inventoryPoint: Location) => {
+    setSelectedInventoryPoint(inventoryPoint)
+    setOpenForm(true)
+  }
+
+  const handleFormSuccess = () => {
+    toast.success("Inventory Point saved successfully!")
+    fetchData()
+    setOpenForm(false)
+    setSelectedInventoryPoint(null)
+  }
 
   return (
-       <Card>
-        <CardHeader
-          title="InventoryPoints"
-          action={
-            <Stack direction="row" spacing={2}>
-              <TextField
-                size="small"
-                placeholder="Search inventoryPoints..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                InputProps={{
-                  startAdornment: <MagnifyingGlass size={20} />,
-                }}
-              />
-              <Button variant="contained" disabled={loading} startIcon={<Plus />} onClick={handleAdd}>
-                Add InventoryPoint
-              </Button>
-            </Stack>
-          }
-        />
-        <CardContent>
-        
-          {loading ? (
-           <Box display="flex" justifyContent="center" alignItems="center" height={200}>
+    <Card>
+      <CardHeader
+        title="Inventory Points"
+        action={
+          <Stack direction="row" spacing={2}>
+            <TextField
+              size="small"
+              placeholder="Search Inventory Points..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              InputProps={{
+                startAdornment: <MagnifyingGlassIcon size={20} />,
+              }}
+            />
+            <Button
+              variant="contained"
+              disabled={loading}
+              startIcon={<PlusIcon />}
+              onClick={handleAdd}
+            >
+              Add Inventory Point
+            </Button>
+          </Stack>
+        }
+      />
+      <CardContent>
+        {loading ? (
+          <Box display="flex" justifyContent="center" alignItems="center" height={200}>
             <MyCircularProgress />
-            </Box>
+          </Box>
         ) : (
-          
-            <InventoryPointTable inventoryPoints={filteredInventoryPoints} onEdit={handleEdit} />        
-
+          <InventoryPointTable inventoryPoints={filteredInventoryPoints} onEdit={handleEdit} />
         )}
-        </CardContent>
-                      <InventoryPointForm
-                      open={openForm}
-                      initialData={selectedInventoryPoint}
-                      onClose={() => setOpenForm(false)}
-                      onSuccess={() => {
-                        fetchData();
-                        setOpenForm(false);
-                        toast.success('InventoryPoint added successfully');
-                      }}
-                      />
-      </Card>
 
-    
+        {openForm && (
+          <InventoryPointForm
+            open={openForm}
+            onClose={() => setOpenForm(false)}
+            initialData={selectedInventoryPoint}
+            onSuccess={handleFormSuccess}
+          />
+        )}
+      </CardContent>
+    </Card>
   )
 }
 

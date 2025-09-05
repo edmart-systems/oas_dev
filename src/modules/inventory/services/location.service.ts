@@ -14,6 +14,10 @@ export class LocationService {
     return await this.locationRepository.findAll();
   }
 
+  async getLocationsByType(locationType: string) {
+    return await this.locationRepository.findByType(locationType as any);
+  }
+
   async getLocationById(location_id: number) {
     const location = await this.locationRepository.findById(location_id);
     if (!location) {

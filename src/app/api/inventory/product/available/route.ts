@@ -18,8 +18,8 @@ export async function GET(req: NextRequest) {
     }
 
     // 1) Find inventory entries with stock > 0 at the point
-    const invRows = await prisma.inventory_stock.findMany({
-      where: { inventory_point_id: ipid, quantity: { gt: 0 } },
+    const invRows = await prisma.location_stock.findMany({
+      where: { location_id: ipid, quantity: { gt: 0 } },
       select: { product_id: true, quantity: true },
     });
 

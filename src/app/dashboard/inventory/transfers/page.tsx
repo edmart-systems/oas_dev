@@ -29,23 +29,14 @@ import { Plus, Eye, PencilSimple, Trash, MagnifyingGlass, ArrowRight } from "@ph
 import PageTitle from "@/components/dashboard/common/page-title";
 import InventoryHorizontalNav from "@/components/dashboard/inventory/inventory-horizontal-nav";
 import TransfersMain from "@/components/dashboard/inventory/transfers/TransfersMain";
-
-interface Transfer {
-  id: number;
-  transferNumber: string;
-  product: string;
-  fromWarehouse: string;
-  toWarehouse: string;
-  quantity: number;
-  transferDate: string;
-  expectedDate: string;
-  status: "Pending" | "In Transit" | "Completed" | "Cancelled";
-  reason: string;
-}
+import RoleGuard from "@/components/dashboard/inventory/RoleGuard";
 
 const TransfersPage = () => {
-  // Reuse the shared TransfersMain which is wired to the real /api/inventory/transfer
-  return <TransfersMain />;
+  return (
+    <RoleGuard>
+      <TransfersMain />
+    </RoleGuard>
+  );
 };
 
 export default TransfersPage;

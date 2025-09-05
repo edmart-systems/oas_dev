@@ -163,7 +163,7 @@ const LocationMain = () => {
                         size="small"
                       />
                     </TableCell>
-                    <TableCell>{getParentName(location.location_parent_id)}</TableCell>
+                    <TableCell>{getParentName(location.location_parent_id ?? null)}</TableCell>
                     <TableCell>{location.location_address || '-'}</TableCell>
                     <TableCell>
                       <Chip
@@ -194,7 +194,7 @@ const LocationMain = () => {
         onSuccess={handleFormSuccess}
         initialData={editingLocation}
         locations={locations}
-        userRoleId={userRoleId}
+        userRole={userRoleId}
       />
     </Stack>
   );

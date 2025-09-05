@@ -108,9 +108,10 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
         suppliersRes.json()
       ]);
 
-      setCategories(categoriesData.map((cat: any) => ({ id: cat.category_id, name: cat.category })));
-      setTags(tagsData.map((tag: any) => ({ id: tag.tag_id, name: tag.tag })));
-      setSuppliers(suppliersData.map((sup: any) => ({ id: sup.supplier_id, name: sup.supplier_name })));
+      console.log('Categories API Response:', categoriesData);
+      setCategories(Array.isArray(categoriesData) ? categoriesData.map((cat: any) => ({ id: cat.category_id, name: cat.category })) : []);
+      setTags(Array.isArray(tagsData) ? tagsData.map((tag: any) => ({ id: tag.tag_id, name: tag.tag })) : []);
+      setSuppliers(Array.isArray(suppliersData) ? suppliersData.map((sup: any) => ({ id: sup.supplier_id, name: sup.supplier_name })) : []);
 
       // Fetch units from database using server actions
       const unitsData = await getUnits();
@@ -402,7 +403,7 @@ export default function ProductForm({ open, onSubmit, onCancel, initialData }: P
               onSuccess={async (newCategory) => {
                 const categoriesRes = await fetch('/api/inventory/category');
                 const categoriesData = await categoriesRes.json();
-                setCategories(categoriesData.map((cat: any) => ({ id: cat.category_id, name: cat.category })));
+                setCategories(Array.isArray(categoriesData) ? categoriesData.map((cat: any) => ({ id: cat.category_id, name: cat.category })) : []);
                 setOpenForm(null);
 
                 toast.success('Category added successfully');

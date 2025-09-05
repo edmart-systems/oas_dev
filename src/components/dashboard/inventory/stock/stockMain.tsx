@@ -8,7 +8,7 @@ import MyCircularProgress from '@/components/common/my-circular-progress'
 import StockAdjustmentForm from './stockAdjustmentForm'
 
 const StockMain = () => {
-  const [stock, setStock] = useState<Stock[]>([])
+  const [stock, setStock] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [loading, setLoading] = useState(true)
   const [openForm, setOpenForm] = useState(false)
@@ -21,10 +21,14 @@ const StockMain = () => {
   const fetchData = async () => {
     setLoading(true)
     try {
+      console.log('Calling API: /api/inventory/stock')
       const res = await fetch("/api/inventory/stock")
+      console.log('API Response status:', res.status)
       if (!res.ok) throw new Error("Failed to fetch Stock")
 
-      const data: Stock[] = await res.json()
+      const data: any[] = await res.json()
+      console.log('Stock API Response:', data)
+      console.log('First item structure:', data[0])
       setStock(data)
     } catch (error) {
       console.error("Failed to fetch Stock", error)

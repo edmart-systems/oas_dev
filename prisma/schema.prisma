@@ -67,6 +67,7 @@ model User {
   updatedSuppliers    Supplier[] @relation("SupplierUpdater")
   createdLocation     Location[] @relation("LocationCreator")
   updatedLocation     Location[] @relation("LocationUpdater")
+  assignedLocations   Location[] @relation("LocationAssignedUser")
   createdProducts     Product[] @relation("ProductCreator")
   updatedProducts     Product[] @relation("ProductUpdater")
   createdPurchases    Purchase[] @relation("PurchaseCreator")
@@ -77,6 +78,8 @@ model User {
   createdOrder       Order[]@relation("OrderCreator")
   updatedOrder       Order[]@relation("OrderUpdater")
   systemSettings     SystemSetting[] @relation("SystemSettingUpdater")
+  assignedTransfers  Transfer[] @relation("TransferAssignedUser")
+  createdTransfers   Transfer[] @relation("TransferCreator")
 
   @@map("user")
 }
@@ -522,11 +525,12 @@ model Location {
   location_type          LocationType
   location_parent_id     Int?         // For hierarchy: branch -> main_store, inventory_point -> branch
   location_address       String?
+  assigned_to            String?
   is_active     Boolean      @default(true)
   created_by    String?
   updated_by    String?
   created_at    DateTime     @default(now())
-  updated_at    DateTime     @default(dbgenerated("CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)"))
+  updated_at    DateTime     @default(now()) @updatedAt
 
   // Self-referencing relationship for hierarchy
   parent        Location?    @relation("LocationHierarchy", fields: [location_parent_id], references: [location_id])
@@ -543,6 +547,7 @@ model Location {
   
   creator       User?        @relation("LocationCreator", fields: [created_by], references: [co_user_id])
   updater       User?        @relation("LocationUpdater", fields: [updated_by], references: [co_user_id])
+  assigned_user User?        @relation("LocationAssignedUser", fields: [assigned_to], references: [co_user_id])
 
   @@map("location")
 }
@@ -794,6 +799,7 @@ model Location_stock {
   product           Product  @relation(fields: [product_id], references: [product_id])
   location          Location @relation(fields: [location_id], references: [location_id])
 
+  @@unique([product_id, location_id])
   @@map("location_stock")
 }
 
@@ -802,10 +808,16 @@ model Transfer {
   from_location_id Int
   to_location_id   Int
   note             String?  @db.VarChar(200)
+  status           String   @default("PENDING") @db.VarChar(20)
+  assigned_user_id Int?
+  created_by       String?
+  signature_data   String?  @db.LongText
   created_at       DateTime @default(now()) @db.DateTime(3)
 
   from_location    Location @relation("TransferFrom", fields: [from_location_id], references: [location_id])
   to_location      Location @relation("TransferTo", fields: [to_location_id], references: [location_id])
+  assigned_user    User?    @relation("TransferAssignedUser", fields: [assigned_user_id], references: [userId])
+  creator          User?    @relation("TransferCreator", fields: [created_by], references: [co_user_id])
   items            Transfer_item[]
 
   @@map("transfer")

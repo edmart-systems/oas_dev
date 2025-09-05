@@ -110,7 +110,7 @@ export default function SalesHistoryTable({ sales }: Props) {
   const [search, setSearch] = useState("");
   const [fromDate, setFromDate] = useState<string>("");
   const [toDate, setToDate] = useState<string>("");
-  const [sellerFilter, setSellerFilter] = useState<string>("all");
+  const [sellerFilter, setSellerFilter] = useState<string>("");
   const [inventoryPointFilter, setInventoryPointFilter] = useState<string>("all");
 
   // Derived lists for selectors
@@ -121,8 +121,13 @@ export default function SalesHistoryTable({ sales }: Props) {
       const key = name || (s.seller?.co_user_id ?? (s.seller_id ? `#${s.seller_id}` : ""));
       if (key) set.set(key, name || key);
     }
-    return Array.from(set.entries()).map(([value, label]) => ({ value, label }));
-  }, [sales]);
+    const options = Array.from(set.entries()).map(([value, label]) => ({ value, label }));
+    // Auto-select first seller if not already set
+    if (options.length > 0 && !sellerFilter) {
+      setSellerFilter(options[0].value);
+    }
+    return options;
+  }, [sales, sellerFilter]);
 
   const inventoryPointOptions = useMemo(() => {
     if (inventoryPoints.length > 0) return inventoryPoints.map(ip => ({ value: String(ip.inventory_point_id), label: ip.inventory_point }));
@@ -156,7 +161,7 @@ export default function SalesHistoryTable({ sales }: Props) {
       // Seller filter
       const sellerName = sale.seller ? `${sale.seller.firstName ?? ""} ${sale.seller.lastName ?? ""}`.trim() : "";
       const sellerKey = sellerName || (sale.seller?.co_user_id ?? (sale.seller_id ? `#${sale.seller_id}` : ""));
-      const sellerOk = sellerFilter === "all" ? true : (sellerKey === sellerFilter);
+      const sellerOk = !sellerFilter || (sellerKey === sellerFilter);
 
       // Inventory point filter
       const ipOk = inventoryPointFilter === "all" ? true : (String(sale.inventory_point_id ?? "") === inventoryPointFilter);
@@ -212,7 +217,6 @@ export default function SalesHistoryTable({ sales }: Props) {
               value={sellerFilter}
               onChange={(e) => setSellerFilter(e.target.value)}
             >
-              <MenuItem value="all">All</MenuItem>
               {sellerOptions.map(o => (
                 <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>
               ))}

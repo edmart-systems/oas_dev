@@ -9,6 +9,7 @@ export const CreateLocationSchema = z.object({
   location_type: z.nativeEnum(LocationType),
   location_parent_id: z.number().optional(),
   location_address: z.string().optional(),
+  assigned_to: z.string().optional(),
   is_active: z.boolean().default(true),
   created_by: z.string().optional(),
 });
@@ -22,6 +23,7 @@ export const UpdateLocationSchema = z.object({
   location_type: z.nativeEnum(LocationType).optional(),
   location_parent_id: z.number().optional(),
   location_address: z.string().optional(),
+  assigned_to: z.string().optional(),
   is_active: z.boolean().optional(),
   updated_by: z.string().optional(),
 });

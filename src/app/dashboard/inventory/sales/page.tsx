@@ -35,6 +35,9 @@ import InventoryHorizontalNav from "@/components/dashboard/inventory/inventory-h
 import { toast } from "react-toastify";
 import SalesHistoryTable from "@/components/dashboard/inventory/sale/salesHistory/salesHistoryTable";
 import { useCurrency } from "@/components/currency/currency-context";
+import { useSession } from "next-auth/react";
+import PendingTransfers from "@/components/dashboard/inventory/transfers/PendingTransfers";
+import SignedTransfers from "@/components/dashboard/inventory/transfers/SignedTransfers";
 
 // Backend product row shape (minimal fields used by POS)
 interface ProductRow {
@@ -62,6 +65,7 @@ interface SaleRow {
 interface InventoryPointRow { inventory_point_id: number; inventory_point: string }
 
 const SalesPage = () => {
+  const { data: session } = useSession();
   const [products, setProducts] = useState<ProductRow[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -72,6 +76,8 @@ const SalesPage = () => {
   const [inventoryPointId, setInventoryPointId] = useState<number>(1);
   const [loading, setLoading] = useState(false);
   const { formatCurrency } = useCurrency();
+  
+  const isRole2 = session?.user?.role_id === 2;
 
   const safeCurrency = (amount: number) => {
     try {
@@ -192,6 +198,7 @@ const SalesPage = () => {
       };
       if (typeof inventoryPointId === 'number' && !Number.isNaN(inventoryPointId)) {
         body.inventory_point_id = inventoryPointId;
+        body.location_id = inventoryPointId; // Use inventory point as location for stock tracking
       }
       const res = await fetch("/api/inventory/sale", {
         method: "POST",
@@ -228,23 +235,45 @@ const SalesPage = () => {
     <Stack >
       
       <Stack direction="row" spacing={2}>
+        {isRole2 && (
+          <Button
+            variant={tabValue === 0 ? "contained" : "outlined"}
+            startIcon={<Receipt size={20} />}
+            onClick={() => setTabValue(0)}
+          >
+            Pending Transfers
+          </Button>
+        )}
+        {isRole2 && (
+          <Button
+            variant={tabValue === 1 ? "contained" : "outlined"}
+            startIcon={<ListIcon size={20} />}
+            onClick={() => setTabValue(1)}
+          >
+            Your Signed Transfer Notes
+          </Button>
+        )}
         <Button
-          variant={tabValue === 0 ? "contained" : "outlined"}
+          variant={tabValue === (isRole2 ? 2 : 0) ? "contained" : "outlined"}
           startIcon={<ShoppingCart size={20} />}
-          onClick={() => setTabValue(0)}
+          onClick={() => setTabValue(isRole2 ? 2 : 0)}
         >
           POS
         </Button>
         <Button
-          variant={tabValue === 1 ? "contained" : "outlined"}
+          variant={tabValue === (isRole2 ? 3 : 1) ? "contained" : "outlined"}
           startIcon={<ListIcon size={20} />}
-          onClick={() => setTabValue(1)}
+          onClick={() => setTabValue(isRole2 ? 3 : 1)}
         >
           Sales History
         </Button>
       </Stack>
       
-      {tabValue === 0 ? (
+      {(isRole2 && tabValue === 0) ? (
+        <PendingTransfers />
+      ) : (isRole2 && tabValue === 1) ? (
+        <SignedTransfers />
+      ) : (tabValue === (isRole2 ? 2 : 0)) ? (
         <Grid container spacing={3} mt={0}>
         {/* Products Section */}
         <Grid item xs={12} md={8}>

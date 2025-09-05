@@ -199,7 +199,7 @@ export default function ProductSearch({ products, onAddToCart }: Props) {
                             Stock
                           </Typography>
                           <Typography variant="body1" fontWeight="medium">
-                            {product.product_quantity}
+                            {product.stock_quantity}
                           </Typography>
                         </Grid>
                         <Grid size={{ xs: 6, sm: 2 }}>
@@ -269,7 +269,7 @@ export default function ProductSearch({ products, onAddToCart }: Props) {
                           Stock
                         </Typography>
                         <Typography variant="body1" fontWeight="medium">
-                          {product.product_quantity}
+                          {product.stock_quantity}
                         </Typography>
                       </Grid>
                       <Grid size={{ xs: 6, sm: 2 }}>

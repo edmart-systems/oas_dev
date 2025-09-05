@@ -5,44 +5,43 @@ const prisma = new PrismaClient();
 
 // GET /api/inventory/alerts
 // Optional query params:
-// - inventory_point_id: number (filter alerts by specific inventory point)
+// - location_id: number (filter alerts by specific location)
 // - type: comma-separated list of alert types to include e.g. "low_stock,stockout,overstock"
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const ipid = searchParams.get("inventory_point_id");
+    const locationId = searchParams.get("location_id");
     const typeFilter = (searchParams.get("type") || "")
       .split(",")
       .map((t) => t.trim())
       .filter(Boolean);
 
     const where: any = {};
-    if (ipid) {
-      const parsed = Number(ipid);
+    if (locationId) {
+      const parsed = Number(locationId);
       if (Number.isNaN(parsed)) {
         return NextResponse.json(
-          { error: "inventory_point_id must be numeric" },
+          { error: "location_id must be numeric" },
           { status: 400 }
         );
       }
-      where.inventory_point_id = parsed;
+      where.location_id = parsed;
     }
 
-    // Join inventory stock with product and inventory point
-    const stocks = await prisma.inventory_stock.findMany({
+    // Join location stock with product and location
+    const stocks = await prisma.location_stock.findMany({
       where,
       include: {
         product: {
           select: {
             product_id: true,
             product_name: true,
-            product_min_quantity: true,
-            product_max_quantity: true,
+            reorder_level: true,
           },
         },
-        inventory_point: { select: { inventory_point_id: true, inventory_point: true } },
+        location: { select: { location_id: true, location_name: true } },
       },
-      orderBy: [{ inventory_point_id: "asc" }, { product_id: "asc" }],
+      orderBy: [{ location_id: "asc" }, { product_id: "asc" }],
     });
 
     type AlertType = "low_stock" | "stockout" | "overstock";
@@ -52,8 +51,8 @@ export async function GET(req: NextRequest) {
         type: AlertType;
         product_id: number;
         product_name: string;
-        inventory_point_id: number;
-        inventory_point: string;
+        location_id: number;
+        location_name: string;
         quantity: number;
         min?: number | null;
         max?: number | null;
@@ -61,8 +60,8 @@ export async function GET(req: NextRequest) {
       }> = [];
 
       const qty = row.quantity ?? 0;
-      const min = row.product.product_min_quantity ?? 0;
-      const max = row.product.product_max_quantity ?? 0;
+      const min = row.product.reorder_level ?? 0;
+      const max = 100; // Default max since no max field exists
 
       // stockout
       if (qty === 0) {
@@ -70,12 +69,12 @@ export async function GET(req: NextRequest) {
           type: "stockout",
           product_id: row.product_id,
           product_name: row.product.product_name,
-          inventory_point_id: row.inventory_point_id,
-          inventory_point: row.inventory_point.inventory_point,
+          location_id: row.location_id,
+          location_name: row.location.location_name,
           quantity: qty,
           min,
           max,
-          message: `Stockout: ${row.product.product_name} at ${row.inventory_point.inventory_point}`,
+          message: `Stockout: ${row.product.product_name} at ${row.location.location_name}`,
         });
       }
 
@@ -85,12 +84,12 @@ export async function GET(req: NextRequest) {
           type: "low_stock",
           product_id: row.product_id,
           product_name: row.product.product_name,
-          inventory_point_id: row.inventory_point_id,
-          inventory_point: row.inventory_point.inventory_point,
+          location_id: row.location_id,
+          location_name: row.location.location_name,
           quantity: qty,
           min,
           max,
-          message: `Low stock: ${row.product.product_name} at ${row.inventory_point.inventory_point} (qty ${qty} <= min ${min})`,
+          message: `Low stock: ${row.product.product_name} at ${row.location.location_name} (qty ${qty} <= min ${min})`,
         });
       }
 
@@ -100,12 +99,12 @@ export async function GET(req: NextRequest) {
           type: "overstock",
           product_id: row.product_id,
           product_name: row.product.product_name,
-          inventory_point_id: row.inventory_point_id,
-          inventory_point: row.inventory_point.inventory_point,
+          location_id: row.location_id,
+          location_name: row.location.location_name,
           quantity: qty,
           min,
           max,
-          message: `Overstock: ${row.product.product_name} at ${row.inventory_point.inventory_point} (qty ${qty} >= max ${max})`,
+          message: `Overstock: ${row.product.product_name} at ${row.location.location_name} (qty ${qty} >= max ${max})`,
         });
       }
 

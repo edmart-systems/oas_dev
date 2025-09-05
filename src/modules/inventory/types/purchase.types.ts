@@ -4,7 +4,7 @@ import { PurchaseDtoInput  } from "@/modules/inventory/dtos/purchase.dto";
 import { CompanyDto } from "@/types/company.types";
 import React, { Dispatch, forwardRef, Fragment, Ref, SetStateAction } from "react";
 import { Supplier } from "./supplier.types";
-import { InventoryPoint } from "./inventoryPoint.types";
+import { Location } from "./location.types";
 import { Product } from "@/types/product.types";
 
 
@@ -30,7 +30,7 @@ export interface PurchaseMainProps {
   products: Product[];
   cart: CartItem[];
   suppliers: Supplier[];
-  inventoryPoints: InventoryPoint[];
+  inventoryPoints: Location[];
   supplierId: number;
   inventoryPointId: number;
   searchTerm: string;

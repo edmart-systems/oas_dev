@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const StockDto = z.object({
   product_id: z.number(),
-  inventory_point_id: z.number(),
+  location_id: z.number(),
   change_type: z.enum(["PURCHASE", "SALE", "RETURN", "ADJUSTMENT", "TRANSFER"]).default("ADJUSTMENT"),
   quantity_change: z
     .number()

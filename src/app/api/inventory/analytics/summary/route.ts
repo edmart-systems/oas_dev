@@ -16,8 +16,8 @@ export async function GET(req: NextRequest) {
     const inventory_point_id = point ? Number(point) : undefined;
 
     // Current inventory valuation and low/out stock
-    const invStocks = await prisma.inventory_stock.findMany({
-      where: inventory_point_id ? { inventory_point_id } : undefined,
+    const invStocks = await prisma.location_stock.findMany({
+      where: inventory_point_id ? { location_id: inventory_point_id } : undefined,
       include: { product: true },
     });
 
@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
 
     for (const row of invStocks) {
       const onHand = row.quantity ?? 0;
-      const minQty = row.product.product_min_quantity ?? 0;
+      const minQty = row.product.reorder_level ?? 0;
       const cost = row.product.buying_price ?? 0;
       valuation += onHand * cost;
       if (onHand <= (minQty || 0)) low_stock_count += 1;

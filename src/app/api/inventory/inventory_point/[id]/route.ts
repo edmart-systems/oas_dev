@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "../../../../../../db/db";
-import { Inventory_pointService } from "@/modules/inventory/services/inventory_point.service";
-import { Inventory_pointRepository } from "@/modules/inventory/repositories/inventory_point.repository";
-import { Inventory_pointDto } from "@/modules/inventory/dtos/inventory_point.dto";
+import { LocationService } from "@/modules/inventory/services/location.service";
+import { UpdateLocationSchema } from "@/modules/inventory/dtos/location.dto";
 import { getServerSession } from "next-auth";
 import { SessionService } from "@/services/auth-service/session.service";
 import { authOptions } from "@/server-actions/auth-actions/auth.actions";
 
-const service = new Inventory_pointService(new Inventory_pointRepository(prisma));
-const sessionService = new SessionService
+const service = new LocationService();
+const sessionService = new SessionService();
 
 export async function PATCH(
   req: NextRequest,
@@ -23,13 +21,12 @@ export async function PATCH(
   const id = Number(params.id);
   const body = await req.json();
 
-  
-  const inventory_pointData = {
+  const locationData = {
     ...body,
     updated_by: session.user?.co_user_id || "unknown",
   };
 
-  const parsed = Inventory_pointDto.safeParse(inventory_pointData);
+  const parsed = UpdateLocationSchema.safeParse(locationData);
 
   if (!parsed.success) {
     return NextResponse.json(
@@ -39,11 +36,11 @@ export async function PATCH(
   }
 
   try {
-    const updated = await service.updateInventory_point(id, parsed.data);
+    const updated = await service.updateLocation(id, parsed.data);
     return NextResponse.json(
       {
         updated,
-        message: `Inventory_point '${updated.inventory_point}' updated successfully`,
+        message: `Location '${updated.location_name}' updated successfully`,
       },
       { status: 200 }
     );
@@ -65,12 +62,9 @@ export async function DELETE(
   const id = Number(params.id);
 
   try {
-    const deleted = await prisma.inventory_point.delete({
-      where: { inventory_point_id: id },
-    });
-
+    const deleted = await service.deleteLocation(id);
     return NextResponse.json(
-      { message: `Inventory_point '${deleted.inventory_point}' permanently deleted.` },
+      { message: `Location '${deleted.location_name}' permanently deleted.` },
       { status: 200 }
     );
   } catch (err: any) {
@@ -80,4 +74,3 @@ export async function DELETE(
     );
   }
 }
-

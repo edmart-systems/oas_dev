@@ -16,7 +16,7 @@ import PurchaseMain from "@/components/dashboard/inventory/purchase/purchaseMain
 import PurchaseHistoryMain from "@/components/dashboard/inventory/purchase/purchaseHistory/purchaseHistoryMain";
 import { Purchase } from "@/modules/inventory/types/purchase.types";
 import { CompanyDto } from "@/types/company.types";
-import { InventoryPoint } from "@/modules/inventory/types/inventoryPoint.types";
+import { Location } from "@/modules/inventory/types/location.types";
 import { Product } from "@/types/product.types";
 import { Supplier } from "@/modules/inventory/types/supplier.types";
 import PurchaseHistoryTable from "@/components/dashboard/inventory/purchase/purchaseHistory/purchaseHistoryTable";
@@ -33,7 +33,7 @@ const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
 const [dateError, setDateError] = useState('');
 const [purchases, setPurchases] = useState<Purchase[]>([]);
 const [suppliers, setSuppliers] = useState<Supplier[]>([]);
-const [inventoryPoints, setInventoryPoints] = useState<InventoryPoint[]>([]);
+const [inventoryPoints, setInventoryPoints] = useState<Location[]>([]);
 const [company, setCompany] = useState<CompanyDto | null>(null);
 const [products, setProducts] = useState<Product[]>([]);
 const [loading, setLoading] = useState(true);
