@@ -4,14 +4,18 @@ export class TransferRepository {
   constructor(private prisma: PrismaClient) {}
 
   async createTransferDocument(
-    from_inventory_point_id: number,
-    to_inventory_point_id: number,
+    from_location_id: number,
+    to_location_id: number,
+    assigned_user_id: number,
+    created_by: string,
     note?: string
   ): Promise<Transfer> {
     return this.prisma.transfer.create({
       data: {
-        from_inventory_point_id,
-        to_inventory_point_id,
+        from_location_id,
+        to_location_id,
+        assigned_user_id,
+        created_by,
         note,
       },
     });
@@ -35,8 +39,10 @@ export class TransferRepository {
     return this.prisma.transfer.findMany({
       orderBy: { created_at: "desc" },
       include: {
-        from_point: { select: { inventory_point_id: true, inventory_point: true } },
-        to_point: { select: { inventory_point_id: true, inventory_point: true } },
+        from_location: { select: { location_id: true, location_name: true } },
+        to_location: { select: { location_id: true, location_name: true } },
+        assigned_user: { select: { userId: true, firstName: true, lastName: true } },
+        creator: { select: { co_user_id: true, firstName: true, lastName: true } },
         items: {
           include: { product: { select: { product_id: true, product_name: true } } },
         },

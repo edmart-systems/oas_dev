@@ -7,7 +7,31 @@ export class LocationRepository {
   async findAll() {
   return await prisma.location.findMany({
     where: { is_active: true },
-    include: { parent: true, children: true },
+    select: {
+      location_id: true,
+      location_name: true,
+      location_type: true,
+      location_parent_id: true,
+      location_address: true,
+      assigned_to: true,
+      is_active: true,
+      created_by: true,
+      updated_by: true,
+      parent: {
+        select: {
+          location_id: true,
+          location_name: true,
+          location_type: true
+        }
+      },
+      children: {
+        select: {
+          location_id: true,
+          location_name: true,
+          location_type: true
+        }
+      }
+    },
     orderBy: { location_name: 'asc' }
   });
 }
@@ -16,9 +40,29 @@ export class LocationRepository {
   async findById(location_id: number) {
     return await prisma.location.findUnique({
       where: { location_id },
-      include: {
-        parent: true,
-        children: true,
+      select: {
+        location_id: true,
+        location_name: true,
+        location_type: true,
+        location_parent_id: true,
+        location_address: true,
+        is_active: true,
+        created_by: true,
+        updated_by: true,
+        parent: {
+          select: {
+            location_id: true,
+            location_name: true,
+            location_type: true
+          }
+        },
+        children: {
+          select: {
+            location_id: true,
+            location_name: true,
+            location_type: true
+          }
+        }
       }
     });
   }
@@ -26,9 +70,29 @@ export class LocationRepository {
   async create(data: CreateLocationDto) {
     return await prisma.location.create({
       data,
-      include: {
-        parent: true,
-        children: true,
+      select: {
+        location_id: true,
+        location_name: true,
+        location_type: true,
+        location_parent_id: true,
+        location_address: true,
+        is_active: true,
+        created_by: true,
+        updated_by: true,
+        parent: {
+          select: {
+            location_id: true,
+            location_name: true,
+            location_type: true
+          }
+        },
+        children: {
+          select: {
+            location_id: true,
+            location_name: true,
+            location_type: true
+          }
+        }
       }
     });
   }
@@ -37,9 +101,29 @@ export class LocationRepository {
     return await prisma.location.update({
       where: { location_id },
       data,
-      include: {
-        parent: true,
-        children: true,
+      select: {
+        location_id: true,
+        location_name: true,
+        location_type: true,
+        location_parent_id: true,
+        location_address: true,
+        is_active: true,
+        created_by: true,
+        updated_by: true,
+        parent: {
+          select: {
+            location_id: true,
+            location_name: true,
+            location_type: true
+          }
+        },
+        children: {
+          select: {
+            location_id: true,
+            location_name: true,
+            location_type: true
+          }
+        }
       }
     });
   }
@@ -53,9 +137,29 @@ export class LocationRepository {
   async findByType(location_type: string) {
     return await prisma.location.findMany({
       where: { location_type: location_type as any },
-      include: {
-        parent: true,
-        children: true,
+      select: {
+        location_id: true,
+        location_name: true,
+        location_type: true,
+        location_parent_id: true,
+        location_address: true,
+        is_active: true,
+        created_by: true,
+        updated_by: true,
+        parent: {
+          select: {
+            location_id: true,
+            location_name: true,
+            location_type: true
+          }
+        },
+        children: {
+          select: {
+            location_id: true,
+            location_name: true,
+            location_type: true
+          }
+        }
       }
     });
   }

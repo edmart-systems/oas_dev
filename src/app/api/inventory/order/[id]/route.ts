@@ -32,7 +32,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
 
   const id = Number(params.id);
   try {
-    await prisma.order_item.deleteMany({ where: { order_id: id } });
+    await prisma.orderItem.deleteMany({ where: { order_id: id } });
     const deleted = await prisma.order.delete({ where: { order_id: id } });
     return NextResponse.json({ message: `Order '${deleted.order_number}' permanently deleted.` });
   } catch (err: any) {

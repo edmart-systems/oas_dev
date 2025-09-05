@@ -12,21 +12,20 @@ export class TransferService {
   ) {}
 
   /**
-   * Creates a transfer document with items and applies stock moves between points
+   * Creates a transfer document with items - NO stock changes until signed
    */
-  async createTransfer(data: TransferDtoInput) {
-    const { from_inventory_point_id, to_inventory_point_id, note, items } = data;
+  async createTransfer(data: TransferDtoInput & { created_by: string }) {
+    const { from_location_id, to_location_id, assigned_user_id, created_by, note, items } = data;
 
     return await this.prisma.$transaction(async (tx) => {
-      // repositories/services bound to the same tx
       const transferRepo = new TransferRepository(tx as unknown as PrismaClient);
-      const stockRepo = new StockRepository(tx as unknown as PrismaClient);
-      const stockServiceTx = new StockService(tx as unknown as PrismaClient, stockRepo);
 
-      // Create transfer doc
+      // Create transfer doc with PENDING status
       const transfer = await transferRepo.createTransferDocument(
-        from_inventory_point_id,
-        to_inventory_point_id,
+        from_location_id,
+        to_location_id,
+        assigned_user_id,
+        created_by,
         note
       );
 
@@ -36,26 +35,63 @@ export class TransferService {
         items.map((i) => ({ product_id: i.product_id, quantity: i.quantity }))
       );
 
+      // NO stock movements here - only when signed
+      return transfer;
+    });
+  }
+
+  /**
+   * Sign transfer and apply stock movements
+   */
+  async signTransfer(transferId: number, signatureData: string) {
+    return await this.prisma.$transaction(async (tx) => {
+      const transferRepo = new TransferRepository(tx as unknown as PrismaClient);
+      const stockRepo = new StockRepository(tx as unknown as PrismaClient);
+      const stockServiceTx = new StockService(tx as unknown as PrismaClient, stockRepo);
+
+      // Get transfer with items
+      const transfer = await tx.transfer.findUnique({
+        where: { transfer_id: transferId },
+        include: { items: true }
+      });
+
+      if (!transfer) {
+        throw new Error('Transfer not found');
+      }
+
+      if (transfer.status !== 'PENDING') {
+        throw new Error('Transfer already processed');
+      }
+
       // Apply stock movements per item
-      for (const it of items) {
+      for (const item of transfer.items) {
         // Move OUT from source (negative)
         await stockServiceTx.createAndApplyStock({
-          product_id: it.product_id,
-          inventory_point_id: from_inventory_point_id,
+          product_id: item.product_id,
+          location_id: transfer.from_location_id,
           change_type: "TRANSFER",
-          quantity_change: -Math.abs(it.quantity),
+          quantity_change: -Math.abs(item.quantity),
           reference_id: transfer.transfer_id,
         } as any);
 
         // Move IN to destination (positive)
         await stockServiceTx.createAndApplyStock({
-          product_id: it.product_id,
-          inventory_point_id: to_inventory_point_id,
+          product_id: item.product_id,
+          location_id: transfer.to_location_id,
           change_type: "TRANSFER",
-          quantity_change: Math.abs(it.quantity),
+          quantity_change: Math.abs(item.quantity),
           reference_id: transfer.transfer_id,
         } as any);
       }
+
+      // Update transfer status and signature
+      await tx.transfer.update({
+        where: { transfer_id: transferId },
+        data: {
+          status: 'COMPLETED',
+          signature_data: signatureData
+        }
+      });
 
       return transfer;
     });

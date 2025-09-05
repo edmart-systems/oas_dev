@@ -6,9 +6,13 @@ export class InventoryStockRepository {
 
   async getAll(): Promise<InventoryStockDto[]> {
     const inventoryStocks = await this.prisma.location.findMany({
-      include: {
+      select: {
+        location_id: true,
+        location_name: true,
         location_stock: {
-          include: {
+          select: {
+            product_id: true,
+            quantity: true,
             product: {
               select: {
                 product_id: true,

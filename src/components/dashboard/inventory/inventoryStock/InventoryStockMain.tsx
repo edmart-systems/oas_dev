@@ -63,13 +63,18 @@ const InventoryStockMain: React.FC = () => {
   const fetchRows = async () => {
     setLoading(true);
     try {
+      console.log('Calling API: /api/inventory/inventory_stock');
       const res = await fetch("/api/inventory/inventory_stock"); 
+      console.log('API Response status:', res.status);
+      
       if (!res.ok) {
         const errorText = await res.text();
+        console.error('API Error:', errorText);
         throw new Error(`HTTP ${res.status}: ${errorText || 'Failed to fetch inventory stock'}`);
       }
 
       const data: InventoryStockDto[] = await res.json();
+      console.log('Inventory Stock API Response:', data);
 
       // flatten nested structure into table rows
       const flatRows: InventoryStockRow[] = data.flatMap((inv) =>
@@ -84,6 +89,7 @@ const InventoryStockMain: React.FC = () => {
         }))
       );
 
+      console.log('Flattened rows:', flatRows);
       setRows(flatRows);
     } catch (e: any) {
       console.error('Inventory stock fetch error:', e);

@@ -404,6 +404,39 @@ const main = async () => {
       ],
     });
   //Edmart Specific Data End
+
+  // Inventory seed data
+  await prisma.category.upsert({
+    where: { category: "Electronics" },
+    update: {},
+    create: {
+      category: "Electronics",
+    },
+  });
+
+  await prisma.category.upsert({
+    where: { category: "Office Supplies" },
+    update: {},
+    create: {
+      category: "Office Supplies",
+    },
+  });
+
+  await prisma.tag.upsert({
+    where: { tag: "Laptop" },
+    update: {},
+    create: {
+      tag: "Laptop",
+    },
+  });
+
+  await prisma.tag.upsert({
+    where: { tag: "Furniture" },
+    update: {},
+    create: {
+      tag: "Furniture",
+    },
+  });
 };
 
 main()

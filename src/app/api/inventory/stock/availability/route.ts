@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const quantity = await stockService.getAvailableAtPoint(pid, ipid);
+    const quantity = await stockService.getAvailableAtLocation(pid, ipid);
     return NextResponse.json({ product_id: pid, inventory_point_id: ipid, quantity });
   } catch (err: any) {
     return NextResponse.json(

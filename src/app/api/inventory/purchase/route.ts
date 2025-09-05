@@ -25,13 +25,25 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    // Get current location from system settings
+    // Get current location from system settings or use first MAIN_STORE
     const currentLocationSetting = await prisma.systemSetting.findUnique({
       where: { setting_key: "current_location_id" }
     });
     
-    const currentLocationId = currentLocationSetting?.setting_value ? 
-      parseInt(currentLocationSetting.setting_value) : 1;
+    let currentLocationId: number;
+    if (currentLocationSetting?.setting_value) {
+      currentLocationId = parseInt(currentLocationSetting.setting_value);
+    } else {
+      // Find first MAIN_STORE location
+      const mainStore = await prisma.location.findFirst({
+        where: { location_type: 'MAIN_STORE' },
+        select: { location_id: true }
+      });
+      if (!mainStore) {
+        throw new Error('No main store location found. Please create a main store location first.');
+      }
+      currentLocationId = mainStore.location_id;
+    }
 
     const tagData = {
       ...body,
@@ -54,8 +66,9 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (err: any) {
+    console.error('Purchase API Error:', err);
     return NextResponse.json(
-      { error: err.message || "Internal Server Error" },
+      { error: err.message || "Internal Server Error", stack: err.stack },
       { status: 500 }
     );
   }

@@ -24,7 +24,7 @@ export class SaleRepository {
         sale_no: saleData.sale_no,
         seller_id: saleData.seller_id,
         currency_id: saleData.currency_id,
-        inventory_point_id: saleData.inventory_point_id,
+        location_id: (saleData as any).location_id || saleData.inventory_point_id,
         sale_total_quantity: (saleData as any).sale_total_quantity ?? undefined,
         sale_total_amount: saleData.sale_total_amount!,
         sale_total_discount: saleData.sale_total_discount ?? 0,
@@ -75,6 +75,29 @@ export class SaleRepository {
           }
         }
       },
+    });
+  }
+
+  async getByUser(userId: number): Promise<Sale[]> {
+    return this.prisma.sale.findMany({
+      where: { seller_id: userId },
+      include: { 
+        Sale_items: true,
+        location: {
+          select: {
+            location_id: true,
+            location_name: true,
+          }
+        },
+        seller: {
+          select: {
+            co_user_id: true,
+            firstName: true,
+            lastName: true,
+          }
+        }
+      },
+      orderBy: { sale_created_at: 'desc' },
     });
   }
 }

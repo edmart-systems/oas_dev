@@ -51,7 +51,7 @@ export class OrderRepository {
 
   async delete(id: number) {
     // delete children first
-    await this.prisma.order_item.deleteMany({ where: { order_id: id } });
+    await this.prisma.orderItem.deleteMany({ where: { order_id: id } });
     return this.prisma.order.delete({ where: { order_id: id } });
   }
 }

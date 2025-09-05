@@ -85,6 +85,38 @@ export class PurchaseService {
                     markup_percentage: newMarkup
                 },
             });
+
+            // Update location_stock for inventory tracking by location
+            const existingLocationStock = await tx.location_stock.findUnique({
+                where: {
+                    product_id_location_id: {
+                        product_id: item.product_id,
+                        location_id: purchase.location_id
+                    }
+                }
+            });
+
+            if (existingLocationStock) {
+                await tx.location_stock.update({
+                    where: {
+                        product_id_location_id: {
+                            product_id: item.product_id,
+                            location_id: purchase.location_id
+                        }
+                    },
+                    data: {
+                        quantity: existingLocationStock.quantity + item.quantity
+                    }
+                });
+            } else {
+                await tx.location_stock.create({
+                    data: {
+                        product_id: item.product_id,
+                        location_id: purchase.location_id,
+                        quantity: item.quantity
+                    }
+                });
+            }
         }
             return purchase;
         });

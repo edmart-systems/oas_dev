@@ -22,6 +22,7 @@ export const SaleDto = z.object({
   sale_net_amount: z.number().optional(),
   sale_grand_total: z.number().optional(),
   inventory_point_id: z.number().default(1),
+  location_id: z.number().optional(),
 }).superRefine((val, ctx) => {
   if (val.seller_id == null && !val.seller_co_user_id) {
     ctx.addIssue({
@@ -45,6 +46,7 @@ export const CreateSaleDto = z.object({
   sale_net_amount: z.number().optional(),
   sale_grand_total: z.number().optional(),
   inventory_point_id: z.number().default(1),
+  location_id: z.number().optional(),
   
 }).superRefine((val, ctx) => {
   if (val.seller_id == null && !val.seller_co_user_id) {

@@ -69,10 +69,10 @@ export class SaleService {
       }
       const productIds = Array.from(requiredByProduct.keys());
       if (productIds.length > 0) {
-        const stocks = await tx.inventory_stock.findMany({
+        const stocks = await tx.location_stock.findMany({
           where: {
             product_id: { in: productIds },
-            inventory_point_id: saleData.inventory_point_id,
+            location_id: saleData.location_id || saleData.inventory_point_id,
           },
           select: { product_id: true, quantity: true },
         });
@@ -123,11 +123,12 @@ export class SaleService {
         sale_items: calculatedItems,
       });
 
-      // Apply stock movements per inventory point with validation and inventory_stock upsert
+      // Apply stock movements per location with validation and location_stock upsert
+      const locationId = saleData.location_id || saleData.inventory_point_id;
       for (const item of calculatedItems) {
         await stockService.createAndApplyStock({
           product_id: item.product_id,
-          inventory_point_id: sale.inventory_point_id,
+          location_id: locationId,
           change_type: "SALE",
           quantity_change: -item.quantity,
           reference_id: sale.sale_id,
@@ -140,6 +141,10 @@ export class SaleService {
 
   async getAllSales(): Promise<Sale[]> {
     return this.saleRepo.getAll();
+  }
+
+  async getSalesByUser(userId: number): Promise<Sale[]> {
+    return this.saleRepo.getByUser(userId);
   }
 
   async getSaleById(id: number): Promise<Sale> {

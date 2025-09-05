@@ -14,27 +14,27 @@ export class StockRepository {
   }
 
   /**
-   * Get all stock records with product & inventory point
+   * Get all stock records with product & location
    */
   async getAll() {
     return this.prisma.stock.findMany({
-      orderBy: { created_at: "desc" },
+      orderBy: { stock_id: "desc" },
       include: {
         product: { select: { product_id: true, product_name: true } },
-        inventory_point: { select: { inventory_point_id: true, inventory_point: true } },
+        location: { select: { location_id: true, location_name: true } },
       },
     });
   }
 
   /**
-   * Get stock record by ID with product & inventory point
+   * Get stock record by ID with product & location
    */
   async getById(stock_id: number) {
     return this.prisma.stock.findUnique({
       where: { stock_id },
       include: {
         product: { select: { product_id: true, product_name: true } },
-        inventory_point: { select: { inventory_point_id: true, inventory_point: true } },
+        location: { select: { location_id: true, location_name: true } },
       },
     });
   }
@@ -45,27 +45,27 @@ export class StockRepository {
   async getByProduct(product_id: number) {
     return this.prisma.stock.findMany({
       where: { product_id },
-      orderBy: { created_at: "desc" },
+      orderBy: { stock_id: "desc" },
       include: {
         product: { select: { product_id: true, product_name: true } },
-        inventory_point: { select: { inventory_point_id: true, inventory_point: true } },
+        location: { select: { location_id: true, location_name: true } },
       },
     });
   }
 
   /**
-   * Get stock for a specific inventory point and product
+   * Get stock for a specific location and product
    */
-  async getByInventoryPoint(product_id: number, inventory_point_id: number) {
+  async getByLocation(product_id: number, location_id: number) {
     return this.prisma.stock.findMany({
       where: {
         product_id,
-        inventory_point_id,
+        location_id,
       },
-      orderBy: { created_at: "desc" },
+      orderBy: { stock_id: "desc" },
       include: {
         product: { select: { product_id: true, product_name: true } },
-        inventory_point: { select: { inventory_point_id: true, inventory_point: true } },
+        location: { select: { location_id: true, location_name: true } },
       },
     });
   }

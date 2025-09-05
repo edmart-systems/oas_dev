@@ -10,6 +10,12 @@ export class CategoryRepository{
     async findByName(category: string){
         return this.prisma.category.findUnique({
             where:{category},
+            select: {
+                category_id: true,
+                category: true,
+                created_by: true,
+                updated_by: true
+            }
         })
     }
 
@@ -26,10 +32,13 @@ export class CategoryRepository{
     
     async getAll():Promise<Category[]>{
         return this.prisma.category.findMany({
-            orderBy:{
-                created_at: "desc"
-            },
-            include: {
+            select: {
+                category_id: true,
+                category: true,
+                created_by: true,
+                updated_by: true,
+                created_at: true,
+                updated_at: true,
                 creator: {
                     select: {
                         co_user_id: true,
@@ -44,12 +53,18 @@ export class CategoryRepository{
                     }
                 }
             }
-        });
+        }) as Promise<Category[]>;
     }
     async getById(id: number): Promise<Category | null> {
         return this.prisma.category.findUnique({
             where: { category_id: id },
-        });
+            select: {
+                category_id: true,
+                category: true,
+                created_by: true,
+                updated_by: true
+            }
+        }) as Promise<Category | null>;
     }
 
     async updateCategory(id: number, data: { category: string }): Promise<Category> {

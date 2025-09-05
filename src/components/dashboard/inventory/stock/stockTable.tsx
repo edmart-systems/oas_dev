@@ -8,8 +8,17 @@ import {
   TableHead,
   TableRow,
   TablePagination,
+  Chip,
+  Box,
 } from "@mui/material";
-import { PencilSimple } from "@phosphor-icons/react";
+import { 
+  PencilSimple, 
+  ShoppingCart, 
+  ArrowsLeftRight, 
+  Receipt,
+  TrendUp,
+  TrendDown
+} from "@phosphor-icons/react";
 import { Stock } from "@/modules/inventory/types/stock.types";
 
 interface Props {
@@ -38,40 +47,86 @@ const StockTable = ({ stock, onEdit }: Props) => {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Stock Id</TableCell>
             <TableCell>Product</TableCell>
-            <TableCell>Inventory Point</TableCell>
+            <TableCell>Location</TableCell>
             <TableCell>Change Type</TableCell>
             <TableCell>Quantity Change</TableCell>
             <TableCell>Resulting Stock</TableCell>
+            <TableCell>Reference</TableCell>
             <TableCell>Date</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {paginatedStock.map((stock) => (
-            <TableRow
-              key={stock.stock_id}
-              sx={{ "&:nth-of-type(odd)": { bgcolor: "action.hover" } }}
-            >
-              <TableCell>ST-{stock.stock_id}</TableCell>
-              <TableCell>{stock.product?.product_name || "N/A"}</TableCell>
-              <TableCell>{stock.inventory_point?.inventory_point || "N/A"}</TableCell>
-              <TableCell>{stock.change_type}</TableCell>
-              <TableCell>{stock.quantity_change}</TableCell>
-              <TableCell>{stock.resulting_stock}</TableCell>
-              <TableCell>
-                {stock.created_at
-                  ? formatDate(stock.created_at)
-                  : "N/A"}
-              </TableCell>
-              <TableCell>
-                <IconButton onClick={() => onEdit(stock)}>
-                  <PencilSimple />
-                </IconButton>
-              </TableCell>
-            </TableRow>
-          ))}
+          {paginatedStock.map((stock) => {
+            const getChangeTypeIcon = (changeType: string) => {
+              switch (changeType) {
+                case 'PURCHASE': return <ShoppingCart size={16} />;
+                case 'SALE': return <Receipt size={16} />;
+                case 'TRANSFER': return <ArrowsLeftRight size={16} />;
+                default: return <PencilSimple size={16} />;
+              }
+            };
+
+            const getChangeTypeColor = (changeType: string) => {
+              switch (changeType) {
+                case 'PURCHASE': return 'success';
+                case 'SALE': return 'error';
+                case 'TRANSFER': return 'info';
+                default: return 'default';
+              }
+            };
+
+            return (
+              <TableRow
+                key={stock.stock_id}
+                sx={{ "&:nth-of-type(odd)": { bgcolor: "action.hover" } }}
+              >
+                <TableCell>{stock.product?.product_name || "N/A"}</TableCell>
+                <TableCell>{stock.location?.location_name || "N/A"}</TableCell>
+                <TableCell>
+                  <Chip
+                    icon={getChangeTypeIcon(stock.change_type)}
+                    label={stock.change_type}
+                    color={getChangeTypeColor(stock.change_type) as any}
+                    size="small"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {stock.quantity_change > 0 ? (
+                      <TrendUp size={16} color="#4caf50" />
+                    ) : (
+                      <TrendDown size={16} color="#f44336" />
+                    )}
+                    <span style={{
+                      color: stock.quantity_change > 0 ? '#4caf50' : '#f44336',
+                      fontWeight: 'bold'
+                    }}>
+                      {stock.quantity_change > 0 ? '+' : ''}{stock.quantity_change}
+                    </span>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <strong>{stock.resulting_stock}</strong>
+                </TableCell>
+                <TableCell>
+                  {stock.change_type === 'PURCHASE' ? `PO-${stock.reference_id}` :
+                   stock.change_type === 'SALE' ? `SALE-${stock.reference_id}` :
+                   stock.change_type === 'TRANSFER' ? `TRF-${stock.reference_id}` :
+                   stock.reference_id || 'N/A'}
+                </TableCell>
+                <TableCell>
+                  {stock.created_at ? formatDate(stock.created_at.toString()) : "N/A"}
+                </TableCell>
+                <TableCell>
+                  <IconButton onClick={() => onEdit(stock)}>
+                    <PencilSimple />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
 

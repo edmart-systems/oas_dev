@@ -14,10 +14,11 @@ import {
   Chip,
   Box,
 } from "@mui/material";
-import { MagnifyingGlassIcon, PlusIcon, ArrowRightIcon } from "@phosphor-icons/react";
+import { MagnifyingGlassIcon, PlusIcon, ArrowRightIcon, Eye } from "@phosphor-icons/react";
 import { toast } from "react-toastify";
 import MyCircularProgress from "@/components/common/my-circular-progress";
 import TransferForm from "./TransferForm";
+import TransferViewDialog from "./TransferViewDialog";
 
 // Simple debounce utility
 const debounce = (func: Function, delay: number) => {
@@ -37,9 +38,13 @@ interface TransferItem {
 interface TransferRow {
   transfer_id: number;
   created_at: string;
+  status: string;
   note?: string | null;
-  from_point: { inventory_point_id: number; inventory_point: string };
-  to_point: { inventory_point_id: number; inventory_point: string };
+  from_location: { location_id: number; location_name: string };
+  to_location: { location_id: number; location_name: string };
+  assigned_user: { userId: number; firstName: string; lastName: string } | null;
+  creator?: { co_user_id: string; firstName: string; lastName: string } | null;
+  signature_data?: string | null;
   items: TransferItem[];
 }
 
@@ -49,6 +54,7 @@ const TransfersMain: React.FC = () => {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [openForm, setOpenForm] = useState(false);
+  const [selectedTransfer, setSelectedTransfer] = useState<TransferRow | null>(null);
 
   // Debounce search to improve performance
   const debouncedSetSearch = useCallback(
@@ -85,8 +91,8 @@ const TransfersMain: React.FC = () => {
     return rows.filter((r) => {
       const products = r.items.map((i) => i.product?.product_name || "").join(" ").toLowerCase();
       return (
-        r.from_point.inventory_point.toLowerCase().includes(term) ||
-        r.to_point.inventory_point.toLowerCase().includes(term) ||
+        r.from_location.location_name.toLowerCase().includes(term) ||
+        r.to_location.location_name.toLowerCase().includes(term) ||
         products.includes(term) ||
         (r.note || "").toLowerCase().includes(term)
       );
@@ -123,8 +129,11 @@ const TransfersMain: React.FC = () => {
               <TableRow>
                 <TableCell>Date</TableCell>
                 <TableCell>Route</TableCell>
+                <TableCell>Assigned User</TableCell>
+                <TableCell>Status</TableCell>
                 <TableCell>Items</TableCell>
                 <TableCell>Note</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -133,10 +142,20 @@ const TransfersMain: React.FC = () => {
                   <TableCell>{new Date(t.created_at).toLocaleString()}</TableCell>
                   <TableCell>
                     <Stack direction="row" alignItems="center" spacing={1}>
-                      <span style={{ fontSize: 13 }}>{t.from_point.inventory_point}</span>
+                      <span style={{ fontSize: 13 }}>{t.from_location.location_name}</span>
                       <ArrowRightIcon size={16} />
-                      <span style={{ fontSize: 13 }}>{t.to_point.inventory_point}</span>
+                      <span style={{ fontSize: 13 }}>{t.to_location.location_name}</span>
                     </Stack>
+                  </TableCell>
+                  <TableCell>
+                    {t.assigned_user ? `${t.assigned_user.firstName} ${t.assigned_user.lastName}` : '-'}
+                  </TableCell>
+                  <TableCell>
+                    <Chip 
+                      label={t.status} 
+                      size="small" 
+                      color={t.status === 'PENDING' ? 'warning' : t.status === 'RECEIVED' ? 'success' : 'default'}
+                    />
                   </TableCell>
                   <TableCell>
                     <Stack direction="row" spacing={1} flexWrap="wrap">
@@ -150,6 +169,16 @@ const TransfersMain: React.FC = () => {
                     </Stack>
                   </TableCell>
                   <TableCell>{t.note}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      startIcon={<Eye />}
+                      onClick={() => setSelectedTransfer(t)}
+                    >
+                      View
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -164,6 +193,14 @@ const TransfersMain: React.FC = () => {
               setOpenForm(false);
               fetchRows();
             }}
+          />
+        )}
+        
+        {selectedTransfer && (
+          <TransferViewDialog
+            open={!!selectedTransfer}
+            setOpen={() => setSelectedTransfer(null)}
+            transfer={selectedTransfer}
           />
         )}
       </CardContent>
