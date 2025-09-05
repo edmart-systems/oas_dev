@@ -1,5 +1,5 @@
 import { UserService } from "@/services/user-service/user.service";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { LocationType, Prisma, PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -47,12 +47,14 @@ const main = async () => {
     ],
   });
 
+  const userCoId = await userService.generateCompanyId({
+    firstTime: false,
+  });
+
   const userTable: Prisma.BatchPayload = await prisma.user.createMany({
     data: [
       {
-        co_user_id: await userService.generateCompanyId({
-          firstTime: false,
-        }),
+        co_user_id: userCoId,
         firstName: "Usaama",
         lastName: "Nkangi",
         email: "se.usaama@edmartsystems.com",
@@ -435,6 +437,19 @@ const main = async () => {
     update: {},
     create: {
       tag: "Furniture",
+    },
+  });
+
+  // Create default main store location
+  await prisma.location.upsert({
+    where: { location_name: "MAIN STORE" },
+    update: {},
+    create: {
+      location_name: "MAIN STORE",
+      location_type: LocationType.MAIN_STORE,
+      location_address: "Head Office - Main Store",
+      assigned_to: userCoId,
+      is_active: true,
     },
   });
 };
