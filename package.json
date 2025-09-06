@@ -11,7 +11,7 @@
     "prismaDev": "dotenv -e .env.local prisma migrate dev"
   },
   "prisma": {
-    "seed": "dotenv -e .env.local npx tsx prisma/seed.ts"
+    "seed": "dotenv -e .env npx tsx prisma/seed.ts"
   },
   "dependencies": {
     "@emotion/cache": "^11.13.1",
@@ -65,6 +65,7 @@
     "nprogress": "^0.2.0",
     "numeral": "^2.0.6",
     "prisma": "^5.22.0",
+    "puppeteer": "^24.18.0",
     "qrcode": "^1.5.4",
     "radix-ui": "^1.4.2",
     "react": "^18",
